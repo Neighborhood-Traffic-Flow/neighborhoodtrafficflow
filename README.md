@@ -54,7 +54,7 @@ Thanks to the following people who have contributed to this project:
 * [@agesak](https://github.com/agesak)
 * [@kels271828](https://github.com/kels271828)
 * [@resquenazi](https://github.com/resquenazi)
-* [@siqicheng88](https://github.com/siqichen88)
+* [@siqicheng88](https://github.com/siqicheng88)
 
 
 ## License
