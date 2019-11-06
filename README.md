@@ -21,7 +21,7 @@ Before you begin, ensure you have met the following requirements:
 * You have read `<guide/link/documentation_related_to_project>`.
 
 
-## Installing neighborhood-traffic-flow
+## Installation
 
 To install neighborhood-traffic-flow, follow these steps:
 
@@ -36,7 +36,7 @@ Windows:
 ```
 
 
-## Using neighborhood-traffic-flow
+## Usage
 
 To use neighborhood-traffic-flow, follow these steps:
 
@@ -51,12 +51,12 @@ Add run commands and examples you think users will find useful. Provide an optio
 
 Thanks to the following people who have contributed to this project:
 
-* @agesak
-* @kels271828 
-* @resquenazi
-* @siqicheng88 
+* [@agesak](https://github.com/agesak)
+* [@kels271828](https://github.com/kels271828)
+* [@resquenazi](https://github.com/resquenazi)
+* [@siqicheng88](https://github.com/siqichen88)
 
 
 ## License
 
-This project uses the following license: [MIT License](./LICENSE).
+This project is [MIT](./LICENSE) licenced.
