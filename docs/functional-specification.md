@@ -12,7 +12,7 @@ The document should have the following sections:
 Traffic flow is an important feature to consider when moving to a new city. Unfortunately, sites such as Zillow, Craigslist, etc., may not provide information about the traffic flow near a particular property. To help people moving to Seattle, we will create an interactive dashboard that allows users to explore traffic flow trends in Seattle neighborhoods.
   
 ## User profile
-Users are anyone interested in learning more about traffic flow in Seattle neighborhoods. Should be familiar with web browser interactions such as hover, click, select from drop-down menu, etc. 
+Users are anyone interested in learning more about traffic flow in Seattle neighborhoods. Should be familiar with web browser interactions such as hover, click, select from drop-down menu, etc. Must be able to clone a git repository and run a Python script. 
 
 ## Data sources
 * [Seattle Streets](https://data-seattlecitygis.opendata.arcgis.com/datasets/seattle-streets)
