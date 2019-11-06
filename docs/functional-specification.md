@@ -18,8 +18,11 @@ The document should have the following sections:
 
 ## Data sources
 * [Seattle Streets](https://data-seattlecitygis.opendata.arcgis.com/datasets/seattle-streets)
+  * GIS street data with street names, block numbers, and speed limit
 * [2018 Traffic Flow Counts](https://data-seattlecitygis.opendata.arcgis.com/datasets/2018-traffic-flow-counts)
+  * GIS traffic flow data with street names, average weekday traffic volume, and average day traffic volume
 * [Seattle Neighborhoods](https://data.opendatasoft.com/explore/dataset/zillow-neighborhoods%40public/map/?refine.city=Seattle&location=10,47.6094,-122.33963&basemap=jawg.sunny)
+  * GIS Seattle neighborhood data from Zillow
 
 ## Use cases
 **Use case 1**: A user wants to view the vehicle traffic flow in a specific neighborhood
