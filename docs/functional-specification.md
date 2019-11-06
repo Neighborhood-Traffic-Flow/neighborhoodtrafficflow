@@ -1,10 +1,12 @@
 # Functional Specification
 
+<!---
 The document should have the following sections:
 * **Background** The problem being addressed.
 * **User profile** Who uses the system. What they know about the domain and computing (e.g., can browse the web, can program in Python).
 * **Data sources** What data you will use and how it is structured.
 * **Use cases** Describing at least two use cases. For each, describe: (a) the objective of the user interaction (e.g., withdraw money from an ATM); and (b) the expected interactions between the user and your system.
+--->
 
 ## Background
 * When moving to a new city/neighborhood, it is difficult to know the flow of traffic in the area.
@@ -21,6 +23,7 @@ The document should have the following sections:
   * GIS street data with street names, block numbers, and speed limit
 * [2018 Traffic Flow Counts](https://data-seattlecitygis.opendata.arcgis.com/datasets/2018-traffic-flow-counts)
   * GIS traffic flow data with street names, average weekday traffic volume, and average day traffic volume
+  * Datasets also available for 2007-2017
 * [Seattle Neighborhoods](https://data.opendatasoft.com/explore/dataset/zillow-neighborhoods%40public/map/?refine.city=Seattle&location=10,47.6094,-122.33963&basemap=jawg.sunny)
   * GIS Seattle neighborhood data from Zillow
 
