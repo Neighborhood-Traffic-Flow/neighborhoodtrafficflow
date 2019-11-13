@@ -22,17 +22,12 @@ def flow_color(flow):
 
 
 # Create neighborhood map with current neighborhood highlighted
-#
-# nbhd_gpd: GeoPandas dataframe of neighborhood polygons
-# nbhd_json: JSON object of neighborhood polygons
-# current: index of currently selected neighborhood
-#
-def neighborhood_map(num,geojson,regionids,names,selected=92):
+def neighborhood_map(num,df,regionids,names,selected=92):
     figure = {
         'data': [{
             'type': 'choroplethmapbox',
             'z': np.zeros((num)),
-            'geojson': geojson,
+            'geojson': df,
             'locations': regionids,
             'hovertext': names,
             'hoverinfo': 'text',
@@ -75,15 +70,13 @@ def neighborhood_map(num,geojson,regionids,names,selected=92):
 
 
 # Create traffic flow map of currently selected neighborhood
-#
-#
-#
-def traffic_flow_map(flow_df,neighborhood='92',flow_type='awdt'):
+def traffic_flow_map(df,neighborhood='92',year=2018,flow_type='flow'):
     lon = CENTROIDS[neighborhood][0]
     lat = CENTROIDS[neighborhood][1]
-    nbhd_df = flow_df[flow_df['neighborhood']==neighborhood]
+    nbhd_idx = df.nbhd.apply(lambda nbhd_list: int(neighborhood) in nbhd_list)
+    df = df[nbhd_idx & (df['year']==year)]
     data = []
-    for idx,row in nbhd_df.iterrows():
+    for idx,row in df.iterrows():
         trace = {
             'type': 'scattermapbox',
             'mode': 'lines',

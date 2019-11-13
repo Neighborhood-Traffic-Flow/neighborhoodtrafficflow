@@ -39,18 +39,18 @@ year_options = {year: str(year) for year in range(2007,2019)}
 
 
 # Import neighborhood data
-with open('data/zillow-neighborhoods/zillow-neighborhoods.geojson') as json_file:
+with open('data/neighborhoods.geojson') as json_file:
     neighborhoods = json.load(json_file)
 for feature in neighborhoods['features']:
     feature['id'] = feature['properties']['regionid']  
 num = len(neighborhoods['features'])
-ids = [feature['properties']['regionid'] for feature in neighborhoods['features']]
+regionids = [feature['properties']['regionid'] for feature in neighborhoods['features']]
 names= [feature['properties']['name'] for feature in neighborhoods['features']]
-MAP_ARGS = [num,neighborhoods,ids,names]
+NBHD_MAP = [num,neighborhoods,regionids,names]
 
 
 # Import filtered data (only 2018)
-FLOW_DF = pd.read_pickle('data/test_2018.pkl')
+FLOW_MAP = pd.read_pickle('data/flow_map.pkl')
 
 
 # Initialize dashboard
@@ -93,7 +93,7 @@ app.layout = html.Div(
                                 html.H4('Seattle Neighborhoods'),
                                 dcc.Graph(
                                     id='neighborhoodMap',
-                                    figure=neighborhood_map(*MAP_ARGS)
+                                    figure=neighborhood_map(*NBHD_MAP)
                                 ),
                                 dcc.Dropdown(
                                     id='dropdown',
@@ -119,7 +119,7 @@ app.layout = html.Div(
                                 html.H4('Traffic Flow'),
                                 dcc.Graph(
                                     id='trafficFlowMap',
-                                    figure=traffic_flow_map(FLOW_DF)
+                                    figure=traffic_flow_map(FLOW_MAP)
                                 ),
                                 dcc.RadioItems(
                                     id='radio',
@@ -177,18 +177,19 @@ app.layout = html.Div(
 )
 
 def update_neighborhood_map(neighborhood):
-    return neighborhood_map(*MAP_ARGS,neighborhood)
+    return neighborhood_map(*NBHD_MAP,neighborhood)
 
 
 # Update traffic flow map after dropdown selection
 @app.callback(
     Output('trafficFlowMap', 'figure'),
     [Input('dropdown', 'value'),
+     Input('slider', 'value'),
      Input('radio', 'value' )]
 )
 
-def update_traffic_flow_map(neighborhood,flow_type):
-    return traffic_flow_map(FLOW_DF,neighborhood,flow_type)
+def update_traffic_flow_map(neighborhood,year,flow_type):
+    return traffic_flow_map(FLOW_MAP,neighborhood,year,'flow')
 
 
 # Update dropdown after neighborhood map selection
