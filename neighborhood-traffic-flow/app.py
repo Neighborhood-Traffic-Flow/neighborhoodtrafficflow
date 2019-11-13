@@ -49,8 +49,9 @@ names= [feature['properties']['name'] for feature in neighborhoods['features']]
 NBHD_MAP = [num,neighborhoods,regionids,names]
 
 
-# Import filtered data (only 2018)
+# Import filtered dataframes
 FLOW_MAP = pd.read_pickle('data/flow_map.pkl')
+FLOW_CHART = pd.read_pickle('data/flow_chart.pkl')
 
 
 # Initialize dashboard
