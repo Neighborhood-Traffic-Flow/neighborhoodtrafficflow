@@ -1,4 +1,6 @@
-# TODO: better documentation!
+"""
+Functions to create neighborhood and traffic flow map in dashboard
+"""
 
 # 92 = University District
 
@@ -13,16 +15,28 @@ from controls import CENTROIDS
 # update vmin, vmax dynamically, or just based on all years
 cmap = cm.get_cmap('viridis')
 norm = Normalize(vmin=387, vmax=108179)
+
+
 def flow_color(flow):
+    """Define the flow color"""
     if flow is None:
         return 'rgb(255,255,255)'
     rgba = cmap(norm(float(flow)))
     return 'rgb(%f,%f,%f)' % rgba[:-1]
-    
 
 
-# Create neighborhood map with current neighborhood highlighted
-def neighborhood_map(num,df,regionids,names,selected=92):
+def neighborhood_map(num, df, regionids, names, selected=92):
+    """Create neighborhood map with current neighborhood highlighted
+
+    Arguments:
+    ----------
+    num:
+    df:
+    regionids:
+    names:
+    selected:
+
+    """
     figure = {
         'data': [{
             'type': 'choroplethmapbox',
@@ -38,7 +52,7 @@ def neighborhood_map(num,df,regionids,names,selected=92):
             },
             'colorscale': 'Greens',
             'showscale': False,
-            'selectedpoints': [selected], 
+            'selectedpoints': [selected],
             'selected': {
                 'marker': {
                     'opacity': 0.75
@@ -67,16 +81,22 @@ def neighborhood_map(num,df,regionids,names,selected=92):
     return figure
 
 
+def traffic_flow_map(df, neighborhood='92', year=2018, flow_type='flow'):
+    """Create traffic flow map of currently selected neighborhood
 
-
-# Create traffic flow map of currently selected neighborhood
-def traffic_flow_map(df,neighborhood='92',year=2018,flow_type='flow'):
+    Arguments:
+    ----------
+    df:
+    neighborhood:
+    year:
+    flow_type:
+    """
     lon = CENTROIDS[neighborhood][0]
     lat = CENTROIDS[neighborhood][1]
     nbhd_idx = df.nbhd.apply(lambda nbhd_list: int(neighborhood) in nbhd_list)
-    df = df[nbhd_idx & (df['year']==year)]
+    df = df[nbhd_idx & (df['year'] == year)]
     data = []
-    for idx,row in df.iterrows():
+    for idx, row in df.iterrows():
         trace = {
             'type': 'scattermapbox',
             'mode': 'lines',
@@ -110,15 +130,14 @@ def traffic_flow_map(df,neighborhood='92',year=2018,flow_type='flow'):
     }
     return figure
 
-    
 
-# Create traffic flow chart
 def traffic_flow_chart():
+    """Create traffic flow chart"""
     figure = {
         'data': [{
             'type': 'scatter',
-            'x': [1,2,3],
-            'y': [1,2,3]
+            'x': [1, 2, 3],
+            'y': [1, 2, 3]
         }],
         'layout': {
             'line_color': 'deepskyblue'

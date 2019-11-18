@@ -1,4 +1,11 @@
-# Dashboard control options
+"""
+Dictionaries with dashboard control options
+Hard-coded options for
+1. Time of day
+2. Seattle neighborhoods
+3. Centroids
+"""
+
 
 # Radio and Checkbox
 TIME_OF_DAY = {
@@ -10,7 +17,7 @@ TIME_OF_DAY = {
 
 # Dropdown
 NEIGHBORHOODS = {
-	'0': 'West Woodland',
+    '0': 'West Woodland',
     '1': 'Olympic Manor',
     '2': 'Sunset Hill',
     '3': 'Maple Leaf',

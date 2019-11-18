@@ -5,7 +5,6 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 # Data
-import geopandas as gpd
 import json
 import pandas as pd
 
@@ -35,18 +34,18 @@ from figures import neighborhood_map, traffic_flow_map, traffic_flow_chart
 # Create control options
 nbhd_options = [{'label': NEIGHBORHOODS[regionid], 'value': regionid} for regionid in NEIGHBORHOODS]
 time_options = [{'label': TIME_OF_DAY[0][idx], 'value': idx} for idx in TIME_OF_DAY[0]]
-year_options = {year: str(year) for year in range(2007,2019)}
+year_options = {year: str(year) for year in range(2007, 2019)}
 
 
 # Import neighborhood data
 with open('data/neighborhoods.geojson') as json_file:
     neighborhoods = json.load(json_file)
 for feature in neighborhoods['features']:
-    feature['id'] = feature['properties']['regionid']  
+    feature['id'] = feature['properties']['regionid']
 num = len(neighborhoods['features'])
 regionids = [feature['properties']['regionid'] for feature in neighborhoods['features']]
-names= [feature['properties']['name'] for feature in neighborhoods['features']]
-NBHD_MAP = [num,neighborhoods,regionids,names]
+names = [feature['properties']['name'] for feature in neighborhoods['features']]
+NBHD_MAP = [num, neighborhoods, regionids, names]
 
 
 # Import filtered dataframes
@@ -69,7 +68,7 @@ app.layout = html.Div(
             className='twelve columns',
             children=[
                 html.H1('Neighborhood Traffic Flow'),
-                html.H4( 
+                html.H4(
                     html.A(
                         'CSE 583: Software Engineering for Data Scientists',
                         href='https://uwseds.github.io/'
@@ -98,7 +97,7 @@ app.layout = html.Div(
                                 ),
                                 dcc.Dropdown(
                                     id='dropdown',
-                                    options=nbhd_options,  
+                                    options=nbhd_options,
                                     value='92'
                                 )
                             ],
@@ -176,9 +175,8 @@ app.layout = html.Div(
     Output('neighborhoodMap', 'figure'),
     [Input('dropdown', 'value')]
 )
-
 def update_neighborhood_map(neighborhood):
-    return neighborhood_map(*NBHD_MAP,neighborhood)
+    return neighborhood_map(*NBHD_MAP, neighborhood)
 
 
 # Update traffic flow map after dropdown selection
@@ -186,11 +184,10 @@ def update_neighborhood_map(neighborhood):
     Output('trafficFlowMap', 'figure'),
     [Input('dropdown', 'value'),
      Input('slider', 'value'),
-     Input('radio', 'value' )]
+     Input('radio', 'value')]
 )
-
-def update_traffic_flow_map(neighborhood,year,flow_type):
-    return traffic_flow_map(FLOW_MAP,neighborhood,year,'flow')
+def update_traffic_flow_map(neighborhood, year, flow_type):
+    return traffic_flow_map(FLOW_MAP, neighborhood, year, 'flow')
 
 
 # Update dropdown after neighborhood map selection
@@ -198,7 +195,6 @@ def update_traffic_flow_map(neighborhood,year,flow_type):
     Output('dropdown', 'value'),
     [Input('neighborhoodMap', 'selectedData')]
 )
-
 def update_dropdown(neighborhood):
     try:
         return str(neighborhood['points'][0]['pointIndex'])
