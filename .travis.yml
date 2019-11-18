@@ -1,1 +1,9 @@
 language: python
+
+python:
+	- '3.7.3'
+
+install:
+	- install -r requirements.txt
+	- conda env create -f environment.yml
+	- conda activate nft
