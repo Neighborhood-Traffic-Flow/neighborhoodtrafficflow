@@ -9,5 +9,6 @@ dependencies:
   - geopandas
   - plotly=4.2.1
   - matplotlib
+  - dash
 prefix: /home//anaconda3/envs/ntf
 
