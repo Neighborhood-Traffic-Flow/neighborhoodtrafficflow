@@ -1,18 +1,17 @@
 """
 Dictionaries with dashboard control options
 Hard-coded options for
-1. Time of day
+1. Map type
 2. Seattle neighborhoods
 3. Centroids
 """
 
 
 # Radio and Checkbox
-TIME_OF_DAY = {
-    'ampk': 'AM Peak Traffic',
-    'pmpk': 'PM Peak Traffic',
-    'awdt': 'Average Weekday Traffic',
-    'adt': 'Average Daily Traffic'
+MAP_TYPE = {
+    'flow': 'Traffic Flow Counts',
+    'speed': 'Speed Limits',
+    'road': 'Road Type'
 },
 
 # Dropdown
