@@ -14,6 +14,16 @@ MAP_TYPE = {
     'road': 'Road Type'
 },
 
+# Arterial types
+ROAD_TYPE = {
+    0: 'Not Designated',
+    1: 'Principal Arterial',
+    2: 'Minor Arterial',
+    3: 'Collector Arterial',
+    4: 'State Highway',
+    5: 'Interstate Freeway'
+}
+
 # Dropdown
 NEIGHBORHOODS = {
     '0': 'West Woodland',
