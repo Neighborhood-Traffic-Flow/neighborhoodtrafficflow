@@ -1,5 +1,7 @@
 """
-Functions to create neighborhood and traffic flow map in dashboard
+Functions to figures shown in the dashboard
+1. map of Seattle neighborhoods
+2. traffic flow map
 """
 
 # 92 = University District

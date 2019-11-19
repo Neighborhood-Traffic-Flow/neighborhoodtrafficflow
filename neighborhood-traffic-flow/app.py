@@ -67,13 +67,25 @@ app.layout = html.Div(
             id='header',
             className='twelve columns',
             children=[
-                html.H1('Neighborhood Traffic Flow'),
+                html.H1('Neighborhood Traffic Flow', style={'color': 'black', 'fontSize': 50}),
                 html.H4(
                     html.A(
                         'CSE 583: Software Engineering for Data Scientists',
                         href='https://uwseds.github.io/'
                     )
                 )
+            ]
+        ),
+        html.Div(
+            [
+            html.P("Choose a Seattle neighborhood:", style={'fontSize':30},
+            className="control_label"
+            ),
+            dcc.Dropdown(
+                id='dropdown',
+                options=nbhd_options,
+                value='92',
+                style={'width':'80%'}),
             ]
         ),
         # Dashboard
@@ -95,11 +107,7 @@ app.layout = html.Div(
                                     id='neighborhoodMap',
                                     figure=neighborhood_map(*NBHD_MAP)
                                 ),
-                                dcc.Dropdown(
-                                    id='dropdown',
-                                    options=nbhd_options,
-                                    value='92'
-                                )
+
                             ],
                             style={
                                 'margin': 50
