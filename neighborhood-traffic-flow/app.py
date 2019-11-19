@@ -1,64 +1,44 @@
-# Dashboard
+"""Neighborhood traffic flow dashboard
+
+Interactive dashboard to explore traffic flow, speed limits, and road
+types in Seattle neighborhoods. To use, run `python app.py` in the
+terminal and copy/paste the URL into your browers.
+"""
+import json
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-
-# Data
-import json
 import pandas as pd
 
-# Controls
 from controls import NEIGHBORHOODS, MAP_TYPE
-
-# Visualizations
 from figures import neighborhood_map, traffic_flow_map, traffic_flow_chart
-
-
-# TODO:
-# - Data pre-processing:
-#   * Do we want to do ahead of time, and add new datasets to repo, or put script in setup.py?
-#   * Join traffic flow datasets for multiple years
-#   * Join neighborhood and traffic flow datasets
-# - Create function to filter data by neighborhood, year, time of day
-# - Add roads traces to traffic flow map (so slow) with controls
-# - Add time series chart with controls
-# - Style and documention
-
-
-# ISSUES:
-# - Shift+Click and Lasso can select multiple neighborhoods, can we disable this?
-# - Clicking the home button on traffic flow map takes us back to U-District, not current neighborhood
-
-
-# Create control options
-nbhd_options = [{'label': NEIGHBORHOODS[regionid], 'value': regionid} for regionid in NEIGHBORHOODS]
-map_options = [{'label': MAP_TYPE[0][idx], 'value': idx} for idx in MAP_TYPE[0]]
-year_options = {year: str(year) for year in range(2007, 2019)}
-
 
 # Import neighborhood data
 with open('data/neighborhoods.geojson') as json_file:
-    neighborhoods = json.load(json_file)
-for feature in neighborhoods['features']:
+    NBHD_JSON = json.load(json_file)
+for feature in NBHD_JSON['features']:
     feature['id'] = feature['properties']['regionid']
-num = len(neighborhoods['features'])
-regionids = [feature['properties']['regionid'] for feature in neighborhoods['features']]
-names = [feature['properties']['name'] for feature in neighborhoods['features']]
-NBHD_DATA = [num, neighborhoods, regionids, names]
-
+NUM = len(NBHD_JSON['features'])
+REGION_IDS = [feature['properties']['regionid'] for feature in NBHD_JSON['features']]
+NAMES = [feature['properties']['name'] for feature in NBHD_JSON['features']]
+NBHD_DATA = [NUM, NBHD_JSON, REGION_IDS, NAMES]
 
 # Import filtered dataframes
 MAP_DATA = pd.read_pickle('data/map_data.pkl')
 CHART_DATA = pd.read_pickle('data/flow_chart.pkl')
 
+# Create control options
+NBHD_OPTIONS = [{'label': NEIGHBORHOODS[regionid], 'value': regionid} for regionid in NEIGHBORHOODS]
+MAP_OPTIONS = [{'label': MAP_TYPE[0][idx], 'value': idx} for idx in MAP_TYPE[0]]
+YEAR_OPTIONS = {year: str(year) for year in range(2007, 2019)}
 
 # Initialize dashboard
-app = dash.Dash(__name__)
-
+APP = dash.Dash(__name__)
 
 # Define dashboard layout
-app.layout = html.Div(
+APP.layout = html.Div(
     id='mainContainer',
     className='twelve columns',
     children=[
@@ -76,16 +56,20 @@ app.layout = html.Div(
                 )
             ]
         ),
+        # Neighborhood selector
         html.Div(
-            [
-            html.P("Choose a Seattle neighborhood:", style={'fontSize':30},
-            className="control_label"
-            ),
-            dcc.Dropdown(
-                id='dropdown',
-                options=nbhd_options,
-                value='92',
-                style={'width':'80%'}),
+            id='dropdownContainer',
+            className='twelve columns',
+            children=[
+                html.H4('Choose a Seattle neighborhood:'),
+                dcc.Dropdown(
+                    id='dropdown',
+                    options=NBHD_OPTIONS,
+                    value='92',
+                    style={
+                        'width': '80%'
+                    }
+                )
             ]
         ),
         # Dashboard
@@ -126,7 +110,7 @@ app.layout = html.Div(
                                 html.H4('Traffic Flow Map'),
                                 dcc.RadioItems(
                                     id='radio',
-                                    options=map_options,
+                                    options=MAP_OPTIONS,
                                     value='flow',
                                     labelStyle={
                                         'display': 'inline-block'
@@ -136,7 +120,7 @@ app.layout = html.Div(
                                     id='slider',
                                     min=2007,
                                     max=2018,
-                                    marks=year_options,
+                                    marks=YEAR_OPTIONS,
                                     value=2018
                                 ),
                                 html.Br(),
@@ -156,7 +140,7 @@ app.layout = html.Div(
                                 html.H4('Traffic Flow Stats'),
                                 dcc.Checklist(
                                     id='checklist',
-                                    options=map_options,
+                                    options=MAP_OPTIONS,
                                     value=['flow'],
                                     labelStyle={
                                         'display': 'inline-block'
@@ -175,39 +159,55 @@ app.layout = html.Div(
     ]
 )
 
-
 # Update neighborhood map after dropdown selection
-@app.callback(
+@APP.callback(
     Output('neighborhoodMap', 'figure'),
     [Input('dropdown', 'value')]
 )
 def update_neighborhood_map(neighborhood):
+    """Update neighborhood map
+
+    Updates neighborhood map after a drowpdown selection is made.
+
+    Input:  (int)  Currently selected neighborhood
+    Output: (dict) Plotly choroplethmapbox figure
+    """
     return neighborhood_map(*NBHD_DATA, neighborhood)
 
 
 # Update traffic flow map after dropdown selection
-@app.callback(
+@APP.callback(
     Output('trafficFlowMap', 'figure'),
     [Input('dropdown', 'value'),
      Input('radio', 'value'),
      Input('slider', 'value')]
 )
 def update_traffic_flow_map(neighborhood, map_type, year):
+    """Update traffic flow map
+
+    Updates traffic flow map after a dropdown, radio, or slider
+    selection is made.
+
+    Input:  (int)  Currently selected neighborhood
+            (str)  Currently selected map type
+            (int)  Currently selected year
+    Output: (dict) Plotly scattermapbox figure
+    """
     return traffic_flow_map(MAP_DATA, neighborhood, map_type, year)
 
 
 # Update dropdown after neighborhood map selection
-@app.callback(
+@APP.callback(
     Output('dropdown', 'value'),
     [Input('neighborhoodMap', 'selectedData')]
 )
 def update_dropdown(neighborhood):
+    """DOCSTRING WILL FIX LATER"""
     try:
         return str(neighborhood['points'][0]['pointIndex'])
-    except:
+    except TypeError:
         return '92'
-
 
 # Run dashboard
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    APP.run_server(debug=True)
