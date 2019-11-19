@@ -10,21 +10,9 @@ import numpy as np
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
 
-from controls import CENTROIDS
+from controls import ROAD_TYPE, CENTROIDS
 
-# define colormap
-# right now vmin, vmax based on 2018
-# update vmin, vmax dynamically, or just based on all years
-cmap = cm.get_cmap('viridis')
-norm = Normalize(vmin=387, vmax=108179)
-
-
-def flow_color(flow):
-    """Define the flow color"""
-    if flow is None:
-        return 'rgb(255,255,255)'
-    rgba = cmap(norm(float(flow)))
-    return 'rgb(%f,%f,%f)' % rgba[:-1]
+mapbox_style = 'carto-positron'
 
 
 def neighborhood_map(num, df, regionids, names, selected=92):
@@ -67,11 +55,17 @@ def neighborhood_map(num, df, regionids, names, selected=92):
             }
         }],
         'layout': {
+            'margin': {
+                'l': 0,
+                'r': 0,
+                't': 0,
+                'b': 0
+            },
             'width': 1000,
             'height': 1500,
             'clickmode': 'event+select',
             'mapbox': {
-                'style': 'stamen-terrain',
+                'style': mapbox_style,
                 'center': {
                     'lon': -122.3266736043623,
                     'lat': 47.61506497849028
@@ -83,7 +77,7 @@ def neighborhood_map(num, df, regionids, names, selected=92):
     return figure
 
 
-def traffic_flow_map(df, neighborhood='92', year=2018, flow_type='flow'):
+def traffic_flow_map(df, neighborhood='92', map_type='flow', year=2018):
     """Create traffic flow map of currently selected neighborhood
 
     Arguments:
@@ -91,13 +85,19 @@ def traffic_flow_map(df, neighborhood='92', year=2018, flow_type='flow'):
     df:
     neighborhood:
     year:
-    flow_type:
+    map_type: 'flow', 'speed', or 'road'
     """
     lon = CENTROIDS[neighborhood][0]
     lat = CENTROIDS[neighborhood][1]
     nbhd_idx = df.nbhd.apply(lambda nbhd_list: int(neighborhood) in nbhd_list)
-    df = df[nbhd_idx & (df['year'] == year)]
+    if map_type == 'flow':
+        df = df[nbhd_idx & (df['flow'].notna()) & (df['year'] == year)]
+    elif map_type == 'speed':
+        df = df[nbhd_idx & (df['speed'].notna())]
+    else:
+        df = df[nbhd_idx & (df['road'].notna())]
     data = []
+
     for idx, row in df.iterrows():
         trace = {
             'type': 'scattermapbox',
@@ -106,22 +106,28 @@ def traffic_flow_map(df, neighborhood='92', year=2018, flow_type='flow'):
             'lat': row['lat'],
             'line': {
                 'width': 5,
-                'color': flow_color(row[flow_type])
+                'color': road_color(row[map_type],map_type)
             },
             'showlegend': False,
             'hoverinfo': 'text',
-            'hovertext': row['name'] + ', Flow: ' + str(row[flow_type])
+            'hovertext': hover_text(row['name'],row[map_type],map_type)
         }
         data.append(trace)
     figure = {
         'data': data,
         'layout': {
+            'margin': {
+                'l': 0,
+                'r': 0,
+                't': 0,
+                'b': 0
+            },
             'width': 1000,
             'height': 750,
             'hovermode': 'closest',
             'clickmode': 'none',
             'mapbox': {
-                'style': 'stamen-terrain',
+                'style': mapbox_style,
                 'center': {
                     'lon': lon,
                     'lat': lat
@@ -131,6 +137,36 @@ def traffic_flow_map(df, neighborhood='92', year=2018, flow_type='flow'):
         }
     }
     return figure
+
+
+def road_color(val,map_type):
+    """Define the flow color"""
+
+    if val is None:
+        return 'rgb(255,255,255)'
+
+    if map_type == 'flow':
+        cmap = cm.get_cmap('viridis')
+        norm = Normalize(vmin=0, vmax=108179)
+    elif map_type == 'speed':
+        cmap = cm.get_cmap('RdYlGn')
+        norm = Normalize(vmin=0, vmax=60)
+    else:
+        cmap = cm.get_cmap('tab10')
+        norm = Normalize(vmin=0, vmax=5)
+    
+    rgba = cmap(norm(float(val)))
+    return 'rgb(%f,%f,%f)' % rgba[:-1]
+
+
+def hover_text(name,val,map_type):
+
+    if map_type == 'flow':
+        return name + ', Flow Count:' + str(val)
+    elif map_type == 'speed':
+        return name + ', Speed Limit:' + str(int(val)) + 'mph'
+    else:
+        return name + ', Road Type:' + ROAD_TYPE[val]
 
 
 def traffic_flow_chart():

@@ -3,12 +3,10 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.7.3
+  - dash==1.4.1
+  - geopandas
+  - matplotlib
   - numpy
   - pandas
-  - geopandas
   - plotly=4.2.1
-  - matplotlib
-  - dash
-prefix: /home//anaconda3/envs/ntf
-
+  - python=3.7.3

@@ -9,7 +9,7 @@ import json
 import pandas as pd
 
 # Controls
-from controls import NEIGHBORHOODS, TIME_OF_DAY
+from controls import NEIGHBORHOODS, MAP_TYPE
 
 # Visualizations
 from figures import neighborhood_map, traffic_flow_map, traffic_flow_chart
@@ -33,7 +33,7 @@ from figures import neighborhood_map, traffic_flow_map, traffic_flow_chart
 
 # Create control options
 nbhd_options = [{'label': NEIGHBORHOODS[regionid], 'value': regionid} for regionid in NEIGHBORHOODS]
-time_options = [{'label': TIME_OF_DAY[0][idx], 'value': idx} for idx in TIME_OF_DAY[0]]
+map_options = [{'label': MAP_TYPE[0][idx], 'value': idx} for idx in MAP_TYPE[0]]
 year_options = {year: str(year) for year in range(2007, 2019)}
 
 
@@ -45,12 +45,12 @@ for feature in neighborhoods['features']:
 num = len(neighborhoods['features'])
 regionids = [feature['properties']['regionid'] for feature in neighborhoods['features']]
 names = [feature['properties']['name'] for feature in neighborhoods['features']]
-NBHD_MAP = [num, neighborhoods, regionids, names]
+NBHD_DATA = [num, neighborhoods, regionids, names]
 
 
 # Import filtered dataframes
-FLOW_MAP = pd.read_pickle('data/flow_map.pkl')
-FLOW_CHART = pd.read_pickle('data/flow_chart.pkl')
+MAP_DATA = pd.read_pickle('data/map_data.pkl')
+CHART_DATA = pd.read_pickle('data/flow_chart.pkl')
 
 
 # Initialize dashboard
@@ -105,9 +105,8 @@ app.layout = html.Div(
                                 html.H4('Seattle Neighborhoods'),
                                 dcc.Graph(
                                     id='neighborhoodMap',
-                                    figure=neighborhood_map(*NBHD_MAP)
-                                ),
-
+                                    figure=neighborhood_map(*NBHD_DATA)
+                                )
                             ],
                             style={
                                 'margin': 50
@@ -124,15 +123,11 @@ app.layout = html.Div(
                         html.Div(
                             id='trafficFlowMapContainer',
                             children=[
-                                html.H4('Traffic Flow'),
-                                dcc.Graph(
-                                    id='trafficFlowMap',
-                                    figure=traffic_flow_map(FLOW_MAP)
-                                ),
+                                html.H4('Traffic Flow Map'),
                                 dcc.RadioItems(
                                     id='radio',
-                                    options=time_options,
-                                    value='awdt',
+                                    options=map_options,
+                                    value='flow',
                                     labelStyle={
                                         'display': 'inline-block'
                                     }
@@ -143,6 +138,11 @@ app.layout = html.Div(
                                     max=2018,
                                     marks=year_options,
                                     value=2018
+                                ),
+                                html.Br(),
+                                dcc.Graph(
+                                    id='trafficFlowMap',
+                                    figure=traffic_flow_map(MAP_DATA)
                                 )
                             ],
                             style={
@@ -153,22 +153,20 @@ app.layout = html.Div(
                         html.Div(
                             id='trafficFlowChartContainer',
                             children=[
-                                dcc.Graph(
-                                    id='trafficFlowChart',
-                                    figure=traffic_flow_chart()
-                                ),
+                                html.H4('Traffic Flow Stats'),
                                 dcc.Checklist(
                                     id='checklist',
-                                    options=time_options,
-                                    value=['awdt'],
+                                    options=map_options,
+                                    value=['flow'],
                                     labelStyle={
                                         'display': 'inline-block'
                                     }
+                                ),
+                                dcc.Graph(
+                                    id='trafficFlowChart',
+                                    figure=traffic_flow_chart()
                                 )
-                            ],
-                            style={
-                                'margin': 50
-                            }
+                            ]
                         )
                     ]
                 )
@@ -184,18 +182,18 @@ app.layout = html.Div(
     [Input('dropdown', 'value')]
 )
 def update_neighborhood_map(neighborhood):
-    return neighborhood_map(*NBHD_MAP, neighborhood)
+    return neighborhood_map(*NBHD_DATA, neighborhood)
 
 
 # Update traffic flow map after dropdown selection
 @app.callback(
     Output('trafficFlowMap', 'figure'),
     [Input('dropdown', 'value'),
-     Input('slider', 'value'),
-     Input('radio', 'value')]
+     Input('radio', 'value'),
+     Input('slider', 'value')]
 )
-def update_traffic_flow_map(neighborhood, year, flow_type):
-    return traffic_flow_map(FLOW_MAP, neighborhood, year, 'flow')
+def update_traffic_flow_map(neighborhood, map_type, year):
+    return traffic_flow_map(MAP_DATA, neighborhood, map_type, year)
 
 
 # Update dropdown after neighborhood map selection
