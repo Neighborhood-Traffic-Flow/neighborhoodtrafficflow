@@ -21,8 +21,10 @@ with open('data/neighborhoods.geojson') as json_file:
 for feature in NBHD_JSON['features']:
     feature['id'] = feature['properties']['regionid']
 NUM = len(NBHD_JSON['features'])
-REGION_IDS = [feature['properties']['regionid'] for feature in NBHD_JSON['features']]
-NAMES = [feature['properties']['name'] for feature in NBHD_JSON['features']]
+REGION_IDS = [feature['properties']['regionid']
+              for feature in NBHD_JSON['features']]
+NAMES = [feature['properties']['name']
+         for feature in NBHD_JSON['features']]
 NBHD_DATA = [NUM, NBHD_JSON, REGION_IDS, NAMES]
 
 # Import filtered dataframes
@@ -30,8 +32,10 @@ MAP_DATA = pd.read_pickle('data/map_data.pkl')
 CHART_DATA = pd.read_pickle('data/flow_chart.pkl')
 
 # Create control options
-NBHD_OPTIONS = [{'label': NEIGHBORHOODS[regionid], 'value': regionid} for regionid in NEIGHBORHOODS]
-MAP_OPTIONS = [{'label': MAP_TYPE[0][idx], 'value': idx} for idx in MAP_TYPE[0]]
+NBHD_OPTIONS = [{'label': NEIGHBORHOODS[regionid], 'value': regionid}
+                for regionid in NEIGHBORHOODS]
+MAP_OPTIONS = [{'label': MAP_TYPE[0][idx], 'value': idx}
+               for idx in MAP_TYPE[0]]
 YEAR_OPTIONS = {year: str(year) for year in range(2007, 2019)}
 
 # Initialize dashboard
@@ -47,28 +51,18 @@ APP.layout = html.Div(
             id='header',
             className='twelve columns',
             children=[
-                html.H1('Neighborhood Traffic Flow', style={'color': 'black', 'fontSize': 50}),
+                html.H1(
+                    'Neighborhood Traffic Flow',
+                    style={
+                        'color': 'black',
+                        'fontSize': 50
+                    }
+                ),
                 html.H4(
                     html.A(
                         'CSE 583: Software Engineering for Data Scientists',
                         href='https://uwseds.github.io/'
                     )
-                )
-            ]
-        ),
-        # Neighborhood selector
-        html.Div(
-            id='dropdownContainer',
-            className='twelve columns',
-            children=[
-                html.H4('Choose a Seattle neighborhood:'),
-                dcc.Dropdown(
-                    id='dropdown',
-                    options=NBHD_OPTIONS,
-                    value='92',
-                    style={
-                        'width': '80%'
-                    }
                 )
             ]
         ),
@@ -86,7 +80,16 @@ APP.layout = html.Div(
                         html.Div(
                             id='neighborhoodMapContainer',
                             children=[
-                                html.H4('Seattle Neighborhoods'),
+                                html.H4('Choose a Seattle neighborhood:'),
+                                dcc.Dropdown(
+                                    id='dropdown',
+                                    options=NBHD_OPTIONS,
+                                    value='92',
+                                    style={
+                                        'width': '80%'
+                                    }
+                                ),
+                                html.Br(),
                                 dcc.Graph(
                                     id='neighborhoodMap',
                                     figure=neighborhood_map(*NBHD_DATA)
@@ -123,6 +126,7 @@ APP.layout = html.Div(
                                     marks=YEAR_OPTIONS,
                                     value=2018
                                 ),
+                                html.Br(),
                                 html.Br(),
                                 dcc.Graph(
                                     id='trafficFlowMap',
@@ -167,15 +171,22 @@ APP.layout = html.Div(
 def update_neighborhood_map(neighborhood):
     """Update neighborhood map
 
-    Updates neighborhood map after a drowpdown selection is made.
+    Update neighborhood map after a drowpdown selection is made.
 
-    Input:  (int)  Currently selected neighborhood
-    Output: (dict) Plotly choroplethmapbox figure
+    Parameters
+    ----------
+    neighborhood : int
+        Currently selected neighborhood (0-201).
+
+    Returns
+    -------
+    figure : dict
+        Plotly choroplethmapbox figure.
     """
     return neighborhood_map(*NBHD_DATA, neighborhood)
 
 
-# Update traffic flow map after dropdown selection
+# Update traffic flow map after dropdown, radio, or slider selection
 @APP.callback(
     Output('trafficFlowMap', 'figure'),
     [Input('dropdown', 'value'),
@@ -185,13 +196,23 @@ def update_neighborhood_map(neighborhood):
 def update_traffic_flow_map(neighborhood, map_type, year):
     """Update traffic flow map
 
-    Updates traffic flow map after a dropdown, radio, or slider
-    selection is made.
+    Update traffic flow map after a dropdown, radio, or slider
+    selection is made. Also triggered by neighborhood map selection
+    via dropdown callback.
 
-    Input:  (int)  Currently selected neighborhood
-            (str)  Currently selected map type
-            (int)  Currently selected year
-    Output: (dict) Plotly scattermapbox figure
+    Parameters
+    ----------
+    neighborhood : str
+        Currently selected neighborhood (0-102)
+    map_type : str
+        Currently selected map type (flow, speed, road).
+    year : int
+        Currently selected year (2007-2018)
+
+    Returns
+    -------
+    figure : dict
+        Plotly scattermapbox figure.
     """
     return traffic_flow_map(MAP_DATA, neighborhood, map_type, year)
 
@@ -201,10 +222,24 @@ def update_traffic_flow_map(neighborhood, map_type, year):
     Output('dropdown', 'value'),
     [Input('neighborhoodMap', 'selectedData')]
 )
-def update_dropdown(neighborhood):
-    """DOCSTRING WILL FIX LATER"""
+def update_dropdown(selected_data):
+    """Update dropdown
+
+    Update dropdown menu after neighborhood map selection is made.
+    If TypeError, returns '92' (University District).
+
+    Parameters
+    ----------
+    selected_data : dict
+        Selected data in neighborhood map.
+
+    Returns
+    -------
+    neighborhood : str
+        Index of selected neighborhood (0-102).
+    """
     try:
-        return str(neighborhood['points'][0]['pointIndex'])
+        return str(selected_data['points'][0]['pointIndex'])
     except TypeError:
         return '92'
 
