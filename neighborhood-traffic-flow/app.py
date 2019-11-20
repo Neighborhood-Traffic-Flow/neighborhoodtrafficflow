@@ -78,25 +78,25 @@ app.layout = html.Div(
         ),
         html.Div(
             [
-            html.P("Choose a Seattle neighborhood:", style={'fontSize':30},
-            className="control_label"
-            ),
-            dcc.Dropdown(
-                id='dropdown',
-                options=nbhd_options,
-                value='92',
-                style={'width':'80%'}),
+                html.P("Choose a Seattle neighborhood:", style={'fontSize': 30},
+                       className="control_label"
+                       ),
+                dcc.Dropdown(
+                    id='dropdown',
+                    options=nbhd_options,
+                    value='92',
+                    style={'width': '80%'}),
             ]
         ),
         # Dashboard
         html.Div(
             id='dashboard',
-            className='twelve columns',
+            className='nine columns',
             children=[
                 # Column 1
                 html.Div(
                     id='columnOne',
-                    className='six columns',
+                    className='five columns',
                     children=[
                         # Seattle Neighborhood Map
                         html.Div(
@@ -117,7 +117,7 @@ app.layout = html.Div(
                 # Column 2
                 html.Div(
                     id='columnTwo',
-                    className='six columns',
+                    className='eight columns',
                     children=[
                         # Traffic Flow Map
                         html.Div(
@@ -164,7 +164,7 @@ app.layout = html.Div(
                                 ),
                                 dcc.Graph(
                                     id='trafficFlowChart',
-                                    figure=traffic_flow_chart()
+                                    figure=traffic_flow_chart(MAP_DATA)
                                 )
                             ]
                         )
@@ -196,6 +196,15 @@ def update_traffic_flow_map(neighborhood, map_type, year):
     return traffic_flow_map(MAP_DATA, neighborhood, map_type, year)
 
 
+# Update chart after dropdown selection
+@app.callback(
+    Output('trafficFlowChart', 'figure'),
+    [Input('dropdown', 'value')]
+)
+def update_traffic_flow_chart(neighborhood, map_type="flow"):
+    return traffic_flow_chart(MAP_DATA, neighborhood, map_type)
+
+
 # Update dropdown after neighborhood map selection
 @app.callback(
     Output('dropdown', 'value'),
@@ -206,6 +215,7 @@ def update_dropdown(neighborhood):
         return str(neighborhood['points'][0]['pointIndex'])
     except:
         return '92'
+
 
 
 # Run dashboard

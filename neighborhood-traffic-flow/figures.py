@@ -9,6 +9,7 @@ Functions to figures shown in the dashboard
 import numpy as np
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
+import plotly.graph_objs as go
 
 from controls import ROAD_TYPE, CENTROIDS
 
@@ -139,7 +140,28 @@ def traffic_flow_map(df, neighborhood='92', map_type='flow', year=2018):
     return figure
 
 
-def road_color(val,map_type):
+def traffic_flow_chart(df, neighborhood=92, map_type='flow'):
+    """Create traffic flow chart"""
+    if map_type == 'flow':
+        y_df = df.loc[df["flow"].notnull(), "flow"]
+    elif map_type == 'speed':
+        y_df = df.loc[df["speed"].notnull(), "speed"]
+    else:
+        y_df = df.loc[df["road"].notnull(), "road"]
+    figure = {
+        'data': [go.Scatter(
+            x = df["year"],
+            y = y_df,
+        marker={
+            'line': {'color': 'deepskyblue'}
+            }
+        )
+    ]
+}
+    return figure
+
+
+def road_color(val, map_type):
     """Define the flow color"""
 
     if val is None:
@@ -159,7 +181,7 @@ def road_color(val,map_type):
     return 'rgb(%f,%f,%f)' % rgba[:-1]
 
 
-def hover_text(name,val,map_type):
+def hover_text(name, val, map_type):
 
     if map_type == 'flow':
         return name + ', Flow Count:' + str(val)
@@ -169,16 +191,3 @@ def hover_text(name,val,map_type):
         return name + ', Road Type:' + ROAD_TYPE[val]
 
 
-def traffic_flow_chart():
-    """Create traffic flow chart"""
-    figure = {
-        'data': [{
-            'type': 'scatter',
-            'x': [1, 2, 3],
-            'y': [1, 2, 3]
-        }],
-        'layout': {
-            'line_color': 'deepskyblue'
-        }
-    }
-    return figure
