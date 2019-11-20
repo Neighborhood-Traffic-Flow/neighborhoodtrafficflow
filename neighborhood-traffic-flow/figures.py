@@ -167,22 +167,23 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
     return figure
 
 
-<<<<<<< HEAD
-def traffic_flow_chart(df, neighborhood=92, map_type='flow'):
+def traffic_flow_chart(dataframe, neighborhood=92, map_type='flow'):
     """Create traffic flow chart"""
+    dataframe["test"] = dataframe[map_type].astype(str)
+    type_idx = ~(dataframe["test"].str.contains("[(None,)]"))
+    dataframe = dataframe[type_idx].sort_values("year")
+    nbhd_idx = dataframe.nbhd.apply(lambda nbhd_list: int(neighborhood) in nbhd_list)
     if map_type == 'flow':
-        y_df = df.loc[df["flow"].notnull(), "flow"]
+        y_df = dataframe.loc[nbhd_idx, "flow"]
     elif map_type == 'speed':
-        y_df = df.loc[df["speed"].notnull(), "speed"]
+        y_df = dataframe.loc[nbhd_idx, "speed"]
     else:
-        y_df = df.loc[df["road"].notnull(), "road"]
+        y_df = dataframe.loc[nbhd_idx, "road"]
     figure = {
         'data': [go.Scatter(
-            x = df["year"],
+            x = dataframe.loc[nbhd_idx, "year"],
             y = y_df,
-        marker={
-            'line': {'color': 'deepskyblue'}
-            }
+            mode = "markers"
         )
     ]
 }

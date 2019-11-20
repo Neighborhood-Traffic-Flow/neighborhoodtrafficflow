@@ -177,7 +177,7 @@ def update_neighborhood_map(neighborhood):
     Parameters
     ----------
     neighborhood : int
-        Currently selected neighborhood (0-201).
+        Currently selected neighborhood (0-102).
 
     Returns
     -------
@@ -219,7 +219,7 @@ def update_traffic_flow_map(neighborhood, map_type, year):
 
 
 # Update chart after dropdown selection
-@app.callback(
+@APP.callback(
     Output('trafficFlowChart', 'figure'),
     [Input('dropdown', 'value')]
 )
