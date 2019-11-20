@@ -19,7 +19,7 @@ from shapely.geometry.linestring import LineString
 from shapely.ops import linemerge
 
 # Load neighborhood dataset
-df_nbhd = gpd.read_file('zillow-neighborhoods/zillow-neighborhoods.shp')
+df_nbhd = gpd.read_file('../zillow-neighborhoods/zillow-neighborhoods.shp')
 
 # Create polygons for each neighborhood
 idx2poly = {}
@@ -53,8 +53,8 @@ def filter_dataframe(df,df_type,name_attr,flow_attr,year):
             speed = None
             road = None
         else:
-            year = None,
-            flow = None,
+            year = None
+            flow = None
             road = row['ARTCLASS']
             speed = row['SPEEDLIMIT']
 
@@ -130,13 +130,13 @@ col_names = {
 df_list = []
 for year in range(2007,2019):
 
-    df_flow = gpd.read_file('%d_Traffic_Flow_Counts/%d_Traffic_Flow_Counts.shp' % (year,year))
+    df_flow = gpd.read_file('../%d_Traffic_Flow_Counts/%d_Traffic_Flow_Counts.shp' % (year,year))
     df_filtered, num_bad = filter_dataframe(df_flow,'flow',*col_names[year],year)
     df_list.append(df_filtered)
     print('Year:',year,', Bad:',num_bad)
 
 # Filter speed dataframes
-df_speed = gpd.read_file('Seattle_Streets/Seattle_Streets.shp')
+df_speed = gpd.read_file('../Seattle_Streets/Seattle_Streets.shp')
 df_filtered, num_bad = filter_dataframe(df_speed,'speed','STNAME_ORD',None,None)
 df_list.append(df_filtered)
 print('Speeds, Bad:',num_bad)
