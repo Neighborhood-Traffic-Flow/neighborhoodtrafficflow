@@ -91,12 +91,26 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
 def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
     """Create traffic flow map of currently selected neighborhood
 
-    Arguments:
+    Create Plotly scattermapbox figure of roads in selected Seattle
+    neighborhood, where roads are colored by either traffic flow,
+    speed limit, or road type. Default is University District (idx=92)
+    with roads colored by traffic flow in 2018.
+
+    Parameters
     ----------
-    df:
-    neighborhood:
-    year:
-    map_type: 'flow', 'speed', or 'road'
+    data : Pandas Dataframe
+        DataFrame with traffic flow, speed limit, and road type data.
+    neighborhood : str
+        Index of selected neighborhood from dropdown.
+    map_type : str
+        Selected type from radio: 'flow' (default), 'speed', or 'road'.
+    year : int
+        Selected year from slider.
+
+    Returns
+    -------
+    figure : dict
+        Plotly scattermapbox figure.
     """
     lon = CENTROIDS[neighborhood][0]
     lat = CENTROIDS[neighborhood][1]
@@ -153,8 +167,24 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
 
 
 def road_color(val, map_type):
-    """Define the flow color"""
+    """Assign road color
 
+    Determine the color of a given road based on road type and value.
+    Color is determined by viridis (flow), RdYlGn (speed), and tab10
+    (road) colormaps and min/max values in dataset.
+
+    Parameters
+    ----------
+    val : double
+        Traffic flow, speed limit, or road type of given road.
+    map_type : str
+        Either 'flow', 'speed', or 'road'.
+
+    Returns
+    -------
+    rgb : str
+        String containting rgb value of given road.
+    """
     if val is None:
         return 'rgb(255,255,255)'
     if map_type == 'flow':
@@ -171,7 +201,25 @@ def road_color(val, map_type):
 
 
 def hover_text(name, val, map_type):
-    """blah"""
+    """Create hover text for traffic flow map
+
+    Create description that appears when when mouse hovers over a road
+    in the traffic flow map, e.g., '65th St N, Speed Limit: 30mph'.
+
+    Parameters
+    ----------
+    name : str
+        Name of the given street.
+    val : float
+        Traffic flow, speed limit, or road type of given road.
+    map_type : str
+        Either 'flow', 'speed', or 'road'.
+
+    Returns
+    -------
+    hovertext : str
+        Description of road including name and value.
+    """
     if map_type == 'flow':
         return name + ', Flow Count:' + str(val)
     if map_type == 'speed':
