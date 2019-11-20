@@ -53,8 +53,8 @@ def filter_dataframe(df,df_type,name_attr,flow_attr,year):
             speed = None
             road = None
         else:
-            year = None,
-            flow = None,
+            year = None
+            flow = None
             road = row['ARTCLASS']
             speed = row['SPEEDLIMIT']
 
