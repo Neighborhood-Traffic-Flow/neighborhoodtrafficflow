@@ -169,10 +169,7 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
 
 def traffic_flow_chart(dataframe, neighborhood=92, map_type='flow'):
     """Create traffic flow chart"""
-    change_cols = [map_type, "year"]
-    dataframe[change_cols] = dataframe[change_cols].astype(str)
-    # dataframe[map_type] = dataframe[map_type].astype(str)
-    type_idx = ~(dataframe[map_type].str.contains("[(None,)]"))
+    type_idx = dataframe[map_type].notnull()
     dataframe = dataframe[type_idx].sort_values("year")
     nbhd_idx = dataframe.nbhd.apply(lambda nbhd_list: int(neighborhood) in nbhd_list)
     if map_type == 'flow':
