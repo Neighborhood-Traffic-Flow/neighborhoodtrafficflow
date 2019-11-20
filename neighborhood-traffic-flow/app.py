@@ -163,6 +163,7 @@ APP.layout = html.Div(
     ]
 )
 
+
 # Update neighborhood map after dropdown selection
 @APP.callback(
     Output('neighborhoodMap', 'figure'),
@@ -242,6 +243,7 @@ def update_dropdown(selected_data):
         return str(selected_data['points'][0]['pointIndex'])
     except TypeError:
         return '92'
+
 
 # Run dashboard
 if __name__ == '__main__':
