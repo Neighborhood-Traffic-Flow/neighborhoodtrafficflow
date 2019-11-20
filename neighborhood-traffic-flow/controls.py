@@ -1,20 +1,13 @@
-"""
-Dictionaries with dashboard control options
-Hard-coded options for
-1. Map type
-2. Seattle neighborhoods
-3. Centroids
-"""
+"""Dictionaries used for dashboard control options"""
 
-
-# Radio and Checkbox
+# map type: control label, used for radio and checkbox controls
 MAP_TYPE = {
     'flow': 'Traffic Flow Counts',
     'speed': 'Speed Limits',
     'road': 'Road Type'
 },
 
-# Arterial types
+# index: arterial classification, used for traffic flow map hover text
 ROAD_TYPE = {
     0: 'Not Designated',
     1: 'Principal Arterial',
@@ -24,7 +17,7 @@ ROAD_TYPE = {
     5: 'Interstate Freeway'
 }
 
-# Dropdown
+# index: neighborhood name, used for dropdown menu
 NEIGHBORHOODS = {
     '0': 'West Woodland',
     '1': 'Olympic Manor',
@@ -131,6 +124,7 @@ NEIGHBORHOODS = {
     '102': 'Loyal Heights',
 }
 
+# index: centroid (lon, lat), used for traffic flow map
 CENTROIDS = {
     '0': (-122.368495, 47.666952),
     '1': (-122.382184, 47.696061),
