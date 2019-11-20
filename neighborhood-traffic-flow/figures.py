@@ -190,15 +190,11 @@ def traffic_flow_chart(df, neighborhood=92, map_type='flow'):
 
 
 def road_color(val, map_type):
-    """Define the flow color"""
-=======
-def road_color(val, map_type):
     """Assign road color
 
     Determine the color of a given road based on road type and value.
     Color is determined by viridis (flow), RdYlGn (speed), and tab10
     (road) colormaps and min/max values in dataset.
->>>>>>> 7f65edaef784e9007bdca3ac0ef4bd7a57df5bbd
 
     Parameters
     ----------
@@ -228,10 +224,7 @@ def road_color(val, map_type):
 
 
 def hover_text(name, val, map_type):
-<<<<<<< HEAD
-=======
     """Create hover text for traffic flow map
->>>>>>> 7f65edaef784e9007bdca3ac0ef4bd7a57df5bbd
 
     Create description that appears when when mouse hovers over a road
     in the traffic flow map, e.g., '65th St N, Speed Limit: 30mph'.
