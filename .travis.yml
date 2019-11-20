@@ -6,5 +6,4 @@ python: '3.7'
 #- conda env create -f environment.yml
 #- conda activate nft
 
-script:
-- pytest
+script: pytest
