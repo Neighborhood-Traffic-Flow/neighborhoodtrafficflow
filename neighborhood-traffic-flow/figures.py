@@ -116,19 +116,14 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
     lon = CENTROIDS[neighborhood][0]
     lat = CENTROIDS[neighborhood][1]
     nbhd_idx = data_frame.nbhd.apply(lambda nbhd_list: int(neighborhood) in nbhd_list)
+    data_frame = data_frame[nbhd_idx]
     if map_type == 'flow':
-        flow_idx = data_frame['flow'].notna()
-        year_idx = data_frame['year'] == year
-        data_frame = data_frame[nbhd_idx & flow_idx & year_idx]
-    elif map_type == 'speed':
-        data_frame = data_frame[nbhd_idx & (data_frame['speed'].notna())]
-    else:
-        data_frame = data_frame[nbhd_idx & (data_frame['road'].notna())]
+        data_frame = data_frame.rename(columns={str(year): 'flow'})
     data = []
 
     for _, row in data_frame.iterrows():
         trace = {
-            'type': 'scattermapbox',
+            'type': 'scattergeo',
             'mode': 'lines',
             'lon': row['lon'],
             'lat': row['lat'],
@@ -154,13 +149,22 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
             'height': 750,
             'hovermode': 'closest',
             'clickmode': 'none',
-            'mapbox': {
-                'style': MAP_STYLE,
+            # 'mapbox': {
+            #     'style': MAP_STYLE,
+            #     'center': {
+            #         'lon': lon,
+            #         'lat': lat,
+            #     },
+            #     'zoom': 13.5
+            # }
+            'geo': {
                 'center': {
                     'lon': lon,
                     'lat': lat
                 },
-                'zoom': 13.5
+                'projection': {
+                    'scale': 5000
+                }
             }
         }
     }
@@ -246,7 +250,13 @@ def hover_text(name, val, map_type):
     if map_type == 'flow':
         return name + ', Flow Count:' + str(val)
     if map_type == 'speed':
-        return name + ', Speed Limit:' + str(int(val)) + 'mph'
-    return name + ', Road Type:' + ROAD_TYPE[val]
+        try:
+            return name + ', Speed Limit:' + str(int(val)) + 'mph'
+        except:
+            return name + ', Speed Limit: Unknown'
+    try:
+        return name + ', Road Type:' + ROAD_TYPE[val]
+    except:
+        return name + ', Road Type: Unknown'
 
 

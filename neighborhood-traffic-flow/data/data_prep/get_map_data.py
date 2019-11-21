@@ -112,7 +112,6 @@ def get_neighborhood(lon,lat):
 # Column names by year
 col_names = {
     2007: ['STNAME','AAWDT'],
-    2006: ['STNAME','AAWDT'],
     2008: ['STNAME','AAWDT'],
     2009: ['STNAME','AAWDT'],
     2010: ['STNAME','AAWDT'],

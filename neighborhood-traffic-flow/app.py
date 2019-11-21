@@ -29,7 +29,7 @@ NBHD_DATA = [NUM, NBHD_JSON, REGION_IDS, NAMES]
 
 # Import filtered dataframes
 MAP_DATA = pd.read_pickle('data/map_data.pkl')
-CHART_DATA = pd.read_pickle('data/flow_chart.pkl')
+STREET_DATA = pd.read_pickle('data/street_data.pkl')
 
 # Create control options
 NBHD_OPTIONS = [{'label': NEIGHBORHOODS[regionid], 'value': regionid}
@@ -69,7 +69,7 @@ APP.layout = html.Div(
         # Dashboard
         html.Div(
             id='dashboard',
-            className='nine columns',
+            className='twelve columns',
             children=[
                 # Column 1
                 html.Div(
@@ -104,7 +104,7 @@ APP.layout = html.Div(
                 # Column 2
                 html.Div(
                     id='columnTwo',
-                    className='eight columns',
+                    className='seven columns',
                     children=[
                         # Traffic Flow Map
                         html.Div(
@@ -130,7 +130,7 @@ APP.layout = html.Div(
                                 html.Br(),
                                 dcc.Graph(
                                     id='trafficFlowMap',
-                                    figure=traffic_flow_map(MAP_DATA)
+                                    figure=traffic_flow_map(STREET_DATA)
                                 )
                             ],
                             style={
@@ -215,7 +215,7 @@ def update_traffic_flow_map(neighborhood, map_type, year):
     figure : dict
         Plotly scattermapbox figure.
     """
-    return traffic_flow_map(MAP_DATA, neighborhood, map_type, year)
+    return traffic_flow_map(STREET_DATA, neighborhood, map_type, year)
 
 
 # Update chart after dropdown selection
