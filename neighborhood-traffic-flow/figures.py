@@ -152,7 +152,7 @@ def traffic_flow_map(data_frame, neighborhood='92', mapbox=False,
                 't': 0,
                 'b': 0
             },
-            'width': 1000,
+            'width': 750,
             'height': 750,
             'hovermode': 'closest',
             'clickmode': 'none',
@@ -169,6 +169,7 @@ def traffic_flow_map(data_frame, neighborhood='92', mapbox=False,
                     'lon': lon,
                     'lat': lat
                 },
+                'showframe': True,
                 'projection': {
                     'scale': 5000
                 }
@@ -267,6 +268,3 @@ def hover_text(name, val, map_type):
     if val is None or np.isnan(val):
         return name + ', Road Type: Unknown'
     return name + ', Road Type:' + ROAD_TYPE[val]
-
-
-

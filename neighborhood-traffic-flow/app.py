@@ -134,9 +134,25 @@ APP.layout = html.Div(
                                 ),
                                 html.Br(),
                                 html.Br(),
-                                dcc.Graph(
-                                    id='trafficFlowMap',
-                                    figure=traffic_flow_map(STREET_DATA)
+                                # Map and Legend
+                                html.Div(
+                                    className='seven columns',
+                                    children=[
+                                        html.Img(
+                                            id='legend',
+                                            className='three columns',
+                                            src=APP.get_asset_url('flowLabel.png'),
+                                            style={
+                                                'width': 500,
+                                                'height': 500
+                                            }
+                                        ),
+                                        dcc.Graph(
+                                            id='trafficFlowMap',
+                                            className='four columns',
+                                            figure=traffic_flow_map(STREET_DATA)
+                                        )
+                                    ]
                                 )
                             ],
                             style={
@@ -146,6 +162,7 @@ APP.layout = html.Div(
                         # Traffic Flow Chart
                         html.Div(
                             id='trafficFlowChartContainer',
+                            className='seven columns',
                             children=[
                                 html.H4('Traffic Flow Stats'),
                                 dcc.Checklist(
@@ -263,6 +280,36 @@ def update_dropdown(selected_data):
         return str(selected_data['points'][0]['pointIndex'])
     except TypeError:
         return '92'
+
+
+# Update legend after radio selection
+@APP.callback(
+    Output('legend', 'src'),
+    [Input('radio', 'value')]
+)
+def update_legend(map_type='flow'):
+    """Update legend
+
+    Update legend for traffic flow map after a radio selection is made.
+
+    Parameters
+    ----------
+    map_type : str
+        Currently selected map type (flow, speed, road).
+
+    Returns
+    -------
+    src : url
+        Location of current legend.
+    """
+    if map_type == 'flow':
+        return APP.get_asset_url('flowLabel.png')
+    if map_type == 'speed':
+        return APP.get_asset_url('speedLabel.png')
+    return APP.get_asset_url('roadLabel.png')
+
+
+
 
 
 # Run dashboard
