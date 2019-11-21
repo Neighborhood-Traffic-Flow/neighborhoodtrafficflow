@@ -11,7 +11,7 @@ import plotly.graph_objs as go
 from controls import ROAD_TYPE, CENTROIDS
 
 # Mapbox style for neighborhood and flow maps
-MAP_STYLE = 'carto-positron'
+MAPBOX_STYLE = 'carto-positron'
 
 
 def neighborhood_map(num, data, region_ids, names, selected=92):
@@ -77,7 +77,7 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
             'height': 1500,
             'clickmode': 'event+select',
             'mapbox': {
-                'style': MAP_STYLE,
+                'style': MAPBOX_STYLE,
                 'center': {
                     'lon': -122.3266736043623,
                     'lat': 47.61506497849028
@@ -89,7 +89,8 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
     return figure
 
 
-def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
+def traffic_flow_map(data_frame, neighborhood='92', mapbox=False, 
+                     map_type='flow', year=2018):
     """Create traffic flow map of currently selected neighborhood
 
     Create Plotly scattermapbox figure of roads in selected Seattle
@@ -103,6 +104,10 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
         DataFrame with traffic flow, speed limit, and road type data.
     neighborhood : str
         Index of selected neighborhood from dropdown.
+    mapbox : bool
+        Currently selected map background.
+        True - scattermapbox 
+        False - scattergeo (default)
     map_type : str
         Selected type from radio: 'flow' (default), 'speed', or 'road'.
     year : int
@@ -115,15 +120,17 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
     """
     lon = CENTROIDS[neighborhood][0]
     lat = CENTROIDS[neighborhood][1]
-    nbhd_idx = data_frame.nbhd.apply(lambda nbhd_list: int(neighborhood) in nbhd_list)
+    nbhd_idx = data_frame.nbhd.apply(
+               lambda nbhd_list: int(neighborhood) in nbhd_list)
     data_frame = data_frame[nbhd_idx]
+    style = 'scattermapbox' if mapbox else 'scattergeo'
     if map_type == 'flow':
         data_frame = data_frame.rename(columns={str(year): 'flow'})
     data = []
 
     for _, row in data_frame.iterrows():
         trace = {
-            'type': 'scattergeo',
+            'type': style,
             'mode': 'lines',
             'lon': row['lon'],
             'lat': row['lat'],
@@ -149,14 +156,14 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
             'height': 750,
             'hovermode': 'closest',
             'clickmode': 'none',
-            # 'mapbox': {
-            #     'style': MAP_STYLE,
-            #     'center': {
-            #         'lon': lon,
-            #         'lat': lat,
-            #     },
-            #     'zoom': 13.5
-            # }
+            'mapbox': {
+                'style': MAPBOX_STYLE,
+                'center': {
+                    'lon': lon,
+                    'lat': lat,
+                },
+                'zoom': 13.5
+            },
             'geo': {
                 'center': {
                     'lon': lon,
@@ -176,7 +183,8 @@ def traffic_flow_chart(dataframe, neighborhood=92, map_type='flow'):
     dataframe["test"] = dataframe[map_type].astype(str)
     type_idx = ~(dataframe["test"].str.contains("[(None,)]"))
     dataframe = dataframe[type_idx].sort_values("year")
-    nbhd_idx = dataframe.nbhd.apply(lambda nbhd_list: int(neighborhood) in nbhd_list)
+    nbhd_idx = dataframe.nbhd.apply(
+               lambda nbhd_list: int(neighborhood) in nbhd_list)
     if map_type == 'flow':
         y_df = dataframe.loc[nbhd_idx, "flow"]
     elif map_type == 'speed':
@@ -213,8 +221,8 @@ def road_color(val, map_type):
     rgb : str
         String containting rgb value of given road.
     """
-    if val is None:
-        return 'rgb(255,255,255)'
+    if val is None or np.isnan(val):
+        return 'rgb(192,192,192)'
     if map_type == 'flow':
         cmap = cm.get_cmap('viridis')
         norm = Normalize(vmin=0, vmax=108179)
@@ -249,15 +257,16 @@ def hover_text(name, val, map_type):
         Description of road including name and value.
     """
     if map_type == 'flow':
+        if val is None or np.isnan(val):
+            return name + ', Flow Count: Unknown'
         return name + ', Flow Count:' + str(val)
     if map_type == 'speed':
-        try:
-            return name + ', Speed Limit:' + str(int(val)) + 'mph'
-        except:
+        if val is None or np.isnan(val):
             return name + ', Speed Limit: Unknown'
-    try:
-        return name + ', Road Type:' + ROAD_TYPE[val]
-    except:
+        return name + ', Speed Limit:' + str(int(val)) + 'mph'
+    if val is None or np.isnan(val):
         return name + ', Road Type: Unknown'
+    return name + ', Road Type:' + ROAD_TYPE[val]
+
 
 
