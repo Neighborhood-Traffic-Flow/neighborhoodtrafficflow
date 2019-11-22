@@ -20,12 +20,12 @@ Note: The above is a one time step.
 
 #### To run this from the command line:
 ```
-# The `conda activate` step only needs to be done once per shell instance
 conda activate ntf
-# Start the server using the run script
-./run
-# Open a web browser with the following URL: http://127.0.0.1:8050/
+cd neighborhood-traffic-flow
+python app.py
 ```
+Open a web browser with the following URL: http://127.0.0.1:8050/
+
 
 ## Contributors
 
