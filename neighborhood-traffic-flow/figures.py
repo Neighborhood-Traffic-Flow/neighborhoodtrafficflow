@@ -89,7 +89,7 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
     return figure
 
 
-def traffic_flow_map(data_frame, neighborhood='92', mapbox=False, 
+def traffic_flow_map(data_frame, neighborhood='92', mapbox=False,
                      map_type='flow', year=2018):
     """Create traffic flow map of currently selected neighborhood
 
@@ -106,7 +106,7 @@ def traffic_flow_map(data_frame, neighborhood='92', mapbox=False,
         Index of selected neighborhood from dropdown.
     mapbox : bool
         Currently selected map background.
-        True - scattermapbox 
+        True - scattermapbox
         False - scattergeo (default)
     map_type : str
         Selected type from radio: 'flow' (default), 'speed', or 'road'.
@@ -121,7 +121,7 @@ def traffic_flow_map(data_frame, neighborhood='92', mapbox=False,
     lon = CENTROIDS[neighborhood][0]
     lat = CENTROIDS[neighborhood][1]
     nbhd_idx = data_frame.nbhd.apply(
-               lambda nbhd_list: int(neighborhood) in nbhd_list)
+        lambda nbhd_list: int(neighborhood) in nbhd_list)
     data_frame = data_frame[nbhd_idx]
     style = 'scattermapbox' if mapbox else 'scattergeo'
     if map_type == 'flow':
@@ -181,25 +181,26 @@ def traffic_flow_map(data_frame, neighborhood='92', mapbox=False,
 
 def traffic_flow_chart(dataframe, neighborhood=92, map_type='flow'):
     """Create traffic flow chart"""
-    dataframe["test"] = dataframe[map_type].astype(str)
-    type_idx = ~(dataframe["test"].str.contains("[(None,)]"))
-    dataframe = dataframe[type_idx].sort_values("year")
+    dataframe['test'] = dataframe[map_type].astype(str)
+    type_idx = ~(dataframe['test'].str.contains('[(None,)]'))
+    dataframe = dataframe[type_idx].sort_values('year')
     nbhd_idx = dataframe.nbhd.apply(
-               lambda nbhd_list: int(neighborhood) in nbhd_list)
+        lambda nbhd_list: int(neighborhood) in nbhd_list)
     if map_type == 'flow':
-        y_df = dataframe.loc[nbhd_idx, "flow"]
+        y_df = dataframe.loc[nbhd_idx, 'flow']
     elif map_type == 'speed':
-        y_df = dataframe.loc[nbhd_idx, "speed"]
+        y_df = dataframe.loc[nbhd_idx, 'speed']
     else:
-        y_df = dataframe.loc[nbhd_idx, "road"]
+        y_df = dataframe.loc[nbhd_idx, 'road']
     figure = {
-        'data': [go.Scatter(
-            x = dataframe.loc[nbhd_idx, "year"],
-            y = y_df,
-            mode = "markers"
-        )
-    ]
-}
+        'data': [
+            go.Scatter(
+                x=dataframe.loc[nbhd_idx, 'year'],
+                y=y_df,
+                mode='markers'
+            )
+        ]
+    }
     return figure
 
 

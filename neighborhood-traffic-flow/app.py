@@ -231,7 +231,7 @@ def update_traffic_flow_map(neighborhood, mapbox, map_type, year):
         Currently selected neighborhood (0-102)
     mapbox : bool
         Currently selected map background.
-        True - scattermapbox 
+        True - scattermapbox
         False - scattergeo (default)
     map_type : str
         Currently selected map type (flow, speed, road).
@@ -252,6 +252,7 @@ def update_traffic_flow_map(neighborhood, mapbox, map_type, year):
     [Input('dropdown', 'value')]
 )
 def update_traffic_flow_chart(neighborhood, map_type="flow"):
+    """Update traffic flow chart"""
     return traffic_flow_chart(MAP_DATA, neighborhood, map_type)
 
 
