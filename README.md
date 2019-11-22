@@ -12,41 +12,20 @@ An interactive dashboard to explore traffic flow trends in Seattle neighborhoods
 
 Final Project for [CSE 583: Software Engineering for Data Scientists](https://uwseds.github.io/)
 
-
-## Prerequisites
-
-Before you begin, ensure you have met the following requirements:
-<!--- These are just example requirements. Add, duplicate or remove as required --->
-* You have installed the latest version of `<coding_language/dependency/requirement_1>`
-* You have a `<Windows/Linux/Mac>` machine. State which OS is supported/which is not.
-* You have read `<guide/link/documentation_related_to_project>`.
-
-
-## Installation
-
-To install neighborhood-traffic-flow, follow these steps:
-
-Linux and macOS:
+#### To setup the `conda` environment to run the dashboard:
 ```
-<install_command>
+conda env create -f environment.yml
 ```
+Note: The above is a one time step.
 
-Windows:
+#### To run this from the command line:
 ```
-<install_command>
+# The `conda activate` step only needs to be done once per shell instance.
+conda activate ntf
+# Start the server using the run script
+./run
+# Open a web browser with the following URL: http://127.0.0.1:8050/
 ```
-
-
-## Usage
-
-To use neighborhood-traffic-flow, follow these steps:
-
-```
-<usage_example>
-```
-
-Add run commands and examples you think users will find useful. Provide an options reference for bonus points!
-
 
 ## Contributors
 
