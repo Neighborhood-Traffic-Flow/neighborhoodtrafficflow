@@ -20,7 +20,7 @@ Note: The above is a one time step.
 
 #### To run this from the command line:
 ```
-# The `conda activate` step only needs to be done once per shell instance.
+# The `conda activate` step only needs to be done once per shell instance
 conda activate ntf
 # Start the server using the run script
 ./run
