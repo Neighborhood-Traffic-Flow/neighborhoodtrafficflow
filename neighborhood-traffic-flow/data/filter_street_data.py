@@ -233,4 +233,4 @@ for i, df_flow in enumerate(DF_LIST):
             DF_STREETS.loc[DF_STREETS['key'] == int(key), str(year)] = flow
 
 # Save DataFrame
-DF_STREETS.to_pickle('flow_new.pkl')
+DF_STREETS.to_pickle('street_data_new.pkl')
