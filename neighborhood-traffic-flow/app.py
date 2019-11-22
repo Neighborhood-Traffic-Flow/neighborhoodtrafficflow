@@ -5,6 +5,7 @@ types in Seattle neighborhoods. To use, run `python app.py` in the
 terminal and copy/paste the URL into your browers.
 """
 import json
+import os
 
 import dash
 import dash_core_components as dcc
@@ -28,8 +29,7 @@ NAMES = [feature['properties']['name']
          for feature in NBHD_JSON['features']]
 NBHD_DATA = [NUM, NBHD_JSON, REGION_IDS, NAMES]
 
-# Import filtered dataframes
-MAP_DATA = pd.read_pickle('data/map_data.pkl')
+# Import street data
 STREET_DATA = pd.read_pickle('data/street_data.pkl')
 
 # Create control options
@@ -175,7 +175,7 @@ APP.layout = html.Div(
                                 ),
                                 dcc.Graph(
                                     id='trafficFlowChart',
-                                    figure=traffic_flow_chart(MAP_DATA)
+                                    figure=traffic_flow_chart(STREET_DATA)
                                 )
                             ]
                         )
@@ -207,7 +207,7 @@ def update_neighborhood_map(neighborhood):
     figure : dict
         Plotly choroplethmapbox figure.
     """
-    return neighborhood_map(*NBHD_DATA, neighborhood)
+    return neighborhood_map(*NBHD_DATA, selected=neighborhood)
 
 
 # Update traffic flow map after dropdown, radio, or slider selection
@@ -253,7 +253,7 @@ def update_traffic_flow_map(neighborhood, mapbox, map_type, year):
 )
 def update_traffic_flow_chart(neighborhood, map_type="flow"):
     """Update traffic flow chart"""
-    return traffic_flow_chart(MAP_DATA, neighborhood, map_type)
+    return traffic_flow_chart(STREET_DATA, neighborhood, map_type)
 
 
 # Update dropdown after neighborhood map selection
@@ -308,9 +308,6 @@ def update_legend(map_type='flow'):
     if map_type == 'speed':
         return APP.get_asset_url('speedLabel.png')
     return APP.get_asset_url('roadLabel.png')
-
-
-
 
 
 # Run dashboard
