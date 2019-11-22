@@ -3,10 +3,10 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - dash==1.4.1
-  - geopandas
-  - matplotlib
+  - python=3.7.3
   - numpy
   - pandas
+  - geopandas
   - plotly=4.2.1
-  - python=3.7.3
+  - matplotlib
+
