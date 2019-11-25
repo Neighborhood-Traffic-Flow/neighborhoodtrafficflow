@@ -18,7 +18,7 @@ The document should have sections for:
     * Output: Current neighborhood, time of day, and year to data manager
 * **Data manager**: 
     * What it does: - Load street, neighborhood, and traffic flow data
-    *               - Join data by neighborhood and street
+    *************** - Join data by neighborhood and street
     *               - Query data for neighborhood, time of day, and year
     * Input: Current neighborhood, time of day, year from callback managers
     * Output: Filtered Pandas dataframe to map and chart managers
