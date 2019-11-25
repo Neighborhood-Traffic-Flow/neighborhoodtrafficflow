@@ -16,7 +16,7 @@ Final Project for [CSE 583: Software Engineering for Data Scientists](https://uw
 ```
 conda env create -f environment.yml
 ```
-Note: The above is a one time step. Take about ~5 mins, please be patient.
+Note: The above is a one time step. Take about 5 mins, please be patient.
 
 #### To run this from the command line:
 ```
