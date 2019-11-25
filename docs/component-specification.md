@@ -54,7 +54,7 @@ The document should have sections for:
     * Callback manager that reacts on checkboxes 
     * Data manager that selects time of day (AM Peak, PM Peak, Weekday, Daily)
     * Map manager that displays street-level traffic flow for selected time of day (AM Peak, PM Peak, Weekday, Daily)
-    * Control logic 
+    * Control logic
 * **Slider**: 
     * Database with Layout manager and Seattle Neighborhoods file (neighborhoods.geojson)
     * Callback manager that reacts on sliders
