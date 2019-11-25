@@ -9,35 +9,66 @@ The document should have sections for:
 
 ## Software Components
 * **Layout manager**: HTML structure of dashboard
-    * Includes HTML headers and divs for map, chart, and interactive components
+    * What it does: Includes HTML headers and divs for map, chart, and interactive components
     * Input: Dictionary of map data and chart data, current state of interactive components
     * Output: Dashboard displays in browser
-* **Map manager**: Plotly map
-    * Display either neighborhood polygons or street-level traffic flow for specific neighborhood
-    * Input: Filtered Pandas DataFrame from data manager
-    * Output: Dictionary of updated map data to layout manager
-* **Chart manager**: Plotly charts
-    * Display statistical charts (e.g., time series, histograms, etc.) for traffic flow trends
-    * Input: Filtered Pandas DataFrame from data manager
-    * Output: Dictionary of updated chart data to layouy manager
-* **Callback managers**:
-    * Control interactions and current state
+* **Callback manager**:
+    * What it does: Control interactions and current state
     * Input: User hovers, clicks, drop-down selections, and slider changes
     * Output: Current neighborhood, time of day, and year to data manager
 * **Data manager**: 
-    * Load street, neighborhood, and traffic flow data
-    * Join data by neighborhood and street
-    * Query data for neighborhood, time of day, and year
+    * What it does: - Load street, neighborhood, and traffic flow data
+    *               - Join data by neighborhood and street
+    *               - Query data for neighborhood, time of day, and year
     * Input: Current neighborhood, time of day, year from callback managers
     * Output: Filtered Pandas dataframe to map and chart managers
+* **Map manager**: Plotly map
+    * What it does: Display either neighborhood polygons or street-level traffic flow for specific neighborhood
+    * Input: Filtered Pandas DataFrame from data manager
+    * Output: Dictionary of updated map data to layout manager
+* **Chart manager**: Plotly charts
+    * What it does: Display statistical charts (e.g., time series, histograms, etc.) for traffic flow trends
+    * Input: Filtered Pandas DataFrame from data manager
+    * Output: Dictionary of updated chart data to layouy manager
+
 
 ## Interactions
-* **Hover**: Hover mouse over neighborhood or street to view name and traffic flow
-* **Click**: Click on neighborhood to zoom in on map and display street-level traffic flow
-* **Drop-down menu**: Select neighborhood to zoom in on map and display street-level traffic flow
-* **Checkboxes**: Select time of day (AM Peak, PM Peak, Weekday, Daily)
-* **Slider**: Select year (2007-2018)
-* **Button**: Generate statistical charts
+* **Hover**: 
+    * Database with Layout manager and Seattle Neighborhoods file (neighborhoods.geojson)
+    * Callback manager that reacts on hovers 
+    * Data manager that loads street, neighborhood, and traffic flow data
+    * Map manager that displays neighborhood or street for specific neighborhood on map
+    * Control logic
+* **Click**: 
+    * Database with Layout manager and Seattle Neighborhoods file (neighborhoods.geojson)
+    * Callback manager that reacts on clickers 
+    * Data manager that loads street, neighborhood, and traffic flow datathat and joins data by neighborhood and street 
+    * Map manager that displays zoom-ins and street-level traffic flow
+    * Control logic
+* **Drop-down menu**: 
+    * Database with Layout manager and Seattle Neighborhoods file (neighborhoods.geojson)
+    * Callback manager that reacts on drop-down selections
+    * Data manager that loads street, neighborhood, and traffic flow data for selected neighborhood
+    * Map manager that displays zoom-ins and street-level traffic flow for selected neighborhood
+    * Control logic
+* **Checkboxes**: 
+    * Database with Layout manager and Seattle Neighborhoods file (neighborhoods.geojson)
+    * Callback manager that reacts on checkboxes 
+    * Data manager that selects time of day (AM Peak, PM Peak, Weekday, Daily)
+    * Map manager that displays street-level traffic flow for selected time of day (AM Peak, PM Peak, Weekday, Daily)
+    * Control logic 
+* **Slider**: 
+    * Database with Layout manager and Seattle Neighborhoods file (neighborhoods.geojson)
+    * Callback manager that reacts on sliders
+    * Data manager that selects the specific year (e.g. 2007-2018)
+    * Map manager that displays street-level traffic flow for selected year (e.g. 2007-2018)
+    * Control logic 
+* **Button**: 
+    * Database with Layout manager and Seattle Neighborhoods file (neighborhoods.geojson)
+    * Callback manager that reacts on Button
+    * Data manager that queries data for neighborhood, time of day, and year
+    * Chart manager that displays statistical charts (e.g., time series, histograms, etc.) for traffic flow trends
+    * Control logic 
 
 ## Preliminary Plan
 1. Create dashboard template, including HTML divs for map, chart, and interactive components
