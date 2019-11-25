@@ -13,6 +13,8 @@ An interactive dashboard to explore traffic flow trends in Seattle neighborhoods
 Final Project for [CSE 583: Software Engineering for Data Scientists](https://uwseds.github.io/)
 
 #### To setup the `conda` environment to run the dashboard:
+
+Need to clone the repository, and then cd into the directory.
 ```
 conda env create -f environment.yml
 ```
