@@ -17,9 +17,7 @@ The document should have sections for:
     * Input: User hovers, clicks, drop-down selections, and slider changes
     * Output: Current neighborhood, time of day, and year to data manager
 * **Data manager**: 
-    * What it does: - Load street, neighborhood, and traffic flow data
-    *************** - Join data by neighborhood and street
-    *               - Query data for neighborhood, time of day, and year
+    * What it does: Load street, neighborhood, and traffic flow data; Join data by neighborhood and street; Query data for neighborhood, time of day, and year
     * Input: Current neighborhood, time of day, year from callback managers
     * Output: Filtered Pandas dataframe to map and chart managers
 * **Map manager**: Plotly map
