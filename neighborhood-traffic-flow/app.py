@@ -5,7 +5,6 @@ types in Seattle neighborhoods. To use, run `python app.py` in the
 terminal and copy/paste the URL into your browers.
 """
 import json
-import os
 
 import dash
 import dash_core_components as dcc
@@ -128,17 +127,11 @@ APP.layout = html.Div(
                                 ),
                                 html.Br(),
                                 html.Br(),
-                                # Map and Legend
-                                html.Div(
+                                dcc.Graph(
+                                    id='trafficFlowMap',
+                                    #className='four columns',
                                     className='seven columns',
-                                    children=[
-                                        dcc.Graph(
-                                            id='trafficFlowMap',
-                                            #className='four columns',
-                                            className='seven columns',
-                                            figure=traffic_flow_map(STREET_DATA)
-                                        )
-                                    ]
+                                    figure=traffic_flow_map(STREET_DATA)
                                 )
                             ],
                             style={
@@ -206,7 +199,7 @@ def update_neighborhood_map(neighborhood):
 def update_traffic_flow_map(neighborhood, map_type, year):
     """Update traffic flow map
 
-    Update traffic flow map after a dropdown, toggle, radio, or slider
+    Update traffic flow map after a dropdown, radio, or slider
     selection is made. Also triggered by neighborhood map selection
     via dropdown callback.
 

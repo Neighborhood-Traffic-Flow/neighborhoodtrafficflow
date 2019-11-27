@@ -3,17 +3,59 @@ Functions to figures shown in the dashboard
 1. map of Seattle neighborhoods
 2. traffic flow map
 """
+import math
+
 import numpy as np
 import matplotlib.cm as cm
-import math
-import matplotlib
 from matplotlib.colors import Normalize
-import plotly.graph_objs as go
 
-from controls import BOUNDS, CENTROIDS, NEIGHBORHOODS, ROAD_TYPE 
+from controls import BOUNDS, CENTROIDS, ROAD_TYPE
 
-# Mapbox style for neighborhood and flow maps
-MAPBOX_STYLE = 'carto-positron'
+
+def matplotlib_to_plotly(cmap, entries):
+    """Convert matplotlib colormap to plotly format
+
+    Define plotly colorscales for traffic flow map colorbar based on
+    matplotlib colormaps.
+
+    Parameters
+    ----------
+    cmap : matplotlib.colors.ListedColormap
+           matplotlib.colors.LinearSegmentedColormap
+        Current colormap used in traffic flow map.
+    entries : int
+        Number of colors in colorscale.
+
+    Returns
+    -------
+    colorscale : list
+        List of float and rgb values for colorscale.
+    """
+    cmap = cm.get_cmap(cmap)
+    colorscale = []
+    for k in range(entries):
+        rgba = cmap(k)
+        if entries == 6:
+            if k == 1:
+                colorscale.append([k/5.9, 'rgb(1, 1, 1)'])
+                colorscale.append([(k + 0.9)/5.9, 'rgb(1, 1, 1)'])
+            else:
+                colorscale.append([k/5.9, 'rgb(%f,%f,%f)' % rgba[:-1]])
+                colorscale.append([(k + 0.9)/5.9, 'rgb(%f,%f,%f)' % rgba[:-1]])
+        else:
+            colorscale.append([k/(entries - 1), 'rgb(%f,%f,%f)' % rgba[:-1]])
+    return colorscale
+
+
+# Colormaps for traffic flow map
+FLOW_CMAP = matplotlib_to_plotly('viridis', 255)
+SPEED_CMAP = matplotlib_to_plotly('RdYlGn_r', 255)
+ROAD_CMAP = matplotlib_to_plotly('tab10', 6)
+CMAP_INFO = {
+    'flow': [FLOW_CMAP, 108179, 'Average Weekday Traffic (1000 vehicles)'],
+    'speed': [SPEED_CMAP, 60, 'Speed Limit (mph)'],
+    'road': [ROAD_CMAP, 5.9, 'Arterial Classification']
+}
 
 
 def neighborhood_map(num, data, region_ids, names, selected=92):
@@ -79,7 +121,7 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
             'height': 1500,
             'clickmode': 'event+select',
             'mapbox': {
-                'style': MAPBOX_STYLE,
+                'style': 'carto-positron',
                 'center': {
                     'lon': -122.3266736043623,
                     'lat': 47.61506497849028
@@ -89,12 +131,6 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
         }
     }
     return figure
-
-
-def lat2y(lat):
-    """Pseudo-Mercator projection"""
-    y = 180.0/math.pi*math.log(math.tan(math.pi/4.0+lat*(math.pi/180.0)/2.0))
-    return y
 
 
 def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
@@ -121,49 +157,35 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
     figure : dict
         Plotly scattermapbox figure.
     """
-    bounds = BOUNDS[neighborhood]
-    lon_range = bounds[2] - bounds[0]
-    lat_range = bounds[3] - bounds[1]
-    height = 750
-    width = lon_range/lat_range*height
-    lon = CENTROIDS[neighborhood][0]
-    lat = CENTROIDS[neighborhood][1]
+    # Filter DataFrame by neighborhood
     nbhd_idx = data_frame.nbhd.apply(
         lambda nbhd_list: int(neighborhood) in nbhd_list)
     data_frame = data_frame[nbhd_idx]
     if map_type == 'flow':
         data_frame = data_frame.rename(columns={str(year): 'flow'})
-        colorscale = flow_cmap
-        cmax = 108179
-        title = 'Average Weekday Traffic (1000 vehicles)'
-    elif map_type == 'speed':
-        colorscale = speed_cmap
-        cmax = 60
-        title = 'Speed Limit (mph)'
-    else:
-        colorscale = road_cmap
-        cmax = 5.9
-        title = 'Arterial Classification'
+
+    # Initialize data list with neighborhood centroid and colorscale
+    info = CMAP_INFO[map_type]
     data = [{
         'type': 'scattergl',
         'name': 'Centroid',
-        'x': [lon],
-        'y': [lat2y(lat)],
+        'x': [CENTROIDS[neighborhood][0]],
+        'y': [lat2y(CENTROIDS[neighborhood][1])],
         'mode': 'markers',
         'showlegend': False,
         'marker': {
             'size': 0,
             'color': [0],
             'cmin': 0,
-            'cmax': cmax,
-            'colorscale': colorscale,
+            'cmax': info[1],
+            'colorscale': info[0],
             'showscale': True,
             'colorbar': {
                 'tickfont': {
                     'size': 16
                 },
                 'title': {
-                    'text': title,
+                    'text': info[2],
                     'font': {
                         'size': 20
                     },
@@ -172,8 +194,9 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
             }
         }
     }]
+    # Add categorical legend items for road types
     if map_type == 'road':
-        data[0]['marker']['colorbar']['tickvals'] = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5]
+        data[0]['marker']['colorbar']['tickvals'] = np.arange(0.5, 6.5, 1)
         data[0]['marker']['colorbar']['ticktext'] = [
             'Not Designated',
             'Principal Arterial',
@@ -183,6 +206,7 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
             'Interstate Freeway'
         ]
 
+    # Add roads to data list
     for _, row in data_frame.iterrows():
         trace = {
             'type': 'scattergl',
@@ -198,6 +222,9 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
             'hovertext': hover_text(row['name'], row[map_type], map_type)
         }
         data.append(trace)
+
+    # Define plotly figure
+    dimensions = get_dimensions(neighborhood)
     figure = {
         'data': data,
         'layout': {
@@ -207,8 +234,8 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
                 't': 0,
                 'b': 0
             },
-            'width': width,
-            'height': height,
+            'width': dimensions[0],
+            'height': dimensions[1],
             'hovermode': 'closest',
             'clickmode': 'none'
         }
@@ -219,7 +246,7 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
 def traffic_flow_chart(data_frame, neighborhood=92, map_type='flow'):
     """Create traffic flow chart"""
     data = []
-    for nbhd in CENTROIDS.keys():
+    for nbhd in CENTROIDS:
         data.append(get_series(data_frame, int(nbhd)))
     data.append(get_series(data_frame, int(neighborhood), 5, 'steelblue'))
     figure = {
@@ -233,7 +260,7 @@ def get_series(data_frame, nbhd, width=2, color='rgb(192,192,192)'):
     nbhd_idx = data_frame.nbhd.apply(
         lambda nbhd_list: nbhd in nbhd_list)
     nbhd_flow = data_frame[nbhd_idx]
-    years = np.arange(2007,2019)
+    years = np.arange(2007, 2019)
     flows = np.zeros(12)
     for i in range(12):
         flow_current = nbhd_flow[nbhd_flow[str(years[i])].notna()]
@@ -254,49 +281,10 @@ def get_series(data_frame, nbhd, width=2, color='rgb(192,192,192)'):
     }
     return trace
 
-# https://plot.ly/python/v3/matplotlib-colorscales/
-def matplotlib_to_plotly(cmap, pl_entries):
-    h = 1.0/(pl_entries - 1)
-    pl_colorscale = []
 
-    for k in range(pl_entries):
-        C = map(np.uint8, np.array(cmap(k*h)[:3])*255)
-        C_list = [c for c in C]
-        pl_colorscale.append([k*h, 'rgb' + str((C_list[0], C_list[1], C_list[2]))])
-
-    return pl_colorscale
-
-flow_cmap = cm.get_cmap('viridis')
-flow_norm = Normalize(vmin=0, vmax=108179)
-flow_rgb = []
-for i in range(0,255):
-    k = matplotlib.colors.colorConverter.to_rgb(flow_cmap(flow_norm(i)))
-    flow_rgb.append(k)
-flow_cmap = matplotlib_to_plotly(flow_cmap, 255)
-
-
-speed_cmap = cm.get_cmap('RdYlGn_r')
-speed_norm = Normalize(vmin=0, vmax=60)
-speed_rgb = []
-for i in range(0,255):
-    k = matplotlib.colors.colorConverter.to_rgb(speed_cmap(speed_norm(i)))
-    speed_rgb.append(k)
-speed_cmap = matplotlib_to_plotly(speed_cmap, 255)
-
-
-road_cmap = cm.get_cmap('tab10')
-road_rgb = []
-for i in range(6):
-    if i == 1:
-        road_rgb.append([i/5.9, 'rgb(1,1,1)'])
-        road_rgb.append([(i+0.9)/5.9, 'rgb(1,1,1)'])
-    else:
-        C = map(np.uint8, np.array(road_cmap(i)[:3])*255)
-        C_list = [c for c in C]
-        road_rgb.append([i/5.9, 'rgb' + str((C_list[0], C_list[1], C_list[2]))])
-        road_rgb.append([(i+0.9)/5.9, 'rgb' + str((C_list[0], C_list[1], C_list[2]))])
-road_cmap = road_rgb
-
+def lat2y(lat):
+    """Pseudo-Mercator projection"""
+    return 180.0/math.pi*math.log(math.tan(math.pi/4.0+lat*(math.pi/180.0)/2.0))
 
 
 def road_color(val, map_type):
@@ -318,8 +306,11 @@ def road_color(val, map_type):
     rgb : str
         String containting rgb value of given road.
     """
+    # Bad values
     if val is None or np.isnan(val):
         return 'rgb(192,192,192)'
+
+    # Create colormap
     if map_type == 'flow':
         cmap = cm.get_cmap('viridis')
         norm = Normalize(vmin=0, vmax=108179)
@@ -329,10 +320,14 @@ def road_color(val, map_type):
     else:
         cmap = cm.get_cmap('tab10')
         norm = Normalize(vmin=0, vmax=9)
+
+    # Assign color
     if map_type == 'road' and val == 1:
-        rgba = (0.0,0.0,0.0,1.0)
+        rgba = (0, 0, 0, 1) # use black because orange looks like red
     else:
         rgba = cmap(norm(float(val)))
+
+    # Parse color
     return 'rgb(%f,%f,%f)' % rgba[:-1]
 
 
@@ -367,3 +362,28 @@ def hover_text(name, val, map_type):
     if val is None or np.isnan(val):
         return name + ', Road Type: Unknown'
     return name + ', Road Type:' + ROAD_TYPE[val]
+
+
+def get_dimensions(neighborhood):
+    """Get traffic flow map dimensions
+
+    Determine width and height of traffic flow map based on aspect
+    ratio of currently selected neighborhood.
+
+    Parameters
+    ----------
+    neighborhood : str
+        Index of selected neighborhood from dropdown.
+
+    Returns
+    -------
+    dimensions : list
+        [width, height] in pixels (float).
+    """
+    bounds = BOUNDS[neighborhood]
+    lon_range = bounds[2] - bounds[0]
+    lat_range = bounds[3] - bounds[1]
+    height = lat_range/lon_range*1000
+    if height <= 1000:
+        return [1000, height]
+    return [lon_range/lat_range*1000, 1000]
