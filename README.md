@@ -12,13 +12,15 @@ An interactive dashboard to explore traffic flow trends in Seattle neighborhoods
 
 Final Project for [CSE 583: Software Engineering for Data Scientists](https://uwseds.github.io/)
 
-#### To setup the `conda` environment to run the dashboard:
+#### To setup the `conda` environment:
+
+Need to clone the repository, and then cd into the directory to setup `conda` environment.
 ```
 conda env create -f environment.yml
 ```
-Note: The above is a one time step.
+Note: The above is a one time step. Take about 5 mins, please be patient.
 
-#### To run this from the command line:
+#### To run the dashboard from the command line:
 ```
 conda activate ntf
 cd neighborhood-traffic-flow

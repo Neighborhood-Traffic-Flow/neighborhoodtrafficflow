@@ -12,6 +12,6 @@ install:
     - conda update -q conda
     - conda info -a
     - conda env create -f environment.yml
-    - conda activate ntf
+    - source activate ntf
 
 script: pytest

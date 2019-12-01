@@ -5,11 +5,9 @@ types in Seattle neighborhoods. To use, run `python app.py` in the
 terminal and copy/paste the URL into your browers.
 """
 import json
-import os
 
 import dash
 import dash_core_components as dcc
-import dash_daq as daq
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import pandas as pd
@@ -112,11 +110,6 @@ APP.layout = html.Div(
                             id='trafficFlowMapContainer',
                             children=[
                                 html.H4('Traffic Flow Map'),
-                                daq.ToggleSwitch(
-                                    id='toggle',
-                                    value=False,
-                                    label='Blank or Mapbox'
-                                ),
                                 dcc.RadioItems(
                                     id='radio',
                                     options=MAP_OPTIONS,
@@ -134,25 +127,11 @@ APP.layout = html.Div(
                                 ),
                                 html.Br(),
                                 html.Br(),
-                                # Map and Legend
-                                html.Div(
+                                dcc.Graph(
+                                    id='trafficFlowMap',
+                                    #className='four columns',
                                     className='seven columns',
-                                    children=[
-                                        html.Img(
-                                            id='legend',
-                                            className='three columns',
-                                            src=APP.get_asset_url('flowLabel.png'),
-                                            style={
-                                                'width': 500,
-                                                'height': 500
-                                            }
-                                        ),
-                                        dcc.Graph(
-                                            id='trafficFlowMap',
-                                            className='four columns',
-                                            figure=traffic_flow_map(STREET_DATA)
-                                        )
-                                    ]
+                                    figure=traffic_flow_map(STREET_DATA)
                                 )
                             ],
                             style={
@@ -214,14 +193,13 @@ def update_neighborhood_map(neighborhood):
 @APP.callback(
     Output('trafficFlowMap', 'figure'),
     [Input('dropdown', 'value'),
-     Input('toggle', 'value'),
      Input('radio', 'value'),
      Input('slider', 'value')]
 )
-def update_traffic_flow_map(neighborhood, mapbox, map_type, year):
+def update_traffic_flow_map(neighborhood, map_type, year):
     """Update traffic flow map
 
-    Update traffic flow map after a dropdown, toggle, radio, or slider
+    Update traffic flow map after a dropdown, radio, or slider
     selection is made. Also triggered by neighborhood map selection
     via dropdown callback.
 
@@ -229,10 +207,6 @@ def update_traffic_flow_map(neighborhood, mapbox, map_type, year):
     ----------
     neighborhood : str
         Currently selected neighborhood (0-102)
-    mapbox : bool
-        Currently selected map background.
-        True - scattermapbox
-        False - scattergeo (default)
     map_type : str
         Currently selected map type (flow, speed, road).
     year : int
@@ -243,7 +217,7 @@ def update_traffic_flow_map(neighborhood, mapbox, map_type, year):
     figure : dict
         Plotly scattermapbox figure.
     """
-    return traffic_flow_map(STREET_DATA, neighborhood, mapbox, map_type, year)
+    return traffic_flow_map(STREET_DATA, neighborhood, map_type, year)
 
 
 # Update chart after dropdown selection
@@ -281,33 +255,6 @@ def update_dropdown(selected_data):
         return str(selected_data['points'][0]['pointIndex'])
     except TypeError:
         return '92'
-
-
-# Update legend after radio selection
-@APP.callback(
-    Output('legend', 'src'),
-    [Input('radio', 'value')]
-)
-def update_legend(map_type='flow'):
-    """Update legend
-
-    Update legend for traffic flow map after a radio selection is made.
-
-    Parameters
-    ----------
-    map_type : str
-        Currently selected map type (flow, speed, road).
-
-    Returns
-    -------
-    src : url
-        Location of current legend.
-    """
-    if map_type == 'flow':
-        return APP.get_asset_url('flowLabel.png')
-    if map_type == 'speed':
-        return APP.get_asset_url('speedLabel.png')
-    return APP.get_asset_url('roadLabel.png')
 
 
 # Run dashboard
