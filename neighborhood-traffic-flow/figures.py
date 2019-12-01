@@ -180,38 +180,17 @@ def traffic_flow_map(data_frame, neighborhood='92', mapbox=False,
 
 
 
-def traffic_flow_chart(dataframe, neighborhood=92, map_type='flow'):
-    """Create traffic flow chart"""
-    dataframe["test"] = dataframe[map_type].astype(str)
-    type_idx = ~(dataframe["test"].str.contains("[(None,)]"))
-    dataframe = dataframe[type_idx].sort_values("year")
-    nbhd_idx = dataframe.nbhd.apply(lambda nbhd_list: int(neighborhood) in nbhd_list)
-    if map_type == 'flow':
-        y_df = dataframe.loc[nbhd_idx, "flow"]
-    elif map_type == 'speed':
-        y_df = dataframe.loc[nbhd_idx, "speed"]
-    else:
-        y_df = dataframe.loc[nbhd_idx, "road"]
-    figure = {
-        'data': [go.Scatter(
-            x = dataframe.loc[nbhd_idx, "year"],
-            y = y_df,
-            mode = "markers"
-        )
-    ]
-}
-    return figure
-
-def another_traffic_flow_chart(data_frame, neighborhood=92, map_type='flow'):
+def traffic_flow_chart(data_frame, neighborhood=92, map_type='flow'):
     """Create traffic flow chart"""
     data = []
-    for nbhd in CENTROIDS.keys():
+    for nbhd in CENTROIDS:
         data.append(get_series(data_frame, int(nbhd)))
     data.append(get_series(data_frame, int(neighborhood), 5, 'steelblue'))
     figure = {
         'data': data
     }
     return figure
+
 
 
 def get_series(data_frame, nbhd, width=2, color='rgb(192,192,192)'):
