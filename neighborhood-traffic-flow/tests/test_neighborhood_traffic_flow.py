@@ -1,7 +1,8 @@
 """Tests"""
 import numpy as np
 import importlib
-# FIGURES = importlib.import_module("neighborhood-traffic-flow.figures")
+
+FIGURES = importlib.import_module("neighborhood-traffic-flow.figures")
 
 
 # def test_na_matplotlib_to_plotly():
