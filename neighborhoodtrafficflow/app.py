@@ -13,9 +13,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-
-CONTROLS = importlib.import_module("neighborhood-traffic-flow.controls")
-FIGURES = importlib.import_module("neighborhood-traffic-flow.figures")
+from neighborhoodtrafficflow.controls import NEIGHBORHOOD, MAP_TYPE
+from neighborhoodtrafficflow.figures import neighborhood_map, traffic_flow_map, traffic_flow_chart
 
 # Import neighborhood data
 with open('data/neighborhoods.geojson') as json_file:
@@ -33,10 +32,10 @@ NBHD_DATA = [NUM, NBHD_JSON, REGION_IDS, NAMES]
 STREET_DATA = pd.read_pickle('data/street_data.pkl')
 
 # Create control options
-NBHD_OPTIONS = [{'label': CONTROLS.neighborhoods[regionid], 'value': regionid}
-                for regionid in CONTROLS.neighborhoods]
-MAP_OPTIONS = [{'label': CONTROLS.map_type[0][idx], 'value': idx}
-               for idx in CONTROLS.map_type[0]]
+NBHD_OPTIONS = [{'label': NEIGHBORHOOD[regionid], 'value': regionid}
+                for regionid in NEIGHBORHOOD]
+MAP_OPTIONS = [{'label': MAP_TYPE[0][idx], 'value': idx}
+               for idx in MAP_TYPE[0]]
 YEAR_OPTIONS = {year: str(year) for year in range(2007, 2019)}
 
 # Initialize dashboard
@@ -93,7 +92,7 @@ APP.layout = html.Div(
                                 html.Br(),
                                 dcc.Graph(
                                     id='neighborhoodMap',
-                                    figure=FIGURES.neighborhood_map(*NBHD_DATA)
+                                    figure=neighborhood_map(*NBHD_DATA)
                                 )
                             ],
                             style={
@@ -133,7 +132,7 @@ APP.layout = html.Div(
                                     id='trafficFlowMap',
                                     # className='four columns',
                                     className='seven columns',
-                                    figure=FIGURES.traffic_flow_map(
+                                    figure=traffic_flow_map(
                                         STREET_DATA)
                                 )
                             ],
@@ -157,7 +156,7 @@ APP.layout = html.Div(
                                 ),
                                 dcc.Graph(
                                     id='trafficFlowChart',
-                                    figure=FIGURES.traffic_flow_chart(
+                                    figure=traffic_flow_chart(
                                         STREET_DATA)
                                 )
                             ]
@@ -190,7 +189,7 @@ def update_neighborhood_map(neighborhood):
     figure : dict
         Plotly choroplethmapbox figure.
     """
-    return FIGURES.neighborhood_map(*NBHD_DATA, selected=neighborhood)
+    return neighborhood_map(*NBHD_DATA, selected=neighborhood)
 
 
 # Update traffic flow map after dropdown, radio, or slider selection
@@ -221,7 +220,7 @@ def update_traffic_flow_map(neighborhood, map_type, year):
     figure : dict
         Plotly scattermapbox figure.
     """
-    return FIGURES.traffic_flow_map(STREET_DATA, neighborhood, map_type, year)
+    return traffic_flow_map(STREET_DATA, neighborhood, map_type, year)
 
 
 # Update chart after dropdown selection
@@ -231,7 +230,7 @@ def update_traffic_flow_map(neighborhood, map_type, year):
 )
 def update_traffic_flow_chart(neighborhood):
     """Update traffic flow chart"""
-    return FIGURES.traffic_flow_chart(STREET_DATA, neighborhood)
+    return traffic_flow_chart(STREET_DATA, neighborhood)
 
 
 # Update dropdown after neighborhood map selection
