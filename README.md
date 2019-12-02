@@ -28,14 +28,13 @@ pip install -e .
 ```
 Note: The above is a one-time step.
 
-#### To run the dashboard from the command line:
+#### To run the dashboard:
+Start the server, then open a web browser with the following URL: http://127.0.0.1:8050/
 ```
 conda activate ntf
 cd neighborhoodtrafficflow
 python app.py
 ```
-Open a web browser with the following URL: http://127.0.0.1:8050/
-
 Note: The `conda activate` step only needs to be done once per shell instance.
 
 ## Contributors
