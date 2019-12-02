@@ -1,14 +1,14 @@
 """Dictionaries used for dashboard control options"""
 
 # map type: control label, used for radio and checkbox controls
-MAP_TYPE = {
+map_type = {
     'flow': 'Traffic Flow Counts',
     'speed': 'Speed Limits',
     'road': 'Road Type'
 },
 
 # index: arterial classification, used for traffic flow map hover text
-ROAD_TYPE = {
+road_type = {
     0: 'Not Designated',
     1: 'Principal Arterial',
     2: 'Minor Arterial',
@@ -18,7 +18,7 @@ ROAD_TYPE = {
 }
 
 # index: neighborhood name, used for dropdown menu
-NEIGHBORHOODS = {
+neighborhoods = {
     '0': 'West Woodland',
     '1': 'Olympic Manor',
     '2': 'Sunset Hill',
@@ -125,7 +125,7 @@ NEIGHBORHOODS = {
 }
 
 # index: centroid (lon, lat), used for traffic flow map
-CENTROIDS = {
+centroids = {
     '0': (-122.368495, 47.666952),
     '1': (-122.382184, 47.696061),
     '2': (-122.401110, 47.678887),
@@ -232,7 +232,7 @@ CENTROIDS = {
 }
 
 # index: (minlat, minlon, maxlat, maxlon), used for traffic flow map
-BOUNDS = {
+bounds = {
     '0': (-122.376486, 47.655337, -122.360758, 47.675992),
     '1': (-122.387585, 47.690516, -122.376775, 47.701594),
     '2': (-122.411926, 47.665505, -122.393007, 47.690520),

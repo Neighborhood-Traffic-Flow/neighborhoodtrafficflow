@@ -4,12 +4,13 @@ Functions to figures shown in the dashboard
 2. traffic flow map
 """
 import math
+import importlib
 
 import numpy as np
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
 
-from controls import BOUNDS, CENTROIDS, ROAD_TYPE
+CONTROLS = importlib.import_module("neighborhood-traffic-flow.controls")
 
 
 def matplotlib_to_plotly(cmap, entries):
@@ -37,13 +38,14 @@ def matplotlib_to_plotly(cmap, entries):
         rgba = cmap(k)
         if entries == 6:
             if k == 1:
-                colorscale.append([k/5.9, 'rgb(1, 1, 1)'])
-                colorscale.append([(k + 0.9)/5.9, 'rgb(1, 1, 1)'])
+                colorscale.append([k / 5.9, 'rgb(1, 1, 1)'])
+                colorscale.append([(k + 0.9) / 5.9, 'rgb(1, 1, 1)'])
             else:
-                colorscale.append([k/5.9, 'rgb(%f,%f,%f)' % rgba[:-1]])
-                colorscale.append([(k + 0.9)/5.9, 'rgb(%f,%f,%f)' % rgba[:-1]])
+                colorscale.append([k / 5.9, 'rgb(%f,%f,%f)' % rgba[:-1]])
+                colorscale.append(
+                    [(k + 0.9) / 5.9, 'rgb(%f,%f,%f)' % rgba[:-1]])
         else:
-            colorscale.append([k/(entries - 1), 'rgb(%f,%f,%f)' % rgba[:-1]])
+            colorscale.append([k / (entries - 1), 'rgb(%f,%f,%f)' % rgba[:-1]])
     return colorscale
 
 
@@ -133,7 +135,8 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
     return figure
 
 
-def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
+def traffic_flow_map(data_frame, neighborhood='92',
+                     map_type='flow', year=2018):
     """Create traffic flow map of currently selected neighborhood
 
     Create Plotly scattermapbox figure of roads in selected Seattle
@@ -169,8 +172,8 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
     data = [{
         'type': 'scattergl',
         'name': 'Centroid',
-        'x': [CENTROIDS[neighborhood][0]],
-        'y': [lat2y(CENTROIDS[neighborhood][1])],
+        'x': [CONTROLS.centroids[neighborhood][0]],
+        'y': [lat2y(CONTROLS.centroids[neighborhood][1])],
         'mode': 'markers',
         'showlegend': False,
         'marker': {
@@ -243,18 +246,16 @@ def traffic_flow_map(data_frame, neighborhood='92', map_type='flow', year=2018):
     return figure
 
 
-
-def traffic_flow_chart(data_frame, neighborhood=92, map_type='flow'):
+def traffic_flow_chart(data_frame, neighborhood=92):
     """Create traffic flow chart"""
     data = []
-    for nbhd in CENTROIDS:
+    for nbhd in CONTROLS.centroids:
         data.append(get_series(data_frame, int(nbhd)))
     data.append(get_series(data_frame, int(neighborhood), 5, 'steelblue'))
     figure = {
         'data': data
     }
     return figure
-
 
 
 def get_series(data_frame, nbhd, width=2, color='rgb(192,192,192)'):
@@ -286,7 +287,8 @@ def get_series(data_frame, nbhd, width=2, color='rgb(192,192,192)'):
 
 def lat2y(lat):
     """Pseudo-Mercator projection"""
-    return 180.0/math.pi*math.log(math.tan(math.pi/4.0+lat*(math.pi/180.0)/2.0))
+    return 180.0 / math.pi * math.log(
+        math.tan(math.pi / 4.0 + lat * (math.pi / 180.0) / 2.0))
 
 
 def road_color(val, map_type):
@@ -325,7 +327,7 @@ def road_color(val, map_type):
 
     # Assign color
     if map_type == 'road' and val == 1:
-        rgba = (0, 0, 0, 1) # use black because orange looks like red
+        rgba = (0, 0, 0, 1)  # use black because orange looks like red
     else:
         rgba = cmap(norm(float(val)))
 
@@ -363,7 +365,7 @@ def hover_text(name, val, map_type):
         return name + ', Speed Limit:' + str(int(val)) + 'mph'
     if val is None or np.isnan(val):
         return name + ', Road Type: Unknown'
-    return name + ', Road Type:' + ROAD_TYPE[val]
+    return name + ', Road Type:' + CONTROLS.road_type[val]
 
 
 def get_dimensions(neighborhood):
@@ -382,10 +384,10 @@ def get_dimensions(neighborhood):
     dimensions : list
         [width, height] in pixels (float).
     """
-    bounds = BOUNDS[neighborhood]
+    bounds = CONTROLS.bounds[neighborhood]
     lon_range = bounds[2] - bounds[0]
     lat_range = bounds[3] - bounds[1]
-    height = lat_range/lon_range*1000
+    height = lat_range / lon_range * 1000
     if height <= 1000:
         return [1000, height]
-    return [lon_range/lat_range*1000, 1000]
+    return [lon_range / lat_range * 1000, 1000]
