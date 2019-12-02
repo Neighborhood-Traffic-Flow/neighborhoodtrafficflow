@@ -4,7 +4,6 @@ Functions to figures shown in the dashboard
 2. traffic flow map
 """
 import math
-import importlib
 
 import numpy as np
 import matplotlib.cm as cm
