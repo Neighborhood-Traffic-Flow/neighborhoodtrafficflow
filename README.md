@@ -14,9 +14,13 @@ Final Project for [CSE 583: Software Engineering for Data Scientists](https://uw
 
 ## Installation and Use
 
-#### To set up the `conda` environment:
+#### To clone the repository:
+```
+git clone https://github.com/Neighborhood-Traffic-Flow/neighborhoodtrafficflow.git
+cd neighborhoodtrafficflow
+```
 
-After cloning the repository, cd into the directory to set up the `conda` environment.
+#### To set up the `conda` environment:
 ```
 conda env create -f environment.yml
 conda activate ntf
@@ -25,10 +29,9 @@ pip install -e .
 Note: The above is a one-time step.
 
 #### To run the dashboard from the command line:
-
 ```
 conda activate ntf
-cd neighborhood-traffic-flow
+cd neighborhoodtrafficflow
 python app.py
 ```
 Open a web browser with the following URL: http://127.0.0.1:8050/
