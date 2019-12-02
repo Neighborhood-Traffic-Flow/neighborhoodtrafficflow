@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
 
-CONTROLS = importlib.import_module("neighborhood-traffic-flow.controls")
+CONTROLS = importlib.import_module("neighborhoodtrafficflow.controls")
 
 
 def matplotlib_to_plotly(cmap, entries):

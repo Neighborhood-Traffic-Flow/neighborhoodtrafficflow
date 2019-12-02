@@ -14,8 +14,8 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 
-CONTROLS = importlib.import_module("neighborhood-traffic-flow.controls")
-FIGURES = importlib.import_module("neighborhood-traffic-flow.figures")
+CONTROLS = importlib.import_module("neighborhoodtrafficflow.controls")
+FIGURES = importlib.import_module("neighborhoodtrafficflow.figures")
 
 # Import neighborhood data
 with open('data/neighborhoods.geojson') as json_file:
