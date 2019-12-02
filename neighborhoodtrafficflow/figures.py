@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
 
-CONTROLS = importlib.import_module("neighborhoodtrafficflow.controls")
+from neighborhoodtrafficflow.controls import CENTROIDS, ROAD_TYPE, BOUNDS
 
 
 def matplotlib_to_plotly(cmap, entries):
@@ -172,8 +172,8 @@ def traffic_flow_map(data_frame, neighborhood='92',
     data = [{
         'type': 'scattergl',
         'name': 'Centroid',
-        'x': [CONTROLS.centroids[neighborhood][0]],
-        'y': [lat2y(CONTROLS.centroids[neighborhood][1])],
+        'x': [CENTROIDS[neighborhood][0]],
+        'y': [lat2y(CENTROIDS[neighborhood][1])],
         'mode': 'markers',
         'showlegend': False,
         'marker': {
@@ -249,7 +249,7 @@ def traffic_flow_map(data_frame, neighborhood='92',
 def traffic_flow_chart(data_frame, neighborhood=92):
     """Create traffic flow chart"""
     data = []
-    for nbhd in CONTROLS.centroids:
+    for nbhd in CENTROIDS:
         data.append(get_series(data_frame, int(nbhd)))
     data.append(get_series(data_frame, int(neighborhood), 5, 'steelblue'))
     figure = {
@@ -365,7 +365,7 @@ def hover_text(name, val, map_type):
         return name + ', Speed Limit:' + str(int(val)) + 'mph'
     if val is None or np.isnan(val):
         return name + ', Road Type: Unknown'
-    return name + ', Road Type:' + CONTROLS.road_type[val]
+    return name + ', Road Type:' + ROAD_TYPE[val]
 
 
 def get_dimensions(neighborhood):
@@ -384,7 +384,7 @@ def get_dimensions(neighborhood):
     dimensions : list
         [width, height] in pixels (float).
     """
-    bounds = CONTROLS.bounds[neighborhood]
+    bounds = BOUNDS[neighborhood]
     lon_range = bounds[2] - bounds[0]
     lat_range = bounds[3] - bounds[1]
     height = lat_range / lon_range * 1000
