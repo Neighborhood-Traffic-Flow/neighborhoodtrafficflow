@@ -94,7 +94,7 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
             'hoverinfo': 'text',
             'marker': {
                 'line': {
-                    'width': 3
+                    'width': 2
                 }
             },
             'colorscale': 'Greens',
@@ -118,8 +118,9 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
                 't': 0,
                 'b': 0
             },
-            'width': 1000,
-            'height': 1500,
+            'width': 500,
+            'height': 750,
+            'paper_bgcolor': '#F9F9F9',
             'clickmode': 'event+select',
             'mapbox': {
                 'style': 'carto-positron',
@@ -127,7 +128,7 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
                     'lon': -122.3266736043623,
                     'lat': 47.61506497849028
                 },
-                'zoom': 11.25
+                'zoom': 10.4
             }
         }
     }
@@ -184,14 +185,7 @@ def traffic_flow_map(data_frame, neighborhood='92',
             'showscale': True,
             'colorbar': {
                 'tickfont': {
-                    'size': 16
-                },
-                'title': {
-                    'text': info[2],
-                    'font': {
-                        'size': 20
-                    },
-                    'side': 'right'
+                    'size': 12
                 }
             }
         }
@@ -216,7 +210,7 @@ def traffic_flow_map(data_frame, neighborhood='92',
             'y': [lat2y(lat) for lat in row['lat']],
             'mode': 'lines',
             'line': {
-                'width': 5,
+                'width': 3,
                 'color': road_color(row[map_type], map_type)
             },
             'showlegend': False,
@@ -230,16 +224,19 @@ def traffic_flow_map(data_frame, neighborhood='92',
     figure = {
         'data': data,
         'layout': {
-            'margin': {
-                'l': 0,
-                'r': 0,
-                't': 0,
-                'b': 0
-            },
-            'width': dimensions[0],
-            'height': dimensions[1],
+            # 'width': dimensions[0],
+            # 'height': dimensions[1],
+            'title': info[2],
+            'plot_bgcolor': '#F9F9F9',
+            'paper_bgcolor': '#F9F9F9',
             'hovermode': 'closest',
-            'clickmode': 'none'
+            'clickmode': 'none',
+            'xaxis': {
+                'visible': False
+            },
+            'yaxis': {
+                'visible': False
+            }
         }
     }
     return figure
@@ -252,7 +249,11 @@ def traffic_flow_chart(data_frame, neighborhood=92):
         data.append(get_series(data_frame, int(nbhd)))
     data.append(get_series(data_frame, int(neighborhood), 5, 'steelblue'))
     figure = {
-        'data': data
+        'data': data,
+        'layout': {
+            'plot_bgcolor': '#F9F9F9',
+            'paper_bgcolor': '#F9F9F9',
+        }
     }
     return figure
 

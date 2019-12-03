@@ -2,7 +2,7 @@
 
 # map type: control label, used for radio and checkbox controls
 MAP_TYPE = {
-    'flow': 'Traffic Flow Counts',
+    'flow': 'Traffic Flow',
     'speed': 'Speed Limits',
     'road': 'Road Type'
 },
