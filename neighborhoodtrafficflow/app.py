@@ -5,7 +5,7 @@ types in Seattle neighborhoods. To use, run `python app.py` in the
 terminal and copy/paste the URL into your browers.
 """
 import json
-
+print("test")
 import pandas as pd
 import importlib
 import dash
