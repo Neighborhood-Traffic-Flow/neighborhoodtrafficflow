@@ -4,7 +4,6 @@ Interactive dashboard to explore traffic flow, speed limits, and road
 types in Seattle neighborhoods. To use, run `python app.py` in the
 terminal and copy/paste the URL into your browers.
 """
-print("test")
 import json
 
 import pandas as pd
