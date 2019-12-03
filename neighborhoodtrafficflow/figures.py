@@ -118,17 +118,17 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
                 't': 0,
                 'b': 0
             },
-            'width': 500,
-            'height': 750,
             'paper_bgcolor': '#F9F9F9',
             'clickmode': 'event+select',
             'mapbox': {
                 'style': 'carto-positron',
                 'center': {
-                    'lon': -122.3266736043623,
-                    'lat': 47.61506497849028
+                    # 'lon': -122.3266736043623,
+                    # 'lat': 47.61506497849028
+                    'lon': CENTROIDS[str(selected)][0],
+                    'lat': CENTROIDS[str(selected)][1],
                 },
-                'zoom': 10.4
+                'zoom': 12
             }
         }
     }
@@ -227,16 +227,22 @@ def traffic_flow_map(data_frame, neighborhood='92',
             # 'width': dimensions[0],
             # 'height': dimensions[1],
             'title': info[2],
-            'plot_bgcolor': '#F9F9F9',
+            #'plot_bgcolor': '#F9F9F9',
             'paper_bgcolor': '#F9F9F9',
             'hovermode': 'closest',
             'clickmode': 'none',
             'xaxis': {
-                'visible': False
+                'linecolor': 'black',
+                'mirror': True,
+                'tickvals': [],
+                'ticktext': []
             },
             'yaxis': {
-                'visible': False
-            }
+                'linecolor': 'black',
+                'mirror': True,
+                'tickvals': [],
+                'ticktext': []
+            },
         }
     }
     return figure
