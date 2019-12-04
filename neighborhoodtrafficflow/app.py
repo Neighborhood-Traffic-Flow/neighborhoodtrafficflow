@@ -5,6 +5,7 @@ types in Seattle neighborhoods. To use, run `python app.py` in the
 terminal and copy/paste the URL into your browers.
 """
 import json
+import pickle
 
 import dash
 import dash_core_components as dcc
@@ -16,16 +17,8 @@ from neighborhoodtrafficflow.controls import NEIGHBORHOOD, MAP_TYPE
 from neighborhoodtrafficflow.figures import neighborhood_map, traffic_flow_map, traffic_flow_series, traffic_flow_stats
 
 # Import neighborhood data
-with open('data/neighborhoods.geojson') as json_file:
-    NBHD_JSON = json.load(json_file)
-for feature in NBHD_JSON['features']:
-    feature['id'] = feature['properties']['regionid']
-NUM = len(NBHD_JSON['features'])
-REGION_IDS = [feature['properties']['regionid']
-              for feature in NBHD_JSON['features']]
-NAMES = [feature['properties']['name']
-         for feature in NBHD_JSON['features']]
-NBHD_DATA = [NUM, NBHD_JSON, REGION_IDS, NAMES]
+with open('data/cleaned/nbhd_data.pkl', 'rb') as pickle_file:
+        NBHD_DATA = pickle.load(pickle_file)
 
 # Import street data
 STREET_DATA = pd.read_pickle('data/street_data.pkl')
