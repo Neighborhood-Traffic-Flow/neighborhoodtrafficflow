@@ -248,8 +248,8 @@ def traffic_flow_map(data_frame, neighborhood='92',
     return figure
 
 
-def traffic_flow_chart(data_frame, neighborhood=92):
-    """Create traffic flow chart"""
+def traffic_flow_series(data_frame, neighborhood=92):
+    """Create traffic flow series"""
     data = []
     for nbhd in CENTROIDS:
         data.append(get_series(data_frame, int(nbhd)))

@@ -13,7 +13,7 @@ from dash.dependencies import Input, Output
 import pandas as pd
 
 from neighborhoodtrafficflow.controls import NEIGHBORHOOD, MAP_TYPE
-from neighborhoodtrafficflow.figures import neighborhood_map, traffic_flow_map, traffic_flow_chart
+from neighborhoodtrafficflow.figures import neighborhood_map, traffic_flow_map, traffic_flow_series
 
 # Import neighborhood data
 with open('data/neighborhoods.geojson') as json_file:
@@ -62,109 +62,134 @@ APP.layout = html.Div(
                 )
             ]
         ),
-        # Dashboard
+        # Row one
         html.Div(
-            id='dashboard',
+            id='rowOne',
             className='twelve columns',
             children=[
-                # Column 1
+                # Description
                 html.Div(
-                    id='columnOne',
-                    className='six columns',
+                    className='six columns blankContainer',
                     children=[
-                        # Controls
-                        html.Div(
-                            id='controls',
-                            className='prettyContainer',
-                            children=[
-                                html.H6('Select a neighborhood:'),
-                                dcc.Dropdown(
-                                    id='dropdown',
-                                    options=NBHD_OPTIONS,
-                                    value='92'
-                                ),
-                                html.Br(),
-                                html.H6('Select a map type:'),
-                                dcc.RadioItems(
-                                    id='radio',
-                                    options=MAP_OPTIONS,
-                                    value='flow',
-                                    labelStyle={
-                                        'display': 'inline-block',
-                                        'width': '33%'
-                                    }
-                                ),
-                                # Slider
-                                html.Div(
-                                    id='sliderContainer',
-                                    children=[
-                                        html.H6('Select a year:'),
-                                        dcc.Slider(
-                                            id='slider',
-                                            min=2007,
-                                            max=2018,
-                                            marks=YEAR_OPTIONS,
-                                            value=2018
-                                        ),
-                                        html.Br()
-                                    ]
-                                )
-                            ]
+                        html.H5('Description'),
+                        html.P('blah blah blah')
+                    ]
+                ),
+                # Controls
+                html.Div(
+                    id='controls',
+                    className='six columns prettyContainer',
+                    children=[
+                        html.H6('Select a neighborhood:'),
+                        dcc.Dropdown(
+                            id='dropdown',
+                            options=NBHD_OPTIONS,
+                            value='92'
                         ),
-                        # Seattle Neighborhood Map
+                        html.Br(),
+                        html.H6('Select a map type:'),
+                        dcc.RadioItems(
+                            id='radio',
+                            options=MAP_OPTIONS,
+                            value='flow',
+                            labelStyle={
+                                'display': 'inline-block',
+                                'width': '33%'
+                            }
+                        ),
+                        # Slider
                         html.Div(
-                            id='neighborhoodMapContainer',
-                            className='prettyContainer',
+                            id='sliderContainer',
                             children=[
-                                html.H4(
-                                    className='centerTitle',
-                                    children='Seattle Neighborhoods'),
-                                dcc.Graph(
-                                    id='neighborhoodMap',
-                                    figure=neighborhood_map(*NBHD_DATA)
-                                )
+                                html.H6('Select a year:'),
+                                dcc.Slider(
+                                    id='slider',
+                                    min=2007,
+                                    max=2018,
+                                    marks=YEAR_OPTIONS,
+                                    value=2018
+                                ),
+                                html.Br()
                             ]
                         )
                     ]
-                ),
-                # Column 2
+                )
+            ]
+        ),
+        # Row two
+        html.Div(
+            id='rowTwo',
+            className='twelve columns',
+            children=[
+                # Seattle Neighborhood Map
                 html.Div(
-                    id='columnTwo',
-                    className='six columns',
+                    id='neighborhoodMapContainer',
+                    className='six columns prettyContainer',
                     children=[
-                        # Traffic Flow Map
-                        html.Div(
-                            id='trafficFlowMapContainer',
-                            className='prettyContainer',
-                            children=[
-                                html.H4(
-                                    id='mapTitle',
-                                    className='centerTitle',
-                                    children='Neighborhood Roads'
-                                ),
-                                dcc.Graph(
-                                    id='trafficFlowMap',
-                                    figure=traffic_flow_map(
-                                        STREET_DATA)
-                                )
-                            ]
+                        html.H4(
+                            className='centerTitle',
+                            children='Seattle Neighborhoods'),
+                        dcc.Graph(
+                            id='neighborhoodMap',
+                            figure=neighborhood_map(*NBHD_DATA)
+                        )
+                    ]
+                ),
+                # Traffic Flow Map
+                html.Div(
+                    id='trafficFlowMapContainer',
+                    className='six columns prettyContainer',
+                    children=[
+                        html.H4(
+                            id='mapTitle',
+                            className='centerTitle',
+                            children='Neighborhood Roads'
                         ),
-                        # Traffic Flow Chart
-                        html.Div(
-                            id='trafficFlowChartContainer',
-                            className='prettyContainer',
-                            children=[
-                                html.H4(
-                                    id='chartTitle',
-                                    className='centerTitle',
-                                    children='Neighborhood Stats'
-                                ),
-                                dcc.Graph(
-                                    id='trafficFlowChart',
-                                    figure=traffic_flow_chart(
-                                        STREET_DATA)
-                                )
-                            ]
+                        dcc.Graph(
+                            id='trafficFlowMap',
+                            figure=traffic_flow_map(
+                                STREET_DATA)
+                        )
+                    ]
+                )
+            ]
+        ),
+        # Row three
+        html.Div(
+            id='rowThree',
+            className='twelve columns',
+            children=[
+                # Traffic Flow Series
+                html.Div(
+                    id='trafficFlowSeriesContainer',
+                    className='six columns prettyContainer',
+                    children=[
+                        html.H4(
+                            id='seriesTitle',
+                            className='centerTitle',
+                            children='Neighborhood Series'
+                        ),
+                        dcc.Graph(
+                            id='trafficFlowSeries',
+                            figure=traffic_flow_series(
+                                STREET_DATA)
+                        )
+                    ]
+                ),
+                # Traffic Flow Stats
+                html.Div(
+                    id='trafficFlowStatsContainer',
+                    className='six columns prettyContainer',
+                    children=[
+                        html.H4(
+                            id='statsTitle',
+                            className='centerTitle',
+                            children='Neighborhood Stats'
+                        ),
+                        dcc.Graph(
+                            id='trafficFlowStats',
+                            figure=traffic_flow_series(
+                                STREET_DATA)
                         )
                     ]
                 )
@@ -249,26 +274,34 @@ def update_controls(value):
     return {'display': 'none'}
 
 
-
-# Update traffic chart title after dropdown selection
+# Update traffic flow series title after dropdown selection
 @APP.callback(
-    Output('chartTitle', 'children'),
+    Output('seriesTitle', 'children'),
     [Input('dropdown', 'value')]
 )
-def update_traffic_chart_title(value):
-    """Update traffic chart title"""
+def update_traffic_series_title(value):
+    """Update traffic flow series title"""
+    return NEIGHBORHOOD[value] + ' Series'
+
+
+# Update traffic flow series after dropdown selection
+@APP.callback(
+    Output('trafficFlowSeries', 'figure'),
+    [Input('dropdown', 'value')]
+)
+def update_traffic_flow_series(neighborhood):
+    """Update traffic flow series"""
+    return traffic_flow_series(STREET_DATA, neighborhood)
+
+
+# Update stats title after dropdown selection
+@APP.callback(
+    Output('statsTitle', 'children'),
+    [Input('dropdown', 'value')]
+)
+def update_stats_title(value):
+    """Update stats title"""
     return NEIGHBORHOOD[value] + ' Stats'
-
-
-# Update chart after dropdown selection
-@APP.callback(
-    Output('trafficFlowChart', 'figure'),
-    [Input('dropdown', 'value')]
-)
-def update_traffic_flow_chart(neighborhood):
-    """Update traffic flow chart"""
-    return traffic_flow_chart(STREET_DATA, neighborhood)
-
 
 # Update dropdown after neighborhood map selection
 @APP.callback(
