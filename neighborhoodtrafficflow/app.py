@@ -4,7 +4,6 @@ Interactive dashboard to explore traffic flow, speed limits, and road
 types in Seattle neighborhoods. To use, run `python app.py` in the
 terminal and copy/paste the URL into your browers.
 """
-import json
 import pickle
 
 import dash
@@ -13,22 +12,27 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import pandas as pd
 
-from neighborhoodtrafficflow.controls import NEIGHBORHOOD, MAP_TYPE
-from neighborhoodtrafficflow.figures import neighborhood_map, traffic_flow_map, traffic_flow_series, traffic_flow_stats
+from neighborhoodtrafficflow.figures import (neighborhood_map,
+                                             traffic_flow_map,
+                                             traffic_flow_series,
+                                             traffic_flow_stats)
 
 # Import neighborhood data
 with open('data/cleaned/nbhd_data.pkl', 'rb') as pickle_file:
-        NBHD_DATA = pickle.load(pickle_file)
+    NBHD_DATA = pickle.load(pickle_file)
+NAMES = NBHD_DATA[3]
 
 # Import street data
 STREET_DATA = pd.read_pickle('data/street_data.pkl')
 
-# Create control options
-NBHD_OPTIONS = [{'label': NEIGHBORHOOD[regionid], 'value': regionid}
-                for regionid in NEIGHBORHOOD]
-MAP_OPTIONS = [{'label': MAP_TYPE[0][idx], 'value': idx}
-               for idx in MAP_TYPE[0]]
+# Create control options for dropdown, radio, and slider
+NBHD_OPTIONS = [{'label': NAMES[idx], 'value': idx}
+                for idx in range(len(NAMES))]
+MAP_OPTIONS = [{'label': 'Traffic Flow', 'value': 'flow'},
+               {'label': 'Speed Limit', 'value': 'speed'},
+               {'label': 'Road Type', 'value': 'road'}]
 YEAR_OPTIONS = {year: str(year) for year in range(2007, 2019)}
+
 
 # Initialize dashboard
 APP = dash.Dash(__name__)
@@ -77,7 +81,7 @@ APP.layout = html.Div(
                         dcc.Dropdown(
                             id='dropdown',
                             options=NBHD_OPTIONS,
-                            value='92'
+                            value=92
                         ),
                         html.Br(),
                         html.H6('Select a map type:'),
@@ -222,7 +226,7 @@ def update_neighborhood_map(neighborhood):
 )
 def update_traffic_map_title(value):
     """Update traffic map title"""
-    return NEIGHBORHOOD[value] + ' Roads'
+    return NAMES[value] + ' Roads'
 
 
 # Update traffic flow map after dropdown, radio, or slider selection
@@ -262,6 +266,7 @@ def update_traffic_flow_map(neighborhood, map_type, year):
     [Input('radio', 'value')]
 )
 def update_controls(value):
+    """docstring"""
     if value == 'flow':
         return {'display': 'inline'}
     return {'display': 'none'}
@@ -274,7 +279,7 @@ def update_controls(value):
 )
 def update_traffic_series_title(value):
     """Update traffic flow series title"""
-    return NEIGHBORHOOD[value] + ' Series'
+    return NAMES[value] + ' Series'
 
 
 # Update traffic flow series after dropdown selection
@@ -294,7 +299,7 @@ def update_traffic_flow_series(neighborhood):
 )
 def update_stats_title(value):
     """Update stats title"""
-    return NEIGHBORHOOD[value] + ' Stats'
+    return NAMES[value] + ' Stats'
 
 
 # Update traffic flow stats after dropdown selection
@@ -329,9 +334,9 @@ def update_dropdown(selected_data):
         Index of selected neighborhood (0-102).
     """
     try:
-        return str(selected_data['points'][0]['pointIndex'])
+        return selected_data['points'][0]['pointIndex']
     except TypeError:
-        return '92'
+        return 92
 
 
 # Run dashboard

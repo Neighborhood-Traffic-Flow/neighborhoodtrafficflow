@@ -2,14 +2,18 @@
 import os
 import pickle
 
+import pandas as pd
 import pytest
 
-from ..data.neighborhood_data import prep_map_data
+from ..data.neighborhood_data import prep_map_data, prep_map_info
 
 # File paths
 JSON_PATH = 'neighborhoodtrafficflow/data/raw/' \
-        'zillow-neighborhoods/zillow-neighborhoods.geojson'
+            'zillow-neighborhoods/zillow-neighborhoods.geojson'
+SHP_PATH = 'neighborhoodtrafficflow/data/raw/' \
+           'zillow-neighborhoods/zillow-neighborhoods.shp'
 DATA_PATH = 'nbhd_data.pkl'
+INFO_PATH = 'nbhd_info.csv'
 
 
 def test_prep_data_1():
@@ -41,7 +45,7 @@ def test_prep_map_data_2():
 
 
 def test_prep_map_data_3():
-    """Check format of new data file"""
+    """Check lenght of new data file"""
 
     # Create new data file
     prep_map_data(JSON_PATH, DATA_PATH)
@@ -53,15 +57,42 @@ def test_prep_map_data_3():
     # Check data length
     assert len(nbhd_data) == 4
 
+    # Delete new data file
+    os.remove(DATA_PATH)
+
+
+def test_prep_map_data_4():
+    """Check column types of new file"""
+
+    # Create new data file
+    prep_map_data(JSON_PATH, DATA_PATH)
+
+    # Load new data file
+    with open(DATA_PATH, 'rb') as pickle_file:
+        nbhd_data = pickle.load(pickle_file)
+
     # Check entry types
-    assert isinstance(nbhd_data[0], int)
-    assert isinstance(nbhd_data[1], dict)
-    assert isinstance(nbhd_data[2], list)
-    assert isinstance(nbhd_data[3], list)
+    correct_types = [int, dict, list, list]
+    for i in range(4):
+        assert isinstance(nbhd_data[i], correct_types[i])
 
     # Check list types
     assert all(isinstance(entry, str) for entry in nbhd_data[2])
     assert all(isinstance(entry, str) for entry in nbhd_data[3])
+
+    # Delete new data file
+    os.remove(DATA_PATH)
+
+
+def test_prep_map_data_5():
+    """Check some entries of new data file"""
+
+    # Create new data file
+    prep_map_data(JSON_PATH, DATA_PATH)
+
+    # Load new data file
+    with open(DATA_PATH, 'rb') as pickle_file:
+        nbhd_data = pickle.load(pickle_file)
 
     # Check some data
     assert nbhd_data[0] == 103
@@ -71,3 +102,105 @@ def test_prep_map_data_3():
 
     # Delete new data file
     os.remove(DATA_PATH)
+
+
+def test_prep_info_1():
+    """Check that function throws an error if no file at shp_path"""
+
+    # Bad file path
+    shp_path_bad = SHP_PATH + 'bad'
+
+    # Call function
+    with pytest.raises(Exception):
+        assert prep_map_data(shp_path_bad, INFO_PATH)
+
+
+def test_prep_map_info_2():
+    """Check that function creates new data file if none exists"""
+
+    # Delete old data file if exists
+    if os.path.exists(INFO_PATH):
+        os.remove(INFO_PATH)
+
+    # Create new data file
+    prep_map_info(SHP_PATH, INFO_PATH)
+
+    # Check that new data file created
+    assert os.path.exists(INFO_PATH)
+
+    # Delete new data file
+    os.remove(INFO_PATH)
+
+
+def test_prep_map_info_3():
+    """Check length of new data file"""
+
+    # Create new data file
+    prep_map_info(SHP_PATH, INFO_PATH)
+
+    # Load new data file
+    nbhd_info = pd.read_csv(INFO_PATH)
+
+    # Check data length
+    assert len(nbhd_info) == 103
+
+    # Delete new data file
+    os.remove(INFO_PATH)
+
+
+def test_prep_map_info_4():
+    """Check column types of new data file"""
+
+    # Create new data file
+    prep_map_info(SHP_PATH, INFO_PATH)
+
+    # Load new data file
+    nbhd_info = pd.read_csv(INFO_PATH)
+
+    # Check column types
+    types = nbhd_info.dtypes.to_list()
+    for i in range(7):
+        if i == 0:
+            assert types[i] == object
+        else:
+            assert types[i] == float
+
+    # Delete new data file
+    os.remove(INFO_PATH)
+
+
+def test_prep_map_info_5():
+    """Check column names of new data file"""
+
+    # Create new data file
+    prep_map_info(SHP_PATH, INFO_PATH)
+
+    # Load new data file
+    nbhd_info = pd.read_csv(INFO_PATH)
+
+    # Check column names
+    columns = nbhd_info.columns.to_list()
+    assert columns == ['name', 'minLon', 'midLon', 'maxLon', 'minLat',
+                       'midLat', 'maxLat']
+
+    # Delete new data file
+    os.remove(INFO_PATH)
+
+
+def test_prep_map_info_6():
+    """Check some entries of new data file"""
+
+    # Create new data file
+    prep_map_info(SHP_PATH, INFO_PATH)
+
+    # Load new data file
+    nbhd_info = pd.read_csv(INFO_PATH)
+
+    # Check some data
+    row_one = ['West Woodland', -122.37648625599986,
+               -122.36866107043352, -122.36075799399993,
+               47.65533747300008, 47.66757206792284, 47.67599213900007]
+    assert nbhd_info.loc[0].to_list() == row_one
+
+    # Delete new data file
+    os.remove(INFO_PATH)

@@ -1,7 +1,11 @@
 """Load Seattle neighborhoods datasets and reformat for dashboard."""
+import csv
 import json
 import os
 import pickle
+
+import geopandas as gpd
+from shapely.geometry import Polygon, MultiPolygon
 
 
 def prep_map_data(json_path, data_path):
@@ -9,7 +13,7 @@ def prep_map_data(json_path, data_path):
 
     Load, reformat, and save neighborhood map dataset into lists
     required for Plotly choropleth map. Raises FileNotFoundError if
-    file at json_path does not exist, and overwrites file at data_path
+    file at json_path does not exist and overwrites file at data_path
     if already exists.
 
     Parameters
@@ -49,6 +53,55 @@ def prep_map_data(json_path, data_path):
         pickle.dump(nbhd_data, pickle_file)
 
 
+def prep_map_info(shp_path, info_path):
+    """Prepare neighborhood info dataset
+
+    Load, reformat, and save neighborhood info dataset to be used by
+    various functions in figures.py module. Raises FileNotFoundError if
+    file at shp_path does not exist and overwrites file at info_path if
+    already exists.
+
+    Parameters
+    ----------
+    shp_path : str
+        Path to neighborhood shp file.
+    info_path : str
+        Path to neighborhood csv file.
+
+    Returns
+    -------
+    out : None
+
+    Raises
+    ------
+    FileNotFoundError : No such file or directory
+        If file at shp_path does not exist.
+    """
+    # Import neighborhood shape file
+    nbhd_json = gpd.read_file(shp_path)
+
+    # Read shape file and write csv file
+    with open(info_path, 'w+') as csv_file:
+        file_writer = csv.writer(csv_file, delimiter=',')
+        file_writer.writerow(['name', 'minLon', 'midLon', 'maxLon', 'minLat',
+                              'midLat', 'maxLat'])
+
+        # Extract names, centroids, and bounds
+        for _, row in nbhd_json.iterrows():
+
+            # Get polygon
+            try:
+                polygon = Polygon(row['geometry'])
+            except NotImplementedError:
+                polygon = MultiPolygon(row['geometry'])
+            bounds = polygon.bounds
+
+            # Write row
+            file_writer.writerow([row['name'], bounds[0], polygon.centroid.x,
+                                  bounds[2], bounds[1], polygon.centroid.y,
+                                  bounds[3]])
+
+
 if __name__ == '__main__':
     # Create directory for cleaned data if none exists
     if not os.path.exists('cleaned'):
@@ -56,7 +109,10 @@ if __name__ == '__main__':
 
     # Paths to raw and cleaned datasets
     JSON_PATH = 'raw/zillow-neighborhoods/zillow-neighborhoods.geojson'
+    SHP_PATH = 'raw/zillow-neighborhoods/zillow-neighborhoods.shp'
     DATA_PATH = 'cleaned/nbhd_data.pkl'
+    INFO_PATH = 'cleaned/nbhd_info.csv'
 
     # Prepare data
     prep_map_data(JSON_PATH, DATA_PATH)
+    prep_map_info(SHP_PATH, INFO_PATH)
