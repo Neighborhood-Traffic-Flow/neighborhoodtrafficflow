@@ -13,7 +13,7 @@ from dash.dependencies import Input, Output
 import pandas as pd
 
 from neighborhoodtrafficflow.controls import NEIGHBORHOOD, MAP_TYPE
-from neighborhoodtrafficflow.figures import neighborhood_map, traffic_flow_map, traffic_flow_series
+from neighborhoodtrafficflow.figures import neighborhood_map, traffic_flow_map, traffic_flow_series, traffic_flow_stats
 
 # Import neighborhood data
 with open('data/neighborhoods.geojson') as json_file:
@@ -188,7 +188,7 @@ APP.layout = html.Div(
                         ),
                         dcc.Graph(
                             id='trafficFlowStats',
-                            figure=traffic_flow_series(
+                            figure=traffic_flow_stats(
                                 STREET_DATA)
                         )
                     ]
@@ -302,6 +302,17 @@ def update_traffic_flow_series(neighborhood):
 def update_stats_title(value):
     """Update stats title"""
     return NEIGHBORHOOD[value] + ' Stats'
+
+
+# Update traffic flow stats after dropdown selection
+@APP.callback(
+    Output('trafficFlowStats', 'figure'),
+    [Input('dropdown', 'value')]
+)
+def update_traffic_flow_stats(neighborhood):
+    """Update traffic flow stats"""
+    return traffic_flow_stats(STREET_DATA, neighborhood)
+
 
 # Update dropdown after neighborhood map selection
 @APP.callback(

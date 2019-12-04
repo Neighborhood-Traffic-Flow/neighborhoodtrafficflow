@@ -227,7 +227,6 @@ def traffic_flow_map(data_frame, neighborhood='92',
             # 'width': dimensions[0],
             # 'height': dimensions[1],
             'title': info[2],
-            #'plot_bgcolor': '#F9F9F9',
             'paper_bgcolor': '#F9F9F9',
             'hovermode': 'closest',
             'clickmode': 'none',
@@ -248,6 +247,40 @@ def traffic_flow_map(data_frame, neighborhood='92',
     return figure
 
 
+def traffic_flow_stats(data_frame, neighborhood=92):
+    """Create traffic flow stats"""
+    # Filter DataFrame by neighborhood
+    nbhd_idx = data_frame.nbhd.apply(
+        lambda nbhd_list: int(neighborhood) in nbhd_list)
+    data_frame = data_frame[nbhd_idx]
+    data = []
+    for year in range(2007,2019):
+        y = data_frame[str(year)].to_list()
+        trace = {
+            'type': 'box',
+            'name': year,
+            'x': year,
+            'y': y,
+            'showlegend': False
+        }
+        data.append(trace)
+    figure = {
+        'data': data,
+        'layout': {
+            'paper_bgcolor': '#F9F9F9',
+            'xaxis': {
+                'linecolor': 'black',
+                'mirror': True
+            },
+            'yaxis': {
+                'linecolor': 'black',
+                'mirror': True
+            },
+        }
+    }
+    return figure
+
+
 def traffic_flow_series(data_frame, neighborhood=92):
     """Create traffic flow series"""
     data = []
@@ -257,8 +290,15 @@ def traffic_flow_series(data_frame, neighborhood=92):
     figure = {
         'data': data,
         'layout': {
-            'plot_bgcolor': '#F9F9F9',
             'paper_bgcolor': '#F9F9F9',
+            'xaxis': {
+                'linecolor': 'black',
+                'mirror': True
+            },
+            'yaxis': {
+                'linecolor': 'black',
+                'mirror': True
+            },
         }
     }
     return figure
