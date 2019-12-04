@@ -3,7 +3,7 @@
 # Neighborhood Traffic Flow
 
 <!--- These are examples. See https://shields.io for others or to customize this set of shields. You might want to include dependencies, project status and licence info here --->
-[![GitHub contributors](https://img.shields.io/github/contributors/Neighborhood-Traffic-Flow/neighborhood-traffic-flow)](#contributers)
+[![GitHub contributors](https://img.shields.io/github/contributors/Neighborhood-Traffic-Flow/neighborhood-traffic-flow)](#contributors)
 [![GitHub license](https://img.shields.io/github/license/Neighborhood-Traffic-Flow/neighborhood-traffic-flow)](./LICENSE)
 [![Build Status](https://travis-ci.org/Neighborhood-Traffic-Flow/neighborhoodtrafficflow.svg?branch=master)](https://travis-ci.org/Neighborhood-Traffic-Flow/neighborhoodtrafficflow)
 
