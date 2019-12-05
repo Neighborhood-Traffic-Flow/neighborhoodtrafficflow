@@ -1,8 +1,4 @@
-"""
-Functions to figures shown in the dashboard
-1. map of Seattle neighborhoods
-2. traffic flow map
-"""
+"""Functions corresponding figures shown in the dashboard"""
 import math
 from pathlib import Path
 
@@ -23,8 +19,9 @@ ROAD_TYPE = {
 
 # Neighborhood names, centroids, and bounds
 CWD = Path(__file__).parent
-INFO_PATH = CWD/'data/cleaned/nbhd_info.csv'
+INFO_PATH = CWD / 'data/cleaned/nbhd_info.csv'
 NBHD_INFO = pd.read_csv(INFO_PATH)
+
 
 def matplotlib_to_plotly(cmap, entries):
     """Convert matplotlib colormap to plotly format
@@ -232,7 +229,7 @@ def traffic_flow_map(data_frame, neighborhood=92,
         data.append(trace)
 
     # Define plotly figure
-    #dimensions = get_dimensions(neighborhood)
+    # dimensions = get_dimensions(neighborhood)
     figure = {
         'data': data,
         'layout': {

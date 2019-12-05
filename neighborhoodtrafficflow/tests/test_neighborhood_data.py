@@ -11,10 +11,10 @@ from neighborhoodtrafficflow.data.neighborhood_data import \
 
 # File paths
 CWD = Path(__file__).parent
-JSON_PATH = CWD/'../data/raw/zillow-neighborhoods/' \
-            'zillow-neighborhoods.geojson'
-SHP_PATH = CWD/'../data/raw/zillow-neighborhoods/' \
-           'zillow-neighborhoods.shp'
+JSON_PATH = CWD / '../data/raw/zillow-neighborhoods/' \
+    'zillow-neighborhoods.geojson'
+SHP_PATH = CWD / '../data/raw/zillow-neighborhoods/' \
+    'zillow-neighborhoods.shp'
 DATA_PATH = 'nbhd_data.pkl'
 INFO_PATH = 'nbhd_info.csv'
 

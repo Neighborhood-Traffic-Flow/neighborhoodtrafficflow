@@ -7,19 +7,19 @@ terminal and copy/paste the URL into your browers.
 from pathlib import Path
 import pickle
 
+import pandas as pd
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-import pandas as pd
 
 from neighborhoodtrafficflow.figures import neighborhood_map, \
     traffic_flow_map, traffic_flow_series, traffic_flow_stats
 
 # Data file paths
 CWD = Path(__file__).parent
-NBHD_PATH = CWD/'data/cleaned/nbhd_data.pkl'
-STREET_PATH = CWD/'data/street_data.pkl'
+NBHD_PATH = CWD / 'data/cleaned/nbhd_data.pkl'
+STREET_PATH = CWD / 'data/street_data.pkl'
 
 # Import neighborhood data
 with open(NBHD_PATH, 'rb') as pickle_file:
@@ -56,7 +56,8 @@ APP.layout = html.Div(
                     children=[
                         'Final Project for ',
                         html.A(
-                            'CSE 583: Software Engineering for Data Scientists',
+                            'CSE 583: Software Engineering for\
+                             Data Scientists',
                             href='https://uwseds.github.io/'
                         )
                     ]

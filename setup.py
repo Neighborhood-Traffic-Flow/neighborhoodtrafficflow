@@ -3,11 +3,11 @@ from setuptools import setup, find_packages
 
 PACKAGES = find_packages()
 
-opts = dict(
+OPTS = dict(
     name='neighborhoodtrafficflow',
-    description='An interactive dashboard to explore traffic flow trends ' \
-        'in Seattle neighborhoods.',
-    url='https://github.com/Neighborhood-Traffic-Flow/' \
+    description='An interactive dashboard to explore traffic flow trends '
+    'in Seattle neighborhoods.',
+    url='https://github.com/Neighborhood-Traffic-Flow/'
         'neighborhood-traffic-flow',
     license='MIT',
     author='Neighborhood-Traffic-Flow',
@@ -17,4 +17,4 @@ opts = dict(
 
 
 if __name__ == '__main__':
-    setup(**opts)
+    setup(**OPTS)
