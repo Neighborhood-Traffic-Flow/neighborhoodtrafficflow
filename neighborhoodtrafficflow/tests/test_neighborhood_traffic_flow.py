@@ -1,15 +1,15 @@
 """Test module for functions in figures.py"""
-from pathlib import Path
 import numpy as np
 
 from neighborhoodtrafficflow.figures import (matplotlib_to_plotly,
                                              neighborhood_map)
 import pytest
 import pickle
+import os
 
-# Data file paths
-CWD = Path(__file__).parent
-NBHD_PATH = CWD / '.data/cleaned/nbhd_data.pkl'
+NBHD_PATH = os.path.abspath(os.path.join(os.path.dirname("__file__"),
+                                         '../data/cleaned/nbhd_data.pkl'))
+
 
 # Import neighborhood data
 with open(NBHD_PATH, 'rb') as pickle_file:
