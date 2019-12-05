@@ -9,7 +9,7 @@ from shapely.geometry import Polygon, MultiPolygon
 
 
 def prep_map_data(json_path, data_path):
-    """Prepare neighborhood map dataset
+    """Prepare neighborhood map dataset.
 
     Load, reformat, and save neighborhood map dataset into lists
     required for Plotly choropleth map. Raises FileNotFoundError if
@@ -54,7 +54,7 @@ def prep_map_data(json_path, data_path):
 
 
 def prep_map_info(shp_path, info_path):
-    """Prepare neighborhood info dataset
+    """Prepare neighborhood info dataset.
 
     Load, reformat, and save neighborhood info dataset to be used by
     various functions in figures.py module. Raises FileNotFoundError if
