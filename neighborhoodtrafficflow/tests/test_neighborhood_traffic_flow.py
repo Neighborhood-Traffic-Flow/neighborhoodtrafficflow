@@ -1,14 +1,16 @@
 """Test module for functions in figures.py"""
-from pathlib import Path
+import os
+import pickle
 import numpy as np
+import pytest
+
 from neighborhoodtrafficflow.figures import (matplotlib_to_plotly,
                                              neighborhood_map)
-import pytest
-import pickle
 
-# Data file paths
-CWD = Path(__file__).parent
-NBHD_PATH = CWD / '..data/cleaned/nbhd_data.pkl'
+NBHD_PATH = os.path.abspath(os.path.join(
+    os.path.dirname("__file__"),
+    'neighborhoodtrafficflow/data/cleaned/nbhd_data.pkl'))
+
 
 # Import neighborhood data
 with open(NBHD_PATH, 'rb') as pickle_file:
@@ -30,6 +32,6 @@ def test_neighborhoods_neighborhood_map():
 def test_parameter_types_neighborhood_map():
     """Ensure function breaks if given wrong type"""
     nbhd_data = NBHD_DATA.copy()
-    nbhd_data[0] = 103
+    nbhd_data[0] = "103"
     with pytest.raises(TypeError):
         neighborhood_map(*nbhd_data)
