@@ -1,10 +1,15 @@
 """Load Seattle street datasets and reformat for dashboard."""
 import os
+from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
 import numpy as np
 from shapely.geometry import Point, Polygon, MultiPolygon
+
+# File paths
+CWD = Path(__file__).parent
+STREET_PATH = CWD/'raw/Seattle_Streets/Seattle_Streets.shp'
 
 # Mapping from dataset to street column name
 STREET_NAMES = {
@@ -89,8 +94,8 @@ def get_neighborhood(lon, lat, idx2poly):
     Returns
     -------
     nbhd : list
-        List of indices (int) of all neighborhoods that the street segment
-        passes through.
+        List of indices (int) of all neighborhoods that the street
+        segment passes through.
     """
     point_list = [Point(lon[i], lat[i]) for i in range(len(lat))]
     nbhd_list = []
@@ -100,9 +105,35 @@ def get_neighborhood(lon, lat, idx2poly):
     return nbhd_list
 
 
-def get_flow_data():
-    """docstring"""
+def get_flow_path(year):
+    """Format path to current traffic flow dataset."""
+    name = '%d_Traffic_Flow_Counts' % year
+    path = 'raw/' + name + '/' + name + '.shp'
+    return CWD/path
 
+
+def get_flow_data():
+    """Load and format traffic flow datasets.
+
+    Load Traffic Flow Count datasets for 2007-2018 and populate
+    mappings between FLOWSEGIDs and COMPKEYS used to merge datasets:
+    - Seattle Streets has unique COMPKEY (int)
+    - 2007-2014 has unique COMPKEY (int)
+    - 2015-2016 has unique FLOWSEGID (float)
+    - 2017-2018 has unique FLOWSEGID (int) and list of COMPKEYS (str)
+
+    Returns
+    -------
+    flow2key : dict
+        Mapping from FLOWSEGID (int) to COMPKEY (str).
+        COMPKEY string may contain a list of COMPKEYS.
+    key2flow : dict
+        Mapping from COMPKEY (str) to FLOWSEGID (int).
+    df_list :
+        List of reformatted traffic flow DataFrames.
+    year_list :
+        Years corresponding to the DataFrames in df_list.
+    """
     # Initialize structures
     flow2key = {}
     key2flow = {}
@@ -112,20 +143,17 @@ def get_flow_data():
 
     # Iterate backwards through traffic flow datasets
     for year in range(2018, 2006, -1):
-        df = gpd.read_file('raw/%d_Traffic_Flow_Counts/%d_Traffic_Flow_Counts.shp' % (year, year))
+        df = gpd.read_file(get_flow_path(year))
         for idx, row in df.iterrows():
 
-            # This function is overkill with the conditionals and
-            # types, but I don't feel like fixing it right now.
+            # pylint has a lot of complaints about this function, since
+            # it is a bit overkill in terms of conditionals and type
+            # casting, etc., but I'm prioritizing other things for now.
 
             if year in [2017, 2018]:
 
-                # FLOWSEGID = int
-                # COMPKEY = str
-
                 # All rows have a FLOWSEGID
-
-                # 14 rows missing a COMPKEY, same for both years
+                # 14 rows missing a COMPKEY, same roads for both years
                 if row['COMPKEY'] is None:
                     if row['FLOWSEGID'] not in flow2key:
                         df.at[idx, 'COMPKEY'] = str(new_compkey)
@@ -134,36 +162,35 @@ def get_flow_data():
                         new_compkey += 1
                     else:
                         df.at[idx, 'COMPKEY'] = flow2key[row['FLOWSEGID']]
-                # COMPKEYS can be lists
+                # COMPKEYs can be lists
                 else:
                     keys = row['COMPKEY'].split(',')
                     for key in keys:
                         if key not in key2flow:
                             key2flow[key] = row['FLOWSEGID']
-                
-                if row['FLOWSEGID'] not in flow2key:
-                    flow2key[row['FLOWSEGID']] = df.loc[idx, 'COMPKEY']
+                    if row['FLOWSEGID'] not in flow2key:
+                        flow2key[row['FLOWSEGID']] = row['COMPKEY']
+                    # 2017 has an additional COMPKEY for this FLOWSEGID
+                    if row['FLOWSEGID'] == 604:
+                        flow2key[row['FLOWSEGID']] = row['COMPKEY']
 
             if year in [2015, 2016]:
-
-                # FLOWSEGID = float
 
                 # One row missing a FLOWSEGID, same for both years
                 if np.isnan(row['FLOWSEGID']):
                     df.at[idx, 'FLOWSEGID'] = 1e6
-                
+                    row['FLOWSEGID'] = 1e6
+
                 # No rows have a COMPKEY
-                if np.isnan(row['FLOWSEGID']) or (int(row['FLOWSEGID']) not in flow2key): 
+                if int(row['FLOWSEGID']) not in flow2key:
                     df.at[idx, 'COMPKEY'] = str(new_compkey)
-                    flow2key[int(df.loc[idx, 'FLOWSEGID'])] = str(new_compkey)
-                    key2flow[str(new_compkey)] = int(df.loc[idx, 'FLOWSEGID'])
+                    flow2key[int(row['FLOWSEGID'])] = str(new_compkey)
+                    key2flow[str(new_compkey)] = int(row['FLOWSEGID'])
                     new_compkey += 1
                 else:
                     df.at[idx, 'COMPKEY'] = flow2key[int(row['FLOWSEGID'])]
 
             if year < 2015:
-
-                # COMPKEY = int
 
                 # All rows have a unique COMPKEY
                 if str(row['COMPKEY']) not in key2flow:
@@ -172,7 +199,13 @@ def get_flow_data():
                 else:
                     df.at[idx, 'FLOWSEGID'] = key2flow[str(row['COMPKEY'])]
 
-        df = df.astype({'COMPKEY': 'str', 'FLOWSEGID': 'int64'})
+        # Reformate DataFrame and store in list
+        df = df[['COMPKEY', 'FLOWSEGID',
+                FLOW_NAMES[year], STREET_NAMES[year]]]
+        df = df.rename(columns={FLOW_NAMES[year]: 'flow',
+                       STREET_NAMES[year]: 'name'})
+        df = df.astype({'COMPKEY': 'str', 'FLOWSEGID': 'int64',
+                        'flow': 'float'})
         df_list.append(df)
         year_list.append(year)
 
@@ -221,7 +254,7 @@ def get_street_data(df, df_name, idx2poly, key_list, name_list,
                 else:
                     speed_list.append(None)
                     road_list.append(None)
-            
+
     print('Added %d road segments' % count)
 
 
@@ -231,7 +264,8 @@ if __name__ == '__main__':
         os.mkdir('cleaned')
 
     # Get neighborhood polygons
-    IDX2POLY = get_polygons('raw/zillow-neighborhoods/zillow-neighborhoods.shp')
+    shp_path = 'raw/zillow-neighborhoods/zillow-neighborhoods.shp'
+    IDX2POLY = get_polygons(shp_path)
 
     # Get mapping from FLOWSEGID to COMPKEY
     FLOW2KEY, KEY2FLOW, DF_LIST, YEAR_LIST = get_flow_data()
@@ -246,16 +280,16 @@ if __name__ == '__main__':
     nbhd_list = []
 
     # Get street data from Seattle Streets dataset
-    df = gpd.read_file('raw/Seattle_Streets/Seattle_Streets.shp')
+    df = gpd.read_file(STREET_PATH)
     get_street_data(df, 'street', IDX2POLY, key_list, name_list,
-        lon_list, lat_list, speed_list, road_list, nbhd_list)
+                    lon_list, lat_list, speed_list, road_list, nbhd_list)
     print(len(key_list))
 
     # Get street data from Traffic Flow Counts datasets
     for i in range(len(DF_LIST)-1, -1, -1):
         get_street_data(DF_LIST[i], YEAR_LIST[i], IDX2POLY, key_list,
-            name_list, lon_list, lat_list, speed_list, road_list,
-            nbhd_list)
+                        name_list, lon_list, lat_list, speed_list, road_list,
+                        nbhd_list)
         print(len(key_list))
 
     # Create initial DataFrame
@@ -275,14 +309,3 @@ if __name__ == '__main__':
 
     # Write add_flow_data()
     # Save dataframe
-
-
-    
-    
-
-
-
-
-
-
-

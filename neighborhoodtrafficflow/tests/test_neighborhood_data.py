@@ -45,7 +45,7 @@ def test_prep_map_data_2():
 
 
 def test_prep_map_data_3():
-    """Check lenght of new data file."""
+    """Check length of new data file."""
 
     # Create new data file
     prep_map_data(JSON_PATH, DATA_PATH)
