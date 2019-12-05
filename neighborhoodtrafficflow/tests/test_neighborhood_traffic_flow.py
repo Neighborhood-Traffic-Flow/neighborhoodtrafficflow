@@ -7,8 +7,9 @@ import pytest
 import pickle
 import os
 
-NBHD_PATH = os.path.abspath(os.path.join(os.path.dirname("__file__"),
-                                         'neighborhoodtrafficflow/data/cleaned/nbhd_data.pkl'))
+NBHD_PATH = os.path.abspath(os.path.join(
+    os.path.dirname("__file__"),
+    'neighborhoodtrafficflow/data/cleaned/nbhd_data.pkl'))
 
 
 # Import neighborhood data
@@ -31,6 +32,6 @@ def test_neighborhoods_neighborhood_map():
 def test_parameter_types_neighborhood_map():
     """Ensure function breaks if given wrong type"""
     nbhd_data = NBHD_DATA.copy()
-    nbhd_data[0] = 103
+    nbhd_data[0] = "103"
     with pytest.raises(TypeError):
         neighborhood_map(*nbhd_data)
