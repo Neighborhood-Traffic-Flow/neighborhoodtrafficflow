@@ -9,7 +9,7 @@ import pickle
 
 # Data file paths
 CWD = Path(__file__).parent
-NBHD_PATH = CWD / '..data/cleaned/nbhd_data.pkl'
+NBHD_PATH = CWD / '.data/cleaned/nbhd_data.pkl'
 
 # Import neighborhood data
 with open(NBHD_PATH, 'rb') as pickle_file:
