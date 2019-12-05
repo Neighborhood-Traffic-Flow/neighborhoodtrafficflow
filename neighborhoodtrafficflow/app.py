@@ -4,39 +4,39 @@ Interactive dashboard to explore traffic flow, speed limits, and road
 types in Seattle neighborhoods. To use, run `python app.py` in the
 terminal and copy/paste the URL into your browers.
 """
-import json
+from pathlib import Path
+import pickle
 
 import pandas as pd
-import importlib
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from neighborhoodtrafficflow.controls import NEIGHBORHOOD, MAP_TYPE
-from neighborhoodtrafficflow.figures import neighborhood_map, traffic_flow_map, traffic_flow_chart
+from neighborhoodtrafficflow.figures import neighborhood_map, \
+    traffic_flow_map, traffic_flow_series, traffic_flow_stats
+
+# Data file paths
+CWD = Path(__file__).parent
+NBHD_PATH = CWD / 'data/cleaned/nbhd_data.pkl'
+STREET_PATH = CWD / 'data/street_data.pkl'
 
 # Import neighborhood data
-with open('data/neighborhoods.geojson') as json_file:
-    NBHD_JSON = json.load(json_file)
-for feature in NBHD_JSON['features']:
-    feature['id'] = feature['properties']['regionid']
-NUM = len(NBHD_JSON['features'])
-REGION_IDS = [feature['properties']['regionid']
-              for feature in NBHD_JSON['features']]
-NAMES = [feature['properties']['name']
-         for feature in NBHD_JSON['features']]
-NBHD_DATA = [NUM, NBHD_JSON, REGION_IDS, NAMES]
+with open(NBHD_PATH, 'rb') as pickle_file:
+    NBHD_DATA = pickle.load(pickle_file)
+NAMES = NBHD_DATA[3]
 
 # Import street data
-STREET_DATA = pd.read_pickle('data/street_data.pkl')
+STREET_DATA = pd.read_pickle(STREET_PATH)
 
-# Create control options
-NBHD_OPTIONS = [{'label': NEIGHBORHOOD[regionid], 'value': regionid}
-                for regionid in NEIGHBORHOOD]
-MAP_OPTIONS = [{'label': MAP_TYPE[0][idx], 'value': idx}
-               for idx in MAP_TYPE[0]]
+# Create control options for dropdown, radio, and slider
+NBHD_OPTIONS = [{'label': NAMES[idx], 'value': idx}
+                for idx in range(len(NAMES))]
+MAP_OPTIONS = [{'label': 'Traffic Flow', 'value': 'flow'},
+               {'label': 'Speed Limit', 'value': 'speed'},
+               {'label': 'Road Type', 'value': 'road'}]
 YEAR_OPTIONS = {year: str(year) for year in range(2007, 2019)}
+
 
 # Initialize dashboard
 APP = dash.Dash(__name__)
@@ -49,76 +49,61 @@ APP.layout = html.Div(
         # Header
         html.Div(
             id='header',
-            className='twelve columns',
+            className='twelve columns centerTitle',
             children=[
-                html.H1(
-                    'Neighborhood Traffic Flow',
-                    style={
-                        'color': 'black',
-                        'fontSize': 50
-                    }
-                ),
-                html.H4(
-                    html.A(
-                        'CSE 583: Software Engineering for Data Scientists',
-                        href='https://uwseds.github.io/'
-                    )
+                html.H4('Neighborhood Traffic Flow'),
+                html.H6(
+                    children=[
+                        'Final Project for ',
+                        html.A(
+                            'CSE 583: Software Engineering for\
+                             Data Scientists',
+                            href='https://uwseds.github.io/'
+                        )
+                    ]
                 )
             ]
         ),
-        # Dashboard
+        # Row one
         html.Div(
-            id='dashboard',
+            id='rowOne',
             className='twelve columns',
             children=[
-                # Column 1
+                # Description
                 html.Div(
-                    id='columnOne',
-                    className='five columns',
+                    className='six columns blankContainer',
                     children=[
-                        # Seattle Neighborhood Map
-                        html.Div(
-                            id='neighborhoodMapContainer',
-                            children=[
-                                html.H4('Choose a Seattle neighborhood:'),
-                                dcc.Dropdown(
-                                    id='dropdown',
-                                    options=NBHD_OPTIONS,
-                                    value='92',
-                                    style={
-                                        'width': '80%'
-                                    }
-                                ),
-                                html.Br(),
-                                dcc.Graph(
-                                    id='neighborhoodMap',
-                                    figure=neighborhood_map(*NBHD_DATA)
-                                )
-                            ],
-                            style={
-                                'margin': 50
-                            }
-                        )
+                        html.H5('Description'),
+                        html.P('blah blah blah')
                     ]
                 ),
-                # Column 2
+                # Controls
                 html.Div(
-                    id='columnTwo',
-                    className='seven columns',
+                    id='controls',
+                    className='six columns prettyContainer',
                     children=[
-                        # Traffic Flow Map
+                        html.H6('Select a neighborhood:'),
+                        dcc.Dropdown(
+                            id='dropdown',
+                            options=NBHD_OPTIONS,
+                            value=92
+                        ),
+                        html.Br(),
+                        html.H6('Select a map type:'),
+                        dcc.RadioItems(
+                            id='radio',
+                            options=MAP_OPTIONS,
+                            value='flow',
+                            labelStyle={
+                                'display': 'inline-block',
+                                'width': '33%'
+                            }
+                        ),
+                        # Slider
                         html.Div(
-                            id='trafficFlowMapContainer',
+                            id='sliderContainer',
                             children=[
-                                html.H4('Traffic Flow Map'),
-                                dcc.RadioItems(
-                                    id='radio',
-                                    options=MAP_OPTIONS,
-                                    value='flow',
-                                    labelStyle={
-                                        'display': 'inline-block'
-                                    }
-                                ),
+                                html.H6('Select a year:'),
                                 dcc.Slider(
                                     id='slider',
                                     min=2007,
@@ -126,40 +111,87 @@ APP.layout = html.Div(
                                     marks=YEAR_OPTIONS,
                                     value=2018
                                 ),
-                                html.Br(),
-                                html.Br(),
-                                dcc.Graph(
-                                    id='trafficFlowMap',
-                                    # className='four columns',
-                                    className='seven columns',
-                                    figure=traffic_flow_map(
-                                        STREET_DATA)
-                                )
-                            ],
-                            style={
-                                'margin': 50
-                            }
-                        ),
-                        # Traffic Flow Chart
-                        html.Div(
-                            id='trafficFlowChartContainer',
-                            className='seven columns',
-                            children=[
-                                html.H4('Traffic Flow Stats'),
-                                dcc.Checklist(
-                                    id='checklist',
-                                    options=MAP_OPTIONS,
-                                    value=['flow'],
-                                    labelStyle={
-                                        'display': 'inline-block'
-                                    }
-                                ),
-                                dcc.Graph(
-                                    id='trafficFlowChart',
-                                    figure=traffic_flow_chart(
-                                        STREET_DATA)
-                                )
+                                html.Br()
                             ]
+                        )
+                    ]
+                )
+            ]
+        ),
+        # Row two
+        html.Div(
+            id='rowTwo',
+            className='twelve columns',
+            children=[
+                # Seattle Neighborhood Map
+                html.Div(
+                    id='neighborhoodMapContainer',
+                    className='six columns prettyContainer',
+                    children=[
+                        html.H4(
+                            className='centerTitle',
+                            children='Seattle Neighborhoods'),
+                        dcc.Graph(
+                            id='neighborhoodMap',
+                            figure=neighborhood_map(*NBHD_DATA)
+                        )
+                    ]
+                ),
+                # Traffic Flow Map
+                html.Div(
+                    id='trafficFlowMapContainer',
+                    className='six columns prettyContainer',
+                    children=[
+                        html.H4(
+                            id='mapTitle',
+                            className='centerTitle',
+                            children='Neighborhood Roads'
+                        ),
+                        dcc.Graph(
+                            id='trafficFlowMap',
+                            figure=traffic_flow_map(
+                                STREET_DATA)
+                        )
+                    ]
+                )
+            ]
+        ),
+        # Row three
+        html.Div(
+            id='rowThree',
+            className='twelve columns',
+            children=[
+                # Traffic Flow Series
+                html.Div(
+                    id='trafficFlowSeriesContainer',
+                    className='six columns prettyContainer',
+                    children=[
+                        html.H4(
+                            id='seriesTitle',
+                            className='centerTitle',
+                            children='Neighborhood Series'
+                        ),
+                        dcc.Graph(
+                            id='trafficFlowSeries',
+                            figure=traffic_flow_series(
+                                STREET_DATA)
+                        )
+                    ]
+                ),
+                # Traffic Flow Stats
+                html.Div(
+                    id='trafficFlowStatsContainer',
+                    className='six columns prettyContainer',
+                    children=[
+                        html.H4(
+                            id='statsTitle',
+                            className='centerTitle',
+                            children='Neighborhood Stats'
+                        ),
+                        dcc.Graph(
+                            id='trafficFlowStats',
+                            figure=traffic_flow_stats(
+                                STREET_DATA)
                         )
                     ]
                 )
@@ -190,6 +222,16 @@ def update_neighborhood_map(neighborhood):
         Plotly choroplethmapbox figure.
     """
     return neighborhood_map(*NBHD_DATA, selected=neighborhood)
+
+
+# Update traffic map title after dropdown selection
+@APP.callback(
+    Output('mapTitle', 'children'),
+    [Input('dropdown', 'value')]
+)
+def update_traffic_map_title(value):
+    """Update traffic map title"""
+    return NAMES[value] + ' Roads'
 
 
 # Update traffic flow map after dropdown, radio, or slider selection
@@ -223,14 +265,56 @@ def update_traffic_flow_map(neighborhood, map_type, year):
     return traffic_flow_map(STREET_DATA, neighborhood, map_type, year)
 
 
-# Update chart after dropdown selection
+# Update controls after radio selection
 @APP.callback(
-    Output('trafficFlowChart', 'figure'),
+    Output('sliderContainer', 'style'),
+    [Input('radio', 'value')]
+)
+def update_controls(value):
+    """docstring"""
+    if value == 'flow':
+        return {'display': 'inline'}
+    return {'display': 'none'}
+
+
+# Update traffic flow series title after dropdown selection
+@APP.callback(
+    Output('seriesTitle', 'children'),
     [Input('dropdown', 'value')]
 )
-def update_traffic_flow_chart(neighborhood):
-    """Update traffic flow chart"""
-    return traffic_flow_chart(STREET_DATA, neighborhood)
+def update_traffic_series_title(value):
+    """Update traffic flow series title"""
+    return NAMES[value] + ' Series'
+
+
+# Update traffic flow series after dropdown selection
+@APP.callback(
+    Output('trafficFlowSeries', 'figure'),
+    [Input('dropdown', 'value')]
+)
+def update_traffic_flow_series(neighborhood):
+    """Update traffic flow series"""
+    return traffic_flow_series(STREET_DATA, neighborhood)
+
+
+# Update stats title after dropdown selection
+@APP.callback(
+    Output('statsTitle', 'children'),
+    [Input('dropdown', 'value')]
+)
+def update_stats_title(value):
+    """Update stats title"""
+    return NAMES[value] + ' Stats'
+
+
+# Update traffic flow stats after dropdown selection
+@APP.callback(
+    Output('trafficFlowStats', 'figure'),
+    [Input('dropdown', 'value')]
+)
+def update_traffic_flow_stats(neighborhood):
+    """Update traffic flow stats"""
+    return traffic_flow_stats(STREET_DATA, neighborhood)
 
 
 # Update dropdown after neighborhood map selection
@@ -255,9 +339,9 @@ def update_dropdown(selected_data):
         Index of selected neighborhood (0-102).
     """
     try:
-        return str(selected_data['points'][0]['pointIndex'])
+        return selected_data['points'][0]['pointIndex']
     except TypeError:
-        return '92'
+        return 92
 
 
 # Run dashboard

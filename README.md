@@ -3,31 +3,39 @@
 # Neighborhood Traffic Flow
 
 <!--- These are examples. See https://shields.io for others or to customize this set of shields. You might want to include dependencies, project status and licence info here --->
-![GitHub repo size](https://img.shields.io/github/repo-size/kels271828/neighborhood-traffic-flow)
-![GitHub contributors](https://img.shields.io/github/contributors/kels271828/neighborhood-traffic-flow)
-![GitHub license](https://img.shields.io/github/license/kels271828/neighborhood-traffic-flow)
-![GitHub buid](https://travis-ci.com/Neighborhood-Traffic-Flow/neighborhood-traffic-flow.svg?branch=master)
+[![GitHub contributors](https://img.shields.io/github/contributors/Neighborhood-Traffic-Flow/neighborhood-traffic-flow)](#contributors)
+[![GitHub license](https://img.shields.io/github/license/Neighborhood-Traffic-Flow/neighborhood-traffic-flow)](./LICENSE)
+[![Build Status](https://travis-ci.org/Neighborhood-Traffic-Flow/neighborhoodtrafficflow.svg?branch=master)](https://travis-ci.org/Neighborhood-Traffic-Flow/neighborhoodtrafficflow)
+
 
 An interactive dashboard to explore traffic flow trends in Seattle neighborhoods.
 
 Final Project for [CSE 583: Software Engineering for Data Scientists](https://uwseds.github.io/)
 
-#### To setup the `conda` environment:
+## Installation and Use
 
-Need to clone the repository, and then cd into the directory to setup `conda` environment.
+#### To clone the repository:
+```
+git clone https://github.com/Neighborhood-Traffic-Flow/neighborhoodtrafficflow.git
+cd neighborhoodtrafficflow
+```
+
+#### To set up the `conda` environment:
 ```
 conda env create -f environment.yml
+conda activate ntf
+pip install -e .
 ```
-Note: The above is a one time step. Take about 5 mins, please be patient.
+Note: The above is a one-time step.
 
-#### To run the dashboard from the command line:
+#### To run the dashboard:
+Start the server, then open a web browser with the following URL: http://127.0.0.1:8050/
 ```
 conda activate ntf
-cd neighborhood-traffic-flow
+cd neighborhoodtrafficflow
 python app.py
 ```
-Open a web browser with the following URL: http://127.0.0.1:8050/
-
+Note: The `conda activate` step only needs to be done once per shell instance.
 
 ## Contributors
 

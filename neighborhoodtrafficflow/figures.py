@@ -1,16 +1,26 @@
-"""
-Functions to figures shown in the dashboard
-1. map of Seattle neighborhoods
-2. traffic flow map
-"""
+"""Functions corresponding figures shown in the dashboard"""
 import math
-import importlib
+from pathlib import Path
 
 import numpy as np
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
+import pandas as pd
 
-from neighborhoodtrafficflow.controls import CENTROIDS, ROAD_TYPE, BOUNDS
+# Arterial classification for traffic flow map hover text
+ROAD_TYPE = {
+    0: 'Not Designated',
+    1: 'Principal Arterial',
+    2: 'Minor Arterial',
+    3: 'Collector Arterial',
+    4: 'State Highway',
+    5: 'Interstate Freeway'
+}
+
+# Neighborhood names, centroids, and bounds
+CWD = Path(__file__).parent
+INFO_PATH = CWD / 'data/cleaned/nbhd_info.csv'
+NBHD_INFO = pd.read_csv(INFO_PATH)
 
 
 def matplotlib_to_plotly(cmap, entries):
@@ -95,7 +105,7 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
             'hoverinfo': 'text',
             'marker': {
                 'line': {
-                    'width': 3
+                    'width': 2
                 }
             },
             'colorscale': 'Greens',
@@ -119,23 +129,22 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
                 't': 0,
                 'b': 0
             },
-            'width': 1000,
-            'height': 1500,
+            'paper_bgcolor': '#F9F9F9',
             'clickmode': 'event+select',
             'mapbox': {
                 'style': 'carto-positron',
                 'center': {
-                    'lon': -122.3266736043623,
-                    'lat': 47.61506497849028
+                    'lon': NBHD_INFO.loc[selected, 'midLon'],
+                    'lat': NBHD_INFO.loc[selected, 'midLat']
                 },
-                'zoom': 11.25
+                'zoom': 12
             }
         }
     }
     return figure
 
 
-def traffic_flow_map(data_frame, neighborhood='92',
+def traffic_flow_map(data_frame, neighborhood=92,
                      map_type='flow', year=2018):
     """Create traffic flow map of currently selected neighborhood
 
@@ -148,10 +157,10 @@ def traffic_flow_map(data_frame, neighborhood='92',
     ----------
     data : Pandas Dataframe
         DataFrame with traffic flow, speed limit, and road type data.
-    neighborhood : str
+    neighborhood : int
         Index of selected neighborhood from dropdown.
     map_type : str
-        Selected type from radio: 'flow' (default), 'speed', or 'road'.
+        Selected type from radio: 'flow', 'speed', or 'road'.
     year : int
         Selected year from slider.
 
@@ -172,8 +181,8 @@ def traffic_flow_map(data_frame, neighborhood='92',
     data = [{
         'type': 'scattergl',
         'name': 'Centroid',
-        'x': [CENTROIDS[neighborhood][0]],
-        'y': [lat2y(CENTROIDS[neighborhood][1])],
+        'x': [NBHD_INFO.loc[neighborhood, 'midLon']],
+        'y': [lat2y(NBHD_INFO.loc[neighborhood, 'midLat'])],
         'mode': 'markers',
         'showlegend': False,
         'marker': {
@@ -185,14 +194,7 @@ def traffic_flow_map(data_frame, neighborhood='92',
             'showscale': True,
             'colorbar': {
                 'tickfont': {
-                    'size': 16
-                },
-                'title': {
-                    'text': info[2],
-                    'font': {
-                        'size': 20
-                    },
-                    'side': 'right'
+                    'size': 12
                 }
             }
         }
@@ -217,7 +219,7 @@ def traffic_flow_map(data_frame, neighborhood='92',
             'y': [lat2y(lat) for lat in row['lat']],
             'mode': 'lines',
             'line': {
-                'width': 5,
+                'width': 3,
                 'color': road_color(row[map_type], map_type)
             },
             'showlegend': False,
@@ -227,33 +229,86 @@ def traffic_flow_map(data_frame, neighborhood='92',
         data.append(trace)
 
     # Define plotly figure
-    dimensions = get_dimensions(neighborhood)
+    # dimensions = get_dimensions(neighborhood)
     figure = {
         'data': data,
         'layout': {
-            'margin': {
-                'l': 0,
-                'r': 0,
-                't': 0,
-                'b': 0
-            },
-            'width': dimensions[0],
-            'height': dimensions[1],
+            # 'width': dimensions[0],
+            # 'height': dimensions[1],
+            'title': info[2],
+            'paper_bgcolor': '#F9F9F9',
             'hovermode': 'closest',
-            'clickmode': 'none'
+            'clickmode': 'none',
+            'xaxis': {
+                'linecolor': 'black',
+                'mirror': True,
+                'tickvals': [],
+                'ticktext': []
+            },
+            'yaxis': {
+                'linecolor': 'black',
+                'mirror': True,
+                'tickvals': [],
+                'ticktext': []
+            },
         }
     }
     return figure
 
 
-def traffic_flow_chart(data_frame, neighborhood=92):
-    """Create traffic flow chart"""
+def traffic_flow_stats(data_frame, neighborhood=92):
+    """Create traffic flow stats"""
+    # Filter DataFrame by neighborhood
+    nbhd_idx = data_frame.nbhd.apply(
+        lambda nbhd_list: int(neighborhood) in nbhd_list)
+    data_frame = data_frame[nbhd_idx]
     data = []
-    for nbhd in CENTROIDS:
-        data.append(get_series(data_frame, int(nbhd)))
-    data.append(get_series(data_frame, int(neighborhood), 5, 'steelblue'))
+    for year in range(2007, 2019):
+        values = data_frame[str(year)].to_list()
+        trace = {
+            'type': 'box',
+            'name': year,
+            'x': year,
+            'y': values,
+            'showlegend': False
+        }
+        data.append(trace)
     figure = {
-        'data': data
+        'data': data,
+        'layout': {
+            'paper_bgcolor': '#F9F9F9',
+            'xaxis': {
+                'linecolor': 'black',
+                'mirror': True
+            },
+            'yaxis': {
+                'linecolor': 'black',
+                'mirror': True
+            },
+        }
+    }
+    return figure
+
+
+def traffic_flow_series(data_frame, neighborhood=92):
+    """Create traffic flow series"""
+    data = []
+    for nbhd in range(len(NBHD_INFO)):
+        data.append(get_series(data_frame, nbhd))
+    data.append(get_series(data_frame, neighborhood, 5, 'steelblue'))
+    figure = {
+        'data': data,
+        'layout': {
+            'paper_bgcolor': '#F9F9F9',
+            'xaxis': {
+                'linecolor': 'black',
+                'mirror': True
+            },
+            'yaxis': {
+                'linecolor': 'black',
+                'mirror': True
+            },
+        }
     }
     return figure
 
@@ -300,7 +355,7 @@ def road_color(val, map_type):
 
     Parameters
     ----------
-    val : double
+    val : float
         Traffic flow, speed limit, or road type of given road.
     map_type : str
         Either 'flow', 'speed', or 'road'.
@@ -358,7 +413,7 @@ def hover_text(name, val, map_type):
     if map_type == 'flow':
         if val is None or np.isnan(val):
             return name + ', Flow Count: Unknown'
-        return name + ', Flow Count:' + str(val)
+        return name + ', Flow Count:' + str(int(val))
     if map_type == 'speed':
         if val is None or np.isnan(val):
             return name + ', Speed Limit: Unknown'
@@ -368,7 +423,7 @@ def hover_text(name, val, map_type):
     return name + ', Road Type:' + ROAD_TYPE[val]
 
 
-def get_dimensions(neighborhood):
+def get_dimensions(nbhd, max_size=1000):
     """Get traffic flow map dimensions
 
     Determine width and height of traffic flow map based on aspect
@@ -376,7 +431,7 @@ def get_dimensions(neighborhood):
 
     Parameters
     ----------
-    neighborhood : str
+    nbhd : int
         Index of selected neighborhood from dropdown.
 
     Returns
@@ -384,10 +439,11 @@ def get_dimensions(neighborhood):
     dimensions : list
         [width, height] in pixels (float).
     """
-    bounds = BOUNDS[neighborhood]
-    lon_range = bounds[2] - bounds[0]
-    lat_range = bounds[3] - bounds[1]
-    height = lat_range / lon_range * 1000
-    if height <= 1000:
-        return [1000, height]
-    return [lon_range / lat_range * 1000, 1000]
+    lon_range = NBHD_INFO.loc[nbhd, 'maxLon'] - \
+        NBHD_INFO.loc[nbhd, 'minLon']
+    lat_range = NBHD_INFO.loc[nbhd, 'maxLat'] - \
+        NBHD_INFO.loc[nbhd, 'minLat']
+    height = lat_range / lon_range * max_size
+    if height <= max_size:
+        return [max_size, height]
+    return [lon_range / lat_range * max_size, max_size]
