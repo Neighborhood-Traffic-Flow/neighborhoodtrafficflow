@@ -8,7 +8,7 @@ import pickle
 import os
 
 NBHD_PATH = os.path.abspath(os.path.join(os.path.dirname("__file__"),
-                                         '../data/cleaned/nbhd_data.pkl'))
+                                         '..neighborhoodtrafficflow/data/cleaned/nbhd_data.pkl'))
 
 
 # Import neighborhood data
