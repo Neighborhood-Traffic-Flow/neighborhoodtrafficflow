@@ -1,17 +1,20 @@
 """Test module for pre-processing Seattle neighborhood datasets"""
 import os
+from pathlib import Path
 import pickle
 
 import pandas as pd
 import pytest
 
-from ..data.neighborhood_data import prep_map_data, prep_map_info
+from neighborhoodtrafficflow.data.neighborhood_data import \
+    prep_map_data, prep_map_info
 
 # File paths
-JSON_PATH = 'neighborhoodtrafficflow/data/raw/' \
-            'zillow-neighborhoods/zillow-neighborhoods.geojson'
-SHP_PATH = 'neighborhoodtrafficflow/data/raw/' \
-           'zillow-neighborhoods/zillow-neighborhoods.shp'
+CWD = Path(__file__).parent
+JSON_PATH = CWD/'../data/raw/zillow-neighborhoods/' \
+            'zillow-neighborhoods.geojson'
+SHP_PATH = CWD/'../data/raw/zillow-neighborhoods/' \
+           'zillow-neighborhoods.shp'
 DATA_PATH = 'nbhd_data.pkl'
 INFO_PATH = 'nbhd_info.csv'
 
@@ -19,12 +22,9 @@ INFO_PATH = 'nbhd_info.csv'
 def test_prep_data_1():
     """Check that function throws an error if no file at json_path"""
 
-    # Bad file path
-    json_path_bad = JSON_PATH + 'bad'
-
     # Call function
     with pytest.raises(Exception):
-        assert prep_map_data(json_path_bad, DATA_PATH)
+        assert prep_map_data('dummy.geojson', DATA_PATH)
 
 
 def test_prep_map_data_2():
@@ -107,12 +107,9 @@ def test_prep_map_data_5():
 def test_prep_info_1():
     """Check that function throws an error if no file at shp_path"""
 
-    # Bad file path
-    shp_path_bad = SHP_PATH + 'bad'
-
     # Call function
     with pytest.raises(Exception):
-        assert prep_map_data(shp_path_bad, INFO_PATH)
+        assert prep_map_data('dummy.shp', INFO_PATH)
 
 
 def test_prep_map_info_2():

@@ -4,6 +4,7 @@ Functions to figures shown in the dashboard
 2. traffic flow map
 """
 import math
+from pathlib import Path
 
 import numpy as np
 import matplotlib.cm as cm
@@ -21,7 +22,9 @@ ROAD_TYPE = {
 }
 
 # Neighborhood names, centroids, and bounds
-NBHD_INFO = pd.read_csv('data/cleaned/nbhd_info.csv')
+CWD = Path(__file__).parent
+INFO_PATH = CWD/'data/cleaned/nbhd_info.csv'
+NBHD_INFO = pd.read_csv(INFO_PATH)
 
 def matplotlib_to_plotly(cmap, entries):
     """Convert matplotlib colormap to plotly format

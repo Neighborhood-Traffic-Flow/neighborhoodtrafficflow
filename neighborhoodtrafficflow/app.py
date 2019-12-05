@@ -4,6 +4,7 @@ Interactive dashboard to explore traffic flow, speed limits, and road
 types in Seattle neighborhoods. To use, run `python app.py` in the
 terminal and copy/paste the URL into your browers.
 """
+from pathlib import Path
 import pickle
 
 import dash
@@ -12,18 +13,21 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import pandas as pd
 
-from neighborhoodtrafficflow.figures import (neighborhood_map,
-                                             traffic_flow_map,
-                                             traffic_flow_series,
-                                             traffic_flow_stats)
+from neighborhoodtrafficflow.figures import neighborhood_map, \
+    traffic_flow_map, traffic_flow_series, traffic_flow_stats
+
+# Data file paths
+CWD = Path(__file__).parent
+NBHD_PATH = CWD/'data/cleaned/nbhd_data.pkl'
+STREET_PATH = CWD/'data/street_data.pkl'
 
 # Import neighborhood data
-with open('data/cleaned/nbhd_data.pkl', 'rb') as pickle_file:
+with open(NBHD_PATH, 'rb') as pickle_file:
     NBHD_DATA = pickle.load(pickle_file)
 NAMES = NBHD_DATA[3]
 
 # Import street data
-STREET_DATA = pd.read_pickle('data/street_data.pkl')
+STREET_DATA = pd.read_pickle(STREET_PATH)
 
 # Create control options for dropdown, radio, and slider
 NBHD_OPTIONS = [{'label': NAMES[idx], 'value': idx}
