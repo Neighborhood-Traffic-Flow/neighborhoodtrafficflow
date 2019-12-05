@@ -73,8 +73,13 @@ APP.layout = html.Div(
                 html.Div(
                     className='six columns blankContainer',
                     children=[
-                        html.H5('Description'),
-                        html.P('blah blah blah')
+                        html.H5('About This App',
+                            className='centerTitle'),
+                        html.P('This is an interactive dashboard for current and future Seattle residents\
+                                to understand the traffic flow of neighboorhoods in the city. By clicking\
+                                an area on the map below, you can view the average traffic flow, the \
+                                speed limit, and types of roads. You may also view the historical data\
+                                to see how traffic flow in the selected neighborhood has changed over time.')
                     ]
                 ),
                 # Controls
@@ -131,6 +136,9 @@ APP.layout = html.Div(
                         html.H4(
                             className='centerTitle',
                             children='Seattle Neighborhoods'),
+                        html.P('Select a neighborhood by clicking an area on the map.\
+                                Use your cursor to zoom in and out.',
+                                className='centerTitle'),
                         dcc.Graph(
                             id='neighborhoodMap',
                             figure=neighborhood_map(*NBHD_DATA)
@@ -188,6 +196,10 @@ APP.layout = html.Div(
                             className='centerTitle',
                             children='Neighborhood Stats'
                         ),
+                        html.P('This graph displays historical data about your selected neighborhood.\
+                                The bolded line in the middle of each box represents the average statistic\
+                                for the corresponding year.',
+                                className='centerTitle'),
                         dcc.Graph(
                             id='trafficFlowStats',
                             figure=traffic_flow_stats(
