@@ -1,4 +1,4 @@
-"""Test module for pre-processing Seattle neighborhood datasets"""
+"""Test module for pre-processing Seattle neighborhood datasets."""
 import os
 from pathlib import Path
 import pickle
@@ -20,7 +20,7 @@ INFO_PATH = 'nbhd_info.csv'
 
 
 def test_prep_data_1():
-    """Check that function throws an error if no file at json_path"""
+    """Check that function throws an error if no file at json_path."""
 
     # Call function
     with pytest.raises(Exception):
@@ -28,7 +28,7 @@ def test_prep_data_1():
 
 
 def test_prep_map_data_2():
-    """Check that function creates new data file if none exists"""
+    """Check that function creates new data file if none exists."""
 
     # Delete old data file if exists
     if os.path.exists(DATA_PATH):
@@ -45,7 +45,7 @@ def test_prep_map_data_2():
 
 
 def test_prep_map_data_3():
-    """Check lenght of new data file"""
+    """Check lenght of new data file."""
 
     # Create new data file
     prep_map_data(JSON_PATH, DATA_PATH)
@@ -62,7 +62,7 @@ def test_prep_map_data_3():
 
 
 def test_prep_map_data_4():
-    """Check column types of new file"""
+    """Check column types of new file."""
 
     # Create new data file
     prep_map_data(JSON_PATH, DATA_PATH)
@@ -85,7 +85,7 @@ def test_prep_map_data_4():
 
 
 def test_prep_map_data_5():
-    """Check some entries of new data file"""
+    """Check some entries of new data file."""
 
     # Create new data file
     prep_map_data(JSON_PATH, DATA_PATH)
@@ -105,7 +105,7 @@ def test_prep_map_data_5():
 
 
 def test_prep_info_1():
-    """Check that function throws an error if no file at shp_path"""
+    """Check that function throws an error if no file at shp_path."""
 
     # Call function
     with pytest.raises(Exception):
@@ -113,7 +113,7 @@ def test_prep_info_1():
 
 
 def test_prep_map_info_2():
-    """Check that function creates new data file if none exists"""
+    """Check that function creates new data file if none exists."""
 
     # Delete old data file if exists
     if os.path.exists(INFO_PATH):
@@ -130,7 +130,7 @@ def test_prep_map_info_2():
 
 
 def test_prep_map_info_3():
-    """Check length of new data file"""
+    """Check length of new data file."""
 
     # Create new data file
     prep_map_info(SHP_PATH, INFO_PATH)
@@ -146,7 +146,7 @@ def test_prep_map_info_3():
 
 
 def test_prep_map_info_4():
-    """Check column types of new data file"""
+    """Check column types of new data file."""
 
     # Create new data file
     prep_map_info(SHP_PATH, INFO_PATH)
@@ -167,7 +167,7 @@ def test_prep_map_info_4():
 
 
 def test_prep_map_info_5():
-    """Check column names of new data file"""
+    """Check column names of new data file."""
 
     # Create new data file
     prep_map_info(SHP_PATH, INFO_PATH)
@@ -185,7 +185,7 @@ def test_prep_map_info_5():
 
 
 def test_prep_map_info_6():
-    """Check some entries of new data file"""
+    """Check some entries of new data file."""
 
     # Create new data file
     prep_map_info(SHP_PATH, INFO_PATH)
