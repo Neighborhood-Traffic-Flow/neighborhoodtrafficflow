@@ -133,6 +133,12 @@ def get_flow_data():
         List of reformatted traffic flow DataFrames.
     year_list :
         Years corresponding to the DataFrames in df_list.
+
+    Note
+    ----
+    pylint has a lot of complaints about this function, since it is a
+    bit overkill in terms of conditionals and type casting, etc., but
+    I'm prioritizing other things for now.
     """
     # Initialize structures
     flow2key = {}
@@ -145,10 +151,6 @@ def get_flow_data():
     for year in range(2018, 2006, -1):
         df = gpd.read_file(get_flow_path(year))
         for idx, row in df.iterrows():
-
-            # pylint has a lot of complaints about this function, since
-            # it is a bit overkill in terms of conditionals and type
-            # casting, etc., but I'm prioritizing other things for now.
 
             if year in [2017, 2018]:
 
@@ -200,10 +202,10 @@ def get_flow_data():
                     df.at[idx, 'FLOWSEGID'] = key2flow[str(row['COMPKEY'])]
 
         # Reformate DataFrame and store in list
-        df = df[['COMPKEY', 'FLOWSEGID',
-                FLOW_NAMES[year], STREET_NAMES[year]]]
+        df = df[['COMPKEY', 'FLOWSEGID', 'geometry',
+                 FLOW_NAMES[year], STREET_NAMES[year]]]
         df = df.rename(columns={FLOW_NAMES[year]: 'flow',
-                       STREET_NAMES[year]: 'name'})
+                                STREET_NAMES[year]: 'name'})
         df = df.astype({'COMPKEY': 'str', 'FLOWSEGID': 'int64',
                         'flow': 'float'})
         df_list.append(df)
@@ -214,12 +216,43 @@ def get_flow_data():
 
 def get_street_data(df, df_name, idx2poly, key_list, name_list,
                     lon_list, lat_list, speed_list, road_list, nbhd_list):
-    """get street data
+    """Load and format street data.
+
+    Load Seattle Streets and Traffic Flow Count datasets for 2007-2018
+    based on COMPKEY. Only Seattle Streets has SPEED and ARTCLASS.
+
+    Parameters
+    ----------
+    df : DataFrame
+        Either Seattle Streets or Traffic Flow Count DataFrame.
+    df_name : str
+        Either 'streets' or a year in 2007-2018.
+    idx2poly : dict
+        Mapping from neighborhood index to polygon.
+    key_list : list
+        List of COMPKEYs (str).
+    name_list : list
+        List of street names (str).
+    lon_list : list
+        List of longitude lists (float).
+    lat_list : list
+        List of latitude lists (float).
+    speed_list : list
+        List of speed limits (int).
+    road_list : list
+        List of arterial classifications in 0-5 (int).
+    nbhd_list : list
+        List of lists of indices (int) of all neighborhoods that
+        streets pass through.
 
     Returns
     -------
     out : None
-        Modifies the input lists in place. (hopefully)
+        Modifies the input lists in place.
+
+    Note
+    ----
+    pylint doesn't like this function either.
     """
     print('\nDataset: %s' % df_name)
 
@@ -231,31 +264,95 @@ def get_street_data(df, df_name, idx2poly, key_list, name_list,
 
         row['COMPKEY'] = str(row['COMPKEY'])
         for key in row['COMPKEY'].split(','):
-            if key not in key_list:
+            if int(float(key)) not in key_list:
 
                 # Get geometry
-                geo = row['geometry']
-                lon = [x for x, y in geo.coords]
-                lat = [y for x, y in geo.coords]
+                add = True
+                try:
+                    geo = row['geometry']
+                    lon = [x for x, y in geo.coords]
+                    lat = [y for x, y in geo.coords]
+                except NotImplementedError:
+                    add = False
 
-                # Add info in all datasets
-                key_list.append(row['COMPKEY'])
-                name_list.append(row[STREET_NAMES[df_name]])
-                lon_list.append(lon)
-                lat_list.append(lat)
-                nbhd_list.append(get_neighborhood(lon, lat, idx2poly))
+                if add:
+                    # Add info in all datasets
+                    key_list.append(int(float(key)))
+                    name_list.append(STREET_NAMES[df_name])
+                    lon_list.append(lon)
+                    lat_list.append(lat)
+                    nbhd_list.append(get_neighborhood(lon, lat, idx2poly))
 
-                count += 1
+                    # Add info only in streets dataset
+                    try:
+                        speed_list.append(int(row['SPEEDLIMIT']))
+                    except (ValueError, KeyError):
+                        speed_list.append(-1)
+                    road_type = 0
+                    try:
+                        if int(row['ARTCLASS']) in [0, 1, 2, 3, 4, 5]:
+                            road_type = int(row['ARTCLASS'])
+                    except (ValueError, KeyError):
+                        pass
+                    road_list.append(road_type)
 
-                # Add info only in street dataset
-                if df_name == 'street':
-                    speed_list.append(row['SPEEDLIMIT'])
-                    road_list.append(row['ARTCLASS'])
-                else:
-                    speed_list.append(None)
-                    road_list.append(None)
+                    count += 1
 
     print('Added %d road segments' % count)
+
+
+def add_flow_data(df_streets, df_flow, year, flow2key):
+    """Add traffic flow count data to DataFrame.
+
+    Add traffic flow count from df_flow to df_streets and set any
+    missing values to -1. Rather than assign flows by COMPKEY, we use
+    flow2key to find all COMPKEYs that share a given FLOWSEGID. This is
+    because the 2007-2014 datasets seem to use only a representative
+    COMPKEY for a road segment that might actually includes multiple
+    COMPKEYs from the Seattle Streets dataset. However, any roads that
+    aren't included in flow2key are assigned by their COMPKEY.
+
+    Parameters
+    ----------
+    df_streets : DataFrame
+        Contains street information from all datasets
+    df_flow : DataFrame
+        Reformatted traffic flow count DataFrame.
+    year : int
+        Year corresponding to current traffic flow DataFrame.
+    flow2key : dict
+
+
+    Returns
+    -------
+    out : None
+        Modifies the input DataFrame in place.
+    """
+    print('\nDataset: %d' % year)
+
+    count = 0
+    df_streets[str(year)] = -1
+    for idx, row in df_flow.iterrows():
+
+        print('Percent done: %.2f' % (100.0*idx/len(df_flow)), end='\r')
+
+        try:
+            flow = int(row['flow'])
+        except ValueError:
+            flow = -1
+
+        if row['FLOWSEGID'] == -1:
+            df_streets.loc[df_streets['key'] == int(float(row['COMPKEY'])), \
+                str(year)] = flow
+            count += 1
+        else:
+            keys = flow2key[row['FLOWSEGID']]
+            for key in keys.split(','):
+                df_streets.loc[df_streets['key'] == int(float(key)), \
+                    str(year)] = flow
+                count += 1
+
+    print('Added %d flow values' % count)
 
 
 if __name__ == '__main__':
@@ -264,48 +361,50 @@ if __name__ == '__main__':
         os.mkdir('cleaned')
 
     # Get neighborhood polygons
-    shp_path = 'raw/zillow-neighborhoods/zillow-neighborhoods.shp'
-    IDX2POLY = get_polygons(shp_path)
+    SHP_PATH = 'raw/zillow-neighborhoods/zillow-neighborhoods.shp'
+    IDX2POLY = get_polygons(SHP_PATH)
 
     # Get mapping from FLOWSEGID to COMPKEY
-    FLOW2KEY, KEY2FLOW, DF_LIST, YEAR_LIST = get_flow_data()
+    FLOW2KEY, _, DF_LIST, YEAR_LIST = get_flow_data()
 
     # Initialize lists for street data
-    key_list = []
-    name_list = []
-    lon_list = []
-    lat_list = []
-    speed_list = []
-    road_list = []
-    nbhd_list = []
+    KEY_LIST = []
+    NAME_LIST = []
+    LON_LIST = []
+    LAT_LIST = []
+    SPEED_LIST = []
+    ROAD_LIST = []
+    NBHD_LIST = []
 
     # Get street data from Seattle Streets dataset
+    print('Adding street data...')
     df = gpd.read_file(STREET_PATH)
-    get_street_data(df, 'street', IDX2POLY, key_list, name_list,
-                    lon_list, lat_list, speed_list, road_list, nbhd_list)
-    print(len(key_list))
+    get_street_data(df, 'street', IDX2POLY, KEY_LIST, NAME_LIST,
+                    LON_LIST, LAT_LIST, SPEED_LIST, ROAD_LIST, NBHD_LIST)
 
     # Get street data from Traffic Flow Counts datasets
     for i in range(len(DF_LIST)-1, -1, -1):
-        get_street_data(DF_LIST[i], YEAR_LIST[i], IDX2POLY, key_list,
-                        name_list, lon_list, lat_list, speed_list, road_list,
-                        nbhd_list)
-        print(len(key_list))
+        get_street_data(DF_LIST[i], YEAR_LIST[i], IDX2POLY, KEY_LIST,
+                        NAME_LIST, LON_LIST, LAT_LIST, SPEED_LIST, ROAD_LIST,
+                        NBHD_LIST)
 
     # Create initial DataFrame
     DF_STREETS = pd.DataFrame(
         data={
-            'key': key_list,
-            'name': name_list,
-            'lon': lon_list,
-            'lat': lat_list,
-            'speed': speed_list,
-            'road': road_list,
-            'nbhd': nbhd_list
+            'key': KEY_LIST,
+            'name': NAME_LIST,
+            'lon': LON_LIST,
+            'lat': LAT_LIST,
+            'speed': SPEED_LIST,
+            'road': ROAD_LIST,
+            'nbhd': NBHD_LIST
         }
     )
 
-    DF_STREETS.to_pickle('temp_street.pkl')
+    # Add traffic flow data
+    print('Adding flow data...')
+    for i in range(len(DF_LIST)-1, -1, -1):
+        add_flow_data(DF_STREETS, DF_LIST[i], YEAR_LIST[i], FLOW2KEY)
 
-    # Write add_flow_data()
-    # Save dataframe
+    # Save DataFrame
+    DF_STREETS.to_pickle('cleaned/street_data.pkl')
