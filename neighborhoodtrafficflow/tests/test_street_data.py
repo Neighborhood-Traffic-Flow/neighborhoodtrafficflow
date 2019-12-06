@@ -16,7 +16,7 @@ from neighborhoodtrafficflow.data.street_data import \
 CWD = Path(__file__).parent
 SHP_PATH = CWD/'../data/raw/zillow-neighborhoods/' \
            'zillow-neighborhoods.shp'
-DATA_PATH = 'street_data.pkl'
+STREET_PATH = CWD/'../data/raw/Seattle_Streets/Seattle_Streets.shp'
 
 def test_get_polygons_1():
     """Check that function throws an error if no file at shp_path."""
@@ -236,8 +236,7 @@ def test_get_street_data_3():
 
     # Get street data
     idx2poly = get_polygons(SHP_PATH)
-    shp_path = CWD/'../data/raw/Seattle_Streets/Seattle_Streets.shp'
-    df = gpd.read_file(shp_path)
+    df = gpd.read_file(STREET_PATH)
     get_street_data(df, 'street', idx2poly, key_list, name_list, lon_list,
                     lat_list, speed_list, road_list, nbhd_list)
 
@@ -266,8 +265,7 @@ def test_add_flow_data():
     nbhd_list = []
 
     # Get street data from Seattle Streets dataset
-    street_path = CWD/'../data/raw/Seattle_Streets/Seattle_Streets.shp'
-    df = gpd.read_file(street_path)
+    df = gpd.read_file(STREET_PATH)
     get_street_data(df, 'street', idx2poly, key_list, name_list, lon_list,
                     lat_list, speed_list, road_list, nbhd_list)
 
