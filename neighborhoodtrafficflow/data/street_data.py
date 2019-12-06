@@ -377,7 +377,7 @@ if __name__ == '__main__':
     NBHD_LIST = []
 
     # Get street data from Seattle Streets dataset
-    print('Adding street data...')
+    print('\nAdding street data...')
     df = gpd.read_file(STREET_PATH)
     get_street_data(df, 'street', IDX2POLY, KEY_LIST, NAME_LIST,
                     LON_LIST, LAT_LIST, SPEED_LIST, ROAD_LIST, NBHD_LIST)
@@ -402,7 +402,7 @@ if __name__ == '__main__':
     )
 
     # Add traffic flow data
-    print('Adding flow data...')
+    print('\nAdding flow data...')
     for i in range(len(DF_LIST)-1, -1, -1):
         add_flow_data(DF_STREETS, DF_LIST[i], YEAR_LIST[i], FLOW2KEY)
 
