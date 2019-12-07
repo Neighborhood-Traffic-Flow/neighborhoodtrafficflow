@@ -39,6 +39,21 @@ MAP_OPTIONS = [{'label': 'Traffic Flow', 'value': 'flow'},
                {'label': 'Road Type', 'value': 'road'}]
 YEAR_OPTIONS = {year: str(year) for year in range(2007, 2019)}
 
+# Descriptions
+APP_DESCRIPTION = 'This is an interactive dashboard for current and future \
+                  Seattle residents to understand the traffic flow of \
+                  neighborhoods in the city. By clicking an area on the map \
+                  below, you can view the average traffic flow, the speed \
+                  limit, and types of roads. You may also view the \
+                  historical data to see how traffic flow in the selected \
+                  neighborhood has changed over time.'
+NBHD_DESCRIPTION = 'Select a neighborhood by clicking an area on the map. \
+                    Use your cursor to zoom in and out.'
+FLOW_DESCRIPTION = 'This graph displays historical data about your selected \
+                    neighborhood. The bolded line in the middle of each box \
+                    represents the average statistic for the corresponding \
+                    year.'
+
 # Initialize dashboard
 APP = dash.Dash(__name__)
 
@@ -57,8 +72,8 @@ APP.layout = html.Div(
                     children=[
                         'Final Project for ',
                         html.A(
-                            'CSE 583: Software Engineering for\
-                             Data Scientists',
+                            'CSE 583: Software Engineering for \
+                            Data Scientists',
                             href='https://uwseds.github.io/'
                         )
                     ]
@@ -74,13 +89,11 @@ APP.layout = html.Div(
                 html.Div(
                     className='six columns blankContainer',
                     children=[
-                        html.H5('About This App',
-                            className='centerTitle'),
-                        html.P('This is an interactive dashboard for current and future Seattle residents\
-                                to understand the traffic flow of neighboorhoods in the city. By clicking\
-                                an area on the map below, you can view the average traffic flow, the \
-                                speed limit, and types of roads. You may also view the historical data\
-                                to see how traffic flow in the selected neighborhood has changed over time.')
+                        html.H5(
+                            className='centerTitle',
+                            children='About This App'
+                        ),
+                        html.P(APP_DESCRIPTION)
                     ]
                 ),
                 # Controls
@@ -137,9 +150,9 @@ APP.layout = html.Div(
                         html.H4(
                             className='centerTitle',
                             children='Seattle Neighborhoods'),
-                        html.P('Select a neighborhood by clicking an area on the map.\
-                                Use your cursor to zoom in and out.',
-                                className='centerTitle'),
+                        html.P(
+                            children=NBHD_DESCRIPTION
+                        ),
                         dcc.Graph(
                             id='neighborhoodMapFigure',
                             figure=neighborhood_map(*NBHD_DATA)
@@ -158,8 +171,7 @@ APP.layout = html.Div(
                         ),
                         dcc.Graph(
                             id='roadMapFigure',
-                            figure=road_map(
-                                STREET_DATA)
+                            figure=road_map(STREET_DATA)
                         )
                     ]
                 )
@@ -180,10 +192,7 @@ APP.layout = html.Div(
                             className='centerTitle',
                             children='Neighborhood Flow Counts'
                         ),
-                        html.P('This graph displays historical data about your selected neighborhood.\
-                                The bolded line in the middle of each box represents the average statistic\
-                                for the corresponding year.',
-                                className='centerTitle'),
+                        html.P(FLOW_DESCRIPTION),
                         dcc.Graph(
                             id='flowCountFigure',
                             figure=traffic_flow_counts(STREET_DATA)
