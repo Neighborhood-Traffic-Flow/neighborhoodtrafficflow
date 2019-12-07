@@ -48,7 +48,7 @@ Users are anyone interested in learning more about traffic flow in Seattle neigh
 * User: Hover mouse over specific street
     * Dashboard: Display street name and road type
 
-**Use case 4**: User wants to compare traffic flow, speed limits, and road types of specific neighborhood to the rest of the city
+**Use case 4**: User wants to compare traffic flow, speed limits, and road types of specific neighborhood to entire city
 * User: Select neighborhood in drop-down menu or click on neighborhood in map
     * Dashboard: Display statistical plots for traffic flow, speed limits, and road types for specific neighborhood
 * User: Hover mouse over chart
