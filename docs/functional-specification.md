@@ -16,34 +16,42 @@ Users are anyone interested in learning more about traffic flow in Seattle neigh
 
 ## Data sources
 * [Seattle Streets](https://data-seattlecitygis.opendata.arcgis.com/datasets/seattle-streets)
-  * GIS street data with street names, block numbers, and speed limit
+  * GIS street data with street names, speed limits, and arterial classifications
 * [2018 Traffic Flow Counts](https://data-seattlecitygis.opendata.arcgis.com/datasets/2018-traffic-flow-counts)
-  * GIS traffic flow data with street names, average weekday traffic volume, and average daily traffic volume
+  * GIS traffic flow data with street names and average weekday traffic flow counts
   * Datasets also available for 2007-2017
 * [Seattle Neighborhoods](https://data.opendatasoft.com/explore/dataset/zillow-neighborhoods%40public/map/?refine.city=Seattle&location=10,47.6094,-122.33963&basemap=jawg.sunny)
   * GIS Seattle neighborhood data from Zillow
 
 ## Use cases
-**Use case 1**: User wants to view recent traffic flow in a specific neighborhood
+**Use case 1**: User wants to view traffic flow of specific neighborhood streets
 * User: Select neighborhood in drop-down menu or click on neighborhood in map
-    * Dashboard: Zoom in on neighborhood in map and display streets colored by 2018 average daily traffic flow
+    * Dashboard: Zoom in on neighborhood in map and display streets colored by 2018 average weekday traffic flow
+* User: Select specific year in slider
+    * Dashboard: Update street colors to reflect average weekday traffic flow for selected year
 * User: Hover mouse over specific street
-   * Dashboard: Display street name and traffic flow counts
-   
-**Use case 2**: User wants to traffic flow by time of day in a specific neighborhood
-* User: Select neighborhood in drop-down menu or click on neighborhood in map
-    * Dashboard: Zoom in on neighborhood in map and display streets colored by 2018 average daily traffic flow
-* User: Click checkbox for AM Peak, PM Peak, Weekday, or Daily
-   * Dashboard: Display streets colored by traffic flow for selected time
+    * Dashboard: Display street name and traffic flow counts
 
-**Use case 3**: User wants to view traffic flow trends in a specific neighborhood
+**Use case 2**: User wants to view speed limits of specific neighborhood streets
 * User: Select neighborhood in drop-down menu or click on neighborhood in map
-   * Dashboard: Zoom in on neighborhood in map and display streets colored by 2018 average daily traffic flow
-* User: Use slider to change year
-   * Dashboard: Display streets colored by traffic flow for selected year
- 
-**Use case 4**: User wants to view traffic flow statistics for specific neighborhood
+    * Dashboard: Zoom in on neighborhood in map and display streets colored by 2018 average weekday traffic flow 
+* User: Select "speed limits" in radio
+    * Dashboard: Update street colors to reflect speed limits
+* User: Hover mouse over specific street
+    * Dashboard: Display street name and speed limit
+    
+**Use case 3**: User wants to view arterial classifications of specific neighborhood streets
 * User: Select neighborhood in drop-down menu or click on neighborhood in map
-    * Zoom in on neighborhood in map and display streets colored by 2018 average daily traffic flow
-* User: Click View Report
-    * Dashboard: Display various charts (e.g., time series, histograms, etc.) for neighborhood traffic flow
+    * Dashboard: Zoom in on neighborhood in map and display streets colored by 2018 average weekday traffic flow 
+* User: Select "road type" in radio
+    * Dashboard: Update street colors to reflect arterial classifications
+* User: Hover mouse over specific street
+    * Dashboard: Display street name and road type
+
+**Use case 4***: User wants to compare traffic flow, speed limits, and road types of specific neighborhood to the rest of the city
+* User: Select neighborhood in drop-down menu or click on neighborhood in map
+    * Dashboard: Display statistical plots for traffic flow, speed limits, and road types for specific neighborhood
+* User: Hover mouse over chart
+    * Dashboard: Display traffic flow counts, speed limits, or road types
+* User: Click on City or Neighborhood boxes on right-hand side
+    * Dashboard: Update chart to display either City, Neighborhood, or both City and Neighborhood data in chart
