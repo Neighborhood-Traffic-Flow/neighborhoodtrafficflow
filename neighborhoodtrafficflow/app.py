@@ -244,36 +244,36 @@ APP.layout = html.Div(
     Output('roadMapTitle', 'children'),
     [Input('dropdown', 'value')]
 )
-def update_road_map_title(value):
+def update_road_map_title(neighborhood):
     """Update neighborhood road map title."""
-    return NAMES[value] + ' Roads'
+    return NAMES[neighborhood] + ' Roads'
 
 # Update traffic flow count title after dropdown selection
 @APP.callback(
     Output('flowCountTitle', 'children'),
     [Input('dropdown', 'value')]
 )
-def update_flow_count_title(value):
+def update_flow_count_title(neighborhood):
     """Update flow count title."""
-    return NAMES[value] + ' Flow Counts'
+    return NAMES[neighborhood] + ' Flow Counts'
 
 # Update speed limit title after dropdown selection
 @APP.callback(
     Output('speedLimitTitle', 'children'),
     [Input('dropdown', 'value')]
 )
-def update_speed_limit_title(value):
+def update_speed_limit_title(neighborhood):
     """Update speed limit title."""
-    return NAMES[value] + ' Speed Limits'
+    return NAMES[neighborhood] + ' Speed Limits'
 
 # Update road type title after dropdown selection
 @APP.callback(
     Output('roadTypeTitle', 'children'),
     [Input('dropdown', 'value')]
 )
-def update_road_type_title(value):
+def update_road_type_title(neighborhood):
     """Update road type title."""
-    return NAMES[value] + ' Road Types'
+    return NAMES[neighborhood] + ' Road Types'
 
 
 ##########################
@@ -298,7 +298,7 @@ def update_dropdown(selected_data):
 
     Returns
     -------
-    neighborhood : str
+    neighborhood : int
         Index of selected neighborhood (0-102).
     """
     try:
@@ -311,7 +311,7 @@ def update_dropdown(selected_data):
     Output('sliderContainer', 'style'),
     [Input('radio', 'value')]
 )
-def update_controls(value):
+def update_controls(map_type):
     """Update slider after radio selection.
 
     Update slider after radio selection. If 'flow' selected, show
@@ -319,7 +319,7 @@ def update_controls(value):
 
     Parameters
     ----------
-    value : str
+    map_type : str
         Currently selected map type from radio.
 
     Returns
@@ -327,7 +327,7 @@ def update_controls(value):
     out : dict
         CSS for slider status.
     """
-    if value == 'flow':
+    if map_type == 'flow':
         return {'display': 'inline'}
     return {'display': 'none'}
 
@@ -374,7 +374,7 @@ def update_road_map(neighborhood, map_type, year):
 
     Parameters
     ----------
-    neighborhood : str
+    neighborhood : int
         Currently selected neighborhood (0-102)
     map_type : str
         Currently selected map type (flow, speed, road).
@@ -388,14 +388,75 @@ def update_road_map(neighborhood, map_type, year):
     """
     return road_map(STREET_DATA, neighborhood, map_type, year)
 
-# Update traffic flow counts after dropdown selection
+# Update traffic flow count figure after dropdown selection
 @APP.callback(
     Output('flowCountFigure', 'figure'),
     [Input('dropdown', 'value')]
 )
 def update_traffic_flow_counts(neighborhood):
-    """Update traffic flow stats"""
+    """Update traffic flow count figure.
+
+    Update traffic flow count bar chart after a dropdown selection is
+    made. Also triggered by neighborhood map selection via dropdown
+    callback.
+
+    Parameters
+    ----------
+    neighborhood: int
+        Currently selected neighborhood (0-102)
+
+    Returns
+    -------
+    figure : dict
+        Plotly bars figure.
+    """
     return traffic_flow_counts(STREET_DATA, neighborhood)
+
+# Update speed limit figure after dropdown selection
+@APP.callback(
+    Output('speedLimitFigure', 'figure'),
+    [Input('dropdown', 'value')]
+)
+def update_speed_limits(neighborhood):
+    """Update speed limits figure.
+
+    Update speed limits histogram after a dropdown selection is made.
+    Also triggered by neighborhood map selection via dropdown callback.
+
+    Parameters
+    ----------
+    neighborhood : int
+        Currently selected neighborhood (0-102).
+
+    Returns
+    -------
+    figure : dict
+        Plotly histogram figure.
+    """
+    return speed_limits(STREET_DATA, neighborhood)
+
+# Update road type figure after dropdown selection
+@APP.callback(
+    Output('roadTypeFigure', 'figure'),
+    [Input('dropdown', 'value')]
+)
+def update_road_types(neighborhood):
+    """Update road types figure.
+
+    Update road types histogram after a dropdown selection is made.
+    Also triggered by neighborhood map selection via dropdown callback.
+
+    Parameters
+    ----------
+    neighborhood : int
+        Currently selected neighborhood (0-102).
+
+    Returns
+    -------
+    figure : dict
+        Plotly histogram figure.
+    """
+    return road_types(STREET_DATA, neighborhood)
 
 
 # Run dashboard

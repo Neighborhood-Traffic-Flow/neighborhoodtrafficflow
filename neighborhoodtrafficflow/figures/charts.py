@@ -62,7 +62,7 @@ def traffic_flow_counts(data_frame, neighborhood=92):
         'data': [trace_city, trace_nbhd],
         'layout': {
             'margin': {
-                't': 1,
+                't': 20,
                 'l': 70,
                 'b': 70
             },
@@ -119,7 +119,7 @@ def speed_limits(data_frame, neighborhood=92):
         'data': [trace_city, trace_nbhd],
         'layout': {
             'margin': {
-                't': 1,
+                't': 20,
                 'b': 40,
                 'l': 70
             },
@@ -172,7 +172,7 @@ def road_types(data_frame, neighborhood=92):
         'data': [trace_city, trace_nbhd],
         'layout': {
             'margin': {
-                't': 1,
+                't': 20,
                 'l': 70
             },
             'paper_bgcolor': '#F9F9F9',
