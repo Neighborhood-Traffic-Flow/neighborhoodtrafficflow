@@ -24,7 +24,7 @@ NBHD_INFO = pd.read_csv(INFO_PATH)
 
 
 def matplotlib_to_plotly(cmap, entries):
-    """Convert matplotlib colormap to plotly format
+    """Convert matplotlib colormap to plotly format.
 
     Define plotly colorscales for traffic flow map colorbar based on
     matplotlib colormaps.
@@ -71,7 +71,7 @@ CMAP_INFO = {
 
 
 def neighborhood_map(num, data, region_ids, names, selected=92):
-    """Create neighborhood map with selected neighborhood highlighted
+    """Create neighborhood map with selected neighborhood highlighted.
 
     Create Plotly choroplethmapbox figure of Seattle neighborhoods from
     Zillow data with selected neighborhood highlighted in a darker
@@ -144,9 +144,9 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
     return figure
 
 
-def traffic_flow_map(data_frame, neighborhood=92,
+def road_map(data_frame, neighborhood=92,
                      map_type='flow', year=2018):
-    """Create traffic flow map of currently selected neighborhood
+    """Create rpad map of currently selected neighborhood.
 
     Create Plotly scattermapbox figure of roads in selected Seattle
     neighborhood, where roads are colored by either traffic flow,
@@ -257,8 +257,8 @@ def traffic_flow_map(data_frame, neighborhood=92,
     return figure
 
 
-def traffic_flow_stats(data_frame, neighborhood=92):
-    """Create traffic flow stats"""
+def traffic_flow_counts(data_frame, neighborhood=92):
+    """Create traffic flow stats."""
     x_city = []
     y_city = []
     x_nbhd = []
@@ -275,7 +275,6 @@ def traffic_flow_stats(data_frame, neighborhood=92):
         nbhd_data = city_data[nbhd_idx]
         x_nbhd.extend([year] * len(nbhd_data))
         y_nbhd.extend(nbhd_data[str(year)].to_list())
-
     trace_city = {
         'type': 'box',
         'name': 'City',
@@ -313,6 +312,66 @@ def traffic_flow_stats(data_frame, neighborhood=92):
                 'linecolor': 'black',
                 'mirror': True
             }
+        }
+    }
+    return figure
+
+
+def speed_limits():
+    data = [
+        {
+            'type': 'histogram',
+            'name': 'City',
+            'opacity': 0.75,
+            'x': np.random.randn(500),
+            'marker': {
+                'color': 'gray'
+            }
+        },
+        { 
+            'type': 'histogram',
+            'name': 'Neighborhood',
+            'opacity': 0.75,
+            'x': np.random.randn(500) + 1,
+            'marker': {
+                'color': 'steelblue'
+            }
+        }
+    ]
+    figure = {
+        'data': data,
+        'layout': {
+            'barmode': 'overlay'
+        }
+    }
+    return figure
+
+
+def road_types():
+    data = [
+        {
+            'type': 'histogram',
+            'name': 'City',
+            'opacity': 0.75,
+            'x': np.random.randn(500),
+            'marker': {
+                'color': 'gray'
+            }
+        },
+        { 
+            'type': 'histogram',
+            'name': 'Neighborhood',
+            'opacity': 0.75,
+            'x': np.random.randn(500) + 1,
+            'marker': {
+                'color': 'steelblue'
+            }
+        }
+    ]
+    figure = {
+        'data': data,
+        'layout': {
+            'barmode': 'overlay'
         }
     }
     return figure

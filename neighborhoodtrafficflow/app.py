@@ -14,7 +14,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from neighborhoodtrafficflow.figures import neighborhood_map, \
-    traffic_flow_map, traffic_flow_stats
+    road_map, traffic_flow_counts, speed_limits, road_types
 
 # Data file paths
 CWD = Path(__file__).parent
@@ -36,7 +36,6 @@ MAP_OPTIONS = [{'label': 'Traffic Flow', 'value': 'flow'},
                {'label': 'Speed Limit', 'value': 'speed'},
                {'label': 'Road Type', 'value': 'road'}]
 YEAR_OPTIONS = {year: str(year) for year in range(2007, 2019)}
-
 
 # Initialize dashboard
 APP = dash.Dash(__name__)
@@ -140,24 +139,24 @@ APP.layout = html.Div(
                                 Use your cursor to zoom in and out.',
                                 className='centerTitle'),
                         dcc.Graph(
-                            id='neighborhoodMap',
+                            id='neighborhoodMapFigure',
                             figure=neighborhood_map(*NBHD_DATA)
                         )
                     ]
                 ),
-                # Traffic Flow Map
+                # Neighborhood Road Map
                 html.Div(
-                    id='trafficFlowMapContainer',
+                    id='roadMapContainer',
                     className='six columns prettyContainer',
                     children=[
                         html.H4(
-                            id='mapTitle',
+                            id='roadMapTitle',
                             className='centerTitle',
                             children='Neighborhood Roads'
                         ),
                         dcc.Graph(
-                            id='trafficFlowMap',
-                            figure=traffic_flow_map(
+                            id='roadMapFigure',
+                            figure=road_map(
                                 STREET_DATA)
                         )
                     ]
@@ -170,22 +169,58 @@ APP.layout = html.Div(
             className='twelve columns',
             children=[
                 html.Div(
-                    id='trafficFlowStatsContainer',
+                    id='flowCountContainer',
                     className='twelve columns prettyContainer',
                     children=[
                         html.H4(
-                            id='statsTitle',
+                            id='flowCountTitle',
                             className='centerTitle',
-                            children='Neighborhood Stats'
+                            children='Neighborhood Flow Counts'
                         ),
                         html.P('This graph displays historical data about your selected neighborhood.\
                                 The bolded line in the middle of each box represents the average statistic\
                                 for the corresponding year.',
                                 className='centerTitle'),
                         dcc.Graph(
-                            id='trafficFlowStats',
-                            figure=traffic_flow_stats(
-                                STREET_DATA)
+                            id='flowCountFigure',
+                            figure=traffic_flow_counts(STREET_DATA)
+                        )
+                    ]
+                )
+            ]
+        ),
+        # Row four
+        html.Div(
+            id='rowFour',
+            className='twelve columns',
+            children=[
+                html.Div(
+                    id='speedLimitContainer',
+                    className='six columns prettyContainer',
+                    children=[
+                        html.H4(
+                            id='speedLimitTitle',
+                            className='centerTitle',
+                            children='Neighborhood Speed Limits'
+                        ),
+                        dcc.Graph(
+                            id='speedLimitFigure',
+                            figure=speed_limits()
+                        )
+                    ]
+                ),
+                html.Div(
+                    id='roadTypeContainer',
+                    className='six columns prettyContainer',
+                    children=[
+                        html.H4(
+                            id='roadTypeTitle',
+                            className='centerTitle',
+                            children='Neighborhood Road Types'
+                        ),
+                        dcc.Graph(
+                            id='roadTypeFigure',
+                            figure=road_types()
                         )
                     ]
                 )
@@ -195,112 +230,61 @@ APP.layout = html.Div(
 )
 
 
-# Update neighborhood map after dropdown selection
+#########################
+# Update section titles #
+#########################
+
+# Update neighborhood road map title after dropdown selection
 @APP.callback(
-    Output('neighborhoodMap', 'figure'),
+    Output('roadMapTitle', 'children'),
     [Input('dropdown', 'value')]
 )
-def update_neighborhood_map(neighborhood):
-    """Update neighborhood map
-
-    Update neighborhood map after a drowpdown selection is made.
-
-    Parameters
-    ----------
-    neighborhood : int
-        Currently selected neighborhood (0-102).
-
-    Returns
-    -------
-    figure : dict
-        Plotly choroplethmapbox figure.
-    """
-    return neighborhood_map(*NBHD_DATA, selected=neighborhood)
-
-
-# Update traffic map title after dropdown selection
-@APP.callback(
-    Output('mapTitle', 'children'),
-    [Input('dropdown', 'value')]
-)
-def update_traffic_map_title(value):
-    """Update traffic map title"""
+def update_road_map_title(value):
+    """Update neighborhood road map title."""
     return NAMES[value] + ' Roads'
 
-
-# Update traffic flow map after dropdown, radio, or slider selection
+# Update traffic flow count title after dropdown selection
 @APP.callback(
-    Output('trafficFlowMap', 'figure'),
-    [Input('dropdown', 'value'),
-     Input('radio', 'value'),
-     Input('slider', 'value')]
-)
-def update_traffic_flow_map(neighborhood, map_type, year):
-    """Update traffic flow map
-
-    Update traffic flow map after a dropdown, radio, or slider
-    selection is made. Also triggered by neighborhood map selection
-    via dropdown callback.
-
-    Parameters
-    ----------
-    neighborhood : str
-        Currently selected neighborhood (0-102)
-    map_type : str
-        Currently selected map type (flow, speed, road).
-    year : int
-        Currently selected year (2007-2018)
-
-    Returns
-    -------
-    figure : dict
-        Plotly scattermapbox figure.
-    """
-    return traffic_flow_map(STREET_DATA, neighborhood, map_type, year)
-
-
-# Update controls after radio selection
-@APP.callback(
-    Output('sliderContainer', 'style'),
-    [Input('radio', 'value')]
-)
-def update_controls(value):
-    """docstring"""
-    if value == 'flow':
-        return {'display': 'inline'}
-    return {'display': 'none'}
-
-
-# Update stats title after dropdown selection
-@APP.callback(
-    Output('statsTitle', 'children'),
+    Output('flowCountTitle', 'children'),
     [Input('dropdown', 'value')]
 )
-def update_stats_title(value):
-    """Update stats title"""
-    return NAMES[value] + ' Stats'
+def update_flow_count_title(value):
+    """Update flow count title."""
+    return NAMES[value] + ' Flow Counts'
 
-
-# Update traffic flow stats after dropdown selection
+# Update speed limit title after dropdown selection
 @APP.callback(
-    Output('trafficFlowStats', 'figure'),
+    Output('speedLimitTitle', 'children'),
     [Input('dropdown', 'value')]
 )
-def update_traffic_flow_stats(neighborhood):
-    """Update traffic flow stats"""
-    return traffic_flow_stats(STREET_DATA, neighborhood)
+def update_speed_limit_title(value):
+    """Update speed limit title."""
+    return NAMES[value] + ' Speed Limits'
+
+# Update road type title after dropdown selection
+@APP.callback(
+    Output('roadTypeTitle', 'children'),
+    [Input('dropdown', 'value')]
+)
+def update_road_type_title(value):
+    """Update road type title."""
+    return NAMES[value] + ' Road Types'
 
 
-# Update dropdown after neighborhood map selection
+##########################
+# Update controls status #
+##########################
+
+# Update dropdown after Seattle neighborhood map selection
 @APP.callback(
     Output('dropdown', 'value'),
-    [Input('neighborhoodMap', 'selectedData')]
+    [Input('neighborhoodMapFigure', 'selectedData')]
 )
 def update_dropdown(selected_data):
-    """Update dropdown
+    """Update dropdown after neighborhood map selection.
 
-    Update dropdown menu after neighborhood map selection is made.
-    If TypeError, returns '92' (University District).
+    Update dropdown menu status after neighborhood map selection is
+    made. If TypeError, returns '92' (University District).
 
     Parameters
     ----------
@@ -316,6 +300,97 @@ def update_dropdown(selected_data):
         return selected_data['points'][0]['pointIndex']
     except TypeError:
         return 92
+
+# Update slider after radio selection
+@APP.callback(
+    Output('sliderContainer', 'style'),
+    [Input('radio', 'value')]
+)
+def update_controls(value):
+    """Update slider after radio selection.
+
+    Update slider after radio selection. If 'flow' selected, show
+    slider. If 'speed' or 'road' selected, hide slider.
+
+    Parameters
+    ----------
+    value : str
+        Currently selected map type from radio.
+
+    Returns
+    -------
+    out : dict
+        CSS for slider status.
+    """
+    if value == 'flow':
+        return {'display': 'inline'}
+    return {'display': 'none'}
+
+
+##################
+# Update figures #
+##################
+
+# Update Seattle neighborhood map after dropdown selection
+@APP.callback(
+    Output('neighborhoodMapFigure', 'figure'),
+    [Input('dropdown', 'value')]
+)
+def update_neighborhood_map(neighborhood):
+    """Update Seattle neighborhood map.
+
+    Update neighborhood map after a drowpdown selection is made.
+
+    Parameters
+    ----------
+    neighborhood : int
+        Currently selected neighborhood (0-102).
+
+    Returns
+    -------
+    figure : dict
+        Plotly choroplethmapbox figure.
+    """
+    return neighborhood_map(*NBHD_DATA, selected=neighborhood)
+
+# Update neighborhood road map after dropdown, radio, or slider selection
+@APP.callback(
+    Output('roadMapFigure', 'figure'),
+    [Input('dropdown', 'value'),
+     Input('radio', 'value'),
+     Input('slider', 'value')]
+)
+def update_road_map(neighborhood, map_type, year):
+    """Update neighborhood road map.
+
+    Update road map after a dropdown, radio, or slider selection is
+    made. Also triggered by neighborhood map selection via dropdown
+    callback.
+
+    Parameters
+    ----------
+    neighborhood : str
+        Currently selected neighborhood (0-102)
+    map_type : str
+        Currently selected map type (flow, speed, road).
+    year : int
+        Currently selected year (2007-2018)
+
+    Returns
+    -------
+    figure : dict
+        Plotly scattermapbox figure.
+    """
+    return road_map(STREET_DATA, neighborhood, map_type, year)
+
+# Update traffic flow counts after dropdown selection
+@APP.callback(
+    Output('flowCountFigure', 'figure'),
+    [Input('dropdown', 'value')]
+)
+def update_traffic_flow_counts(neighborhood):
+    """Update traffic flow stats"""
+    return traffic_flow_counts(STREET_DATA, neighborhood)
 
 
 # Run dashboard
