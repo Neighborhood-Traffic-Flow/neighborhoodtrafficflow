@@ -168,6 +168,7 @@ APP.layout = html.Div(
             id='rowThree',
             className='twelve columns',
             children=[
+                # Flow Count Bar Chart
                 html.Div(
                     id='flowCountContainer',
                     className='twelve columns prettyContainer',
@@ -194,6 +195,7 @@ APP.layout = html.Div(
             id='rowFour',
             className='twelve columns',
             children=[
+                # Speed Limit Histogram
                 html.Div(
                     id='speedLimitContainer',
                     className='six columns prettyContainer',
@@ -205,10 +207,11 @@ APP.layout = html.Div(
                         ),
                         dcc.Graph(
                             id='speedLimitFigure',
-                            figure=speed_limits()
+                            figure=speed_limits(STREET_DATA)
                         )
                     ]
                 ),
+                # Road Type Histogram
                 html.Div(
                     id='roadTypeContainer',
                     className='six columns prettyContainer',
@@ -220,7 +223,7 @@ APP.layout = html.Div(
                         ),
                         dcc.Graph(
                             id='roadTypeFigure',
-                            figure=road_types()
+                            figure=road_types(STREET_DATA)
                         )
                     ]
                 )

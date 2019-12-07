@@ -124,10 +124,10 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
         }],
         'layout': {
             'margin': {
-                'l': 0,
-                'r': 0,
-                't': 0,
-                'b': 0
+                'l': 10,
+                'r': 10,
+                't': 10,
+                'b': 10
             },
             'paper_bgcolor': '#F9F9F9',
             'clickmode': 'event+select',
@@ -146,7 +146,7 @@ def neighborhood_map(num, data, region_ids, names, selected=92):
 
 def road_map(data_frame, neighborhood=92,
                      map_type='flow', year=2018):
-    """Create rpad map of currently selected neighborhood.
+    """Create road map of currently selected neighborhood.
 
     Create Plotly scattermapbox figure of roads in selected Seattle
     neighborhood, where roads are colored by either traffic flow,
@@ -236,7 +236,11 @@ def road_map(data_frame, neighborhood=92,
         'layout': {
             # 'width': dimensions[0],
             # 'height': dimensions[1],
-            'title': info[2],
+            'margin': {
+                't': 1,
+                'b': 1,
+                'l': 70
+            },
             'paper_bgcolor': '#F9F9F9',
             'hovermode': 'closest',
             'clickmode': 'none',
@@ -247,6 +251,7 @@ def road_map(data_frame, neighborhood=92,
                 'ticktext': []
             },
             'yaxis': {
+                'title': info[2],
                 'linecolor': 'black',
                 'mirror': True,
                 'tickvals': [],
@@ -298,10 +303,16 @@ def traffic_flow_counts(data_frame, neighborhood=92):
     figure = {
         'data': [trace_city, trace_nbhd],
         'layout': {
+            'margin': {
+                't': 1,
+                'l': 70,
+                'b': 70
+            },
             'paper_bgcolor': '#F9F9F9',
             'hovermode': 'closest',
             'boxmode': 'group',
             'xaxis': {
+                'title': 'Year',
                 'linecolor': 'black',
                 'mirror': True,
                 'tickmode': 'array',
@@ -309,6 +320,7 @@ def traffic_flow_counts(data_frame, neighborhood=92):
                 'tickangle': -90
             },
             'yaxis': {
+                'title': 'Average Weekday Traffic (1000 vehicles)',
                 'linecolor': 'black',
                 'mirror': True
             }
@@ -317,61 +329,109 @@ def traffic_flow_counts(data_frame, neighborhood=92):
     return figure
 
 
-def speed_limits():
-    data = [
-        {
-            'type': 'histogram',
-            'name': 'City',
-            'opacity': 0.75,
-            'x': np.random.randn(500),
-            'marker': {
-                'color': 'gray'
-            }
-        },
-        { 
-            'type': 'histogram',
-            'name': 'Neighborhood',
-            'opacity': 0.75,
-            'x': np.random.randn(500) + 1,
-            'marker': {
-                'color': 'steelblue'
-            }
+def speed_limits(data_frame, neighborhood=92):
+    """docstring"""
+    city_data = data_frame[data_frame['speed'] >= 0]
+    x_city = city_data['speed'].to_list()
+    trace_city = {
+        'type': 'histogram',
+        'name': 'City',
+        'opacity': 0.75,
+        'x': x_city,
+        'histnorm': 'percent',
+        'marker': {
+            'color': 'gray'
         }
-    ]
+    }
+    nbhd_idx = city_data.nbhd.apply(
+        lambda nbhd_list: int(neighborhood) in nbhd_list)
+    nbhd_data = city_data[nbhd_idx]
+    nbhd_roads = nbhd_data['speed'].to_list()
+    trace_nbhd = { 
+        'type': 'histogram',
+        'name': 'Neighborhood',
+        'opacity': 0.75,
+        'x': nbhd_roads,
+        'histnorm': 'percent',
+        'marker': {
+            'color': 'steelblue'
+        }
+    }
     figure = {
-        'data': data,
+        'data': [trace_city, trace_nbhd],
         'layout': {
-            'barmode': 'overlay'
+            'margin': {
+                't': 1,
+                'b': 40,
+                'l': 70
+            },
+            'paper_bgcolor': '#F9F9F9',
+            'barmode': 'overlay',
+            'xaxis': {
+                'title': 'Speed Limit (mph)',
+                'linecolor': 'black',
+                'mirror': True
+            },
+            'yaxis': {
+                'title': 'Percent of Roads',
+                'linecolor': 'black',
+                'mirror': True
+            }
         }
     }
     return figure
 
 
-def road_types():
-    data = [
-        {
-            'type': 'histogram',
-            'name': 'City',
-            'opacity': 0.75,
-            'x': np.random.randn(500),
-            'marker': {
-                'color': 'gray'
-            }
-        },
-        { 
-            'type': 'histogram',
-            'name': 'Neighborhood',
-            'opacity': 0.75,
-            'x': np.random.randn(500) + 1,
-            'marker': {
-                'color': 'steelblue'
-            }
+def road_types(data_frame, neighborhood=92):
+    """docstring"""
+    city_data = data_frame
+    x_city = city_data['road'].to_list()
+    trace_city = {
+        'type': 'histogram',
+        'name': 'City',
+        'opacity': 0.75,
+        'x': x_city,
+        'histnorm': 'percent',
+        'marker': {
+            'color': 'gray'
         }
-    ]
+    }
+    nbhd_idx = city_data.nbhd.apply(
+        lambda nbhd_list: int(neighborhood) in nbhd_list)
+    nbhd_data = city_data[nbhd_idx]
+    nbhd_roads = nbhd_data['road'].to_list()
+    trace_nbhd = { 
+        'type': 'histogram',
+        'name': 'Neighborhood',
+        'opacity': 0.75,
+        'x': nbhd_roads,
+        'histnorm': 'percent',
+        'marker': {
+            'color': 'steelblue'
+        }
+    }
     figure = {
-        'data': data,
+        'data': [trace_city, trace_nbhd],
         'layout': {
-            'barmode': 'overlay'
+            'margin': {
+                't': 1,
+                'l': 70
+            },
+            'paper_bgcolor': '#F9F9F9',
+            'barmode': 'overlay',
+            'xaxis': {
+                'title': 'Arterial Classification',
+                'tickmode': 'array',
+                'tickvals': list(ROAD_TYPE.keys()),
+                'ticktext': list(ROAD_TYPE.values()),
+                'linecolor': 'black',
+                'mirror': True
+            },
+            'yaxis': {
+                'title': 'Percent of Roads',
+                'linecolor': 'black',
+                'mirror': True
+            }
         }
     }
     return figure
