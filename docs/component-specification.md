@@ -1,16 +1,7 @@
 # Component Specification
 
-<!---
-The document should have sections for:
-* **Software components** High level description of the software components such as: *data manager*, which provides a simplified interface to your data and provides application specific features (e.g., querying data subsets); and *visualization manager*, which displays data frames as a plot. Describe at least 3 components specifying what it does, inputs it requires, and outputs it provides.
-* **Interactions to accomplish use cases** Describe how the above software components interact to accomplish at least one of your use cases.
-* **Preliminary plan** A list of tasks in priority order.
---->
-
 ## Software Components
-
 ![](flowchart.png)
-
 * **Data manager**: Pre-process raw data
    * What it does: Load raw data, join data by neighborhood and street, reformat data for Plotly figures
    * Input: Data from Zillow and City of Seattle
@@ -18,11 +9,18 @@ The document should have sections for:
 * **Dashboard manager**: HTML structure of dashboard
    * What it does: Create HTML components for headers, maps, charts, and interactive components
    * Input: Data from data manager, current state of interactive components from browser, Plotly figures from figure manager
-   * Output: Current state of interactive components to figure manager, HTML components to browser
+   * Output: Current state to figure manager, HTML components to browser
 * **Figure manager**: Create Plotly figures
    * What it does: Create Plotly figures for maps and charts
-   * Input: Data from data manager, current state of interactive components from dashboard manager
+   * Input: Data from data manager, current state from dashboard manager
    * Ouput: Plotly figures to dashboard manager
+
+## Interactions
+User selects neighborhood, year, or map type using dashboard controls:
+  * Browser sends current state of interactive components to dashboard manager
+  * Dashboard manager sends current state to figure manager
+  * Figure manager sends Plotly figures for current state to dashboard manager
+  * Dashboard manager sends HTML for current state to browser
 
 ## Preliminary Plan
 1. Initialize package structure in repository, including CI and tests
