@@ -175,6 +175,7 @@ def traffic_flow_map(data_frame, neighborhood=92,
     data_frame = data_frame[nbhd_idx]
     if map_type == 'flow':
         data_frame = data_frame.rename(columns={str(year): 'flow'})
+        data_frame = data_frame.sort_values(by=['flow'])
 
     # Initialize data list with neighborhood centroid and colorscale
     info = CMAP_INFO[map_type]
@@ -258,86 +259,63 @@ def traffic_flow_map(data_frame, neighborhood=92,
 
 def traffic_flow_stats(data_frame, neighborhood=92):
     """Create traffic flow stats"""
-    # Filter DataFrame by neighborhood
-    nbhd_idx = data_frame.nbhd.apply(
-        lambda nbhd_list: int(neighborhood) in nbhd_list)
-    data_frame = data_frame[nbhd_idx]
-    data = []
+    x_city = []
+    y_city = []
+    x_nbhd = []
+    y_nbhd = []
     for year in range(2007, 2019):
-        values = data_frame[str(year)].to_list()
-        trace = {
-            'type': 'box',
-            'name': year,
-            'x': year,
-            'y': values,
-            'showlegend': False
+        # City statistics
+        city_data = data_frame[data_frame[str(year)] >= 0]
+        x_city.extend([year] * len(city_data))
+        y_city.extend(city_data[str(year)].to_list())
+
+        # Neighborhood statistics
+        nbhd_idx = city_data.nbhd.apply(
+            lambda nbhd_list: int(neighborhood) in nbhd_list)
+        nbhd_data = city_data[nbhd_idx]
+        x_nbhd.extend([year] * len(nbhd_data))
+        y_nbhd.extend(nbhd_data[str(year)].to_list())
+
+    trace_city = {
+        'type': 'box',
+        'name': 'City',
+        'x': x_city,
+        'y': y_city,
+        'showledgend': False,
+        'marker': {
+            'color': 'gray'
         }
-        data.append(trace)
+    }
+    trace_nbhd = {
+        'type': 'box',
+        'name': 'Neighborhood',
+        'x': x_nbhd,
+        'y': y_nbhd,
+        'showledgend': False,
+        'marker': {
+            'color': 'steelblue'
+        }
+    }
     figure = {
-        'data': data,
+        'data': [trace_city, trace_nbhd],
         'layout': {
             'paper_bgcolor': '#F9F9F9',
+            'hovermode': 'closest',
+            'boxmode': 'group',
             'xaxis': {
                 'linecolor': 'black',
-                'mirror': True
+                'mirror': True,
+                'tickmode': 'array',
+                'tickvals': np.arange(2007, 2019),
+                'tickangle': -90
             },
             'yaxis': {
                 'linecolor': 'black',
                 'mirror': True
-            },
+            }
         }
     }
     return figure
-
-
-def traffic_flow_series(data_frame, neighborhood=92):
-    """Create traffic flow series"""
-    data = []
-    for nbhd in range(len(NBHD_INFO)):
-        data.append(get_series(data_frame, nbhd))
-    data.append(get_series(data_frame, neighborhood, 5, 'steelblue'))
-    figure = {
-        'data': data,
-        'layout': {
-            'paper_bgcolor': '#F9F9F9',
-            'xaxis': {
-                'linecolor': 'black',
-                'mirror': True
-            },
-            'yaxis': {
-                'linecolor': 'black',
-                'mirror': True
-            },
-        }
-    }
-    return figure
-
-
-def get_series(data_frame, nbhd, width=2, color='rgb(192,192,192)'):
-    """Get time series of flow for given neighborhood"""
-    nbhd_idx = data_frame.nbhd.apply(
-        lambda nbhd_list: nbhd in nbhd_list)
-    nbhd_flow = data_frame[nbhd_idx]
-    years = np.arange(2007, 2019)
-    flows = np.zeros(12)
-    for i in range(12):
-        flow_current = nbhd_flow[nbhd_flow[str(years[i])].notna()]
-        flow_current = flow_current[str(years[i])].to_list()
-        flow = [flow_current[j] for j in range(len(flow_current))]
-        flows[i] = np.mean(flow)
-    trace = {
-        'type': 'scatter',
-        'showlegend': False,
-        'mode': 'lines',
-        'x': years,
-        'y': flows,
-        'hoverinfo': 'none',
-        'line': {
-            'width': width,
-            'color': color
-        }
-    }
-    return trace
 
 
 def lat2y(lat):
@@ -366,7 +344,7 @@ def road_color(val, map_type):
         String containting rgb value of given road.
     """
     # Bad values
-    if val is None or np.isnan(val):
+    if val is None or val == -1:
         return 'rgb(192,192,192)'
 
     # Create colormap
@@ -411,15 +389,13 @@ def hover_text(name, val, map_type):
         Description of road including name and value.
     """
     if map_type == 'flow':
-        if val is None or np.isnan(val):
+        if val == -1:
             return name + ', Flow Count: Unknown'
         return name + ', Flow Count:' + str(int(val))
     if map_type == 'speed':
-        if val is None or np.isnan(val):
+        if val == -1:
             return name + ', Speed Limit: Unknown'
         return name + ', Speed Limit:' + str(int(val)) + 'mph'
-    if val is None or np.isnan(val):
-        return name + ', Road Type: Unknown'
     return name + ', Road Type:' + ROAD_TYPE[val]
 
 

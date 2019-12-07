@@ -204,10 +204,8 @@ def get_flow_data():
         # Reformate DataFrame and store in list
         df = df[['COMPKEY', 'FLOWSEGID', 'geometry',
                  FLOW_NAMES[year], STREET_NAMES[year]]]
-        df = df.rename(columns={FLOW_NAMES[year]: 'flow',
-                                STREET_NAMES[year]: 'name'})
         df = df.astype({'COMPKEY': 'str', 'FLOWSEGID': 'int64',
-                        'flow': 'float'})
+                        FLOW_NAMES[year]: 'float'})
         df_list.append(df)
         year_list.append(year)
 
@@ -278,7 +276,7 @@ def get_street_data(df, df_name, idx2poly, key_list, name_list,
                 if add:
                     # Add info in all datasets
                     key_list.append(int(float(key)))
-                    name_list.append(STREET_NAMES[df_name])
+                    name_list.append(row[STREET_NAMES[df_name]])
                     lon_list.append(lon)
                     lat_list.append(lat)
                     nbhd_list.append(get_neighborhood(lon, lat, idx2poly))
@@ -337,7 +335,7 @@ def add_flow_data(df_streets, df_flow, year, flow2key):
         print('Percent done: %.2f' % (100.0*idx/len(df_flow)), end='\r')
 
         try:
-            flow = int(row['flow'])
+            flow = int(row[FLOW_NAMES[year]])
         except ValueError:
             flow = -1
 
@@ -407,4 +405,4 @@ if __name__ == '__main__':
         add_flow_data(DF_STREETS, DF_LIST[i], YEAR_LIST[i], FLOW2KEY)
 
     # Save DataFrame
-    DF_STREETS.to_pickle('cleaned/street_data.pkl')
+    DF_STREETS.to_pickle('cleaned/street_data2.pkl')

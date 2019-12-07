@@ -14,12 +14,12 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from neighborhoodtrafficflow.figures import neighborhood_map, \
-    traffic_flow_map, traffic_flow_series, traffic_flow_stats
+    traffic_flow_map, traffic_flow_stats
 
 # Data file paths
 CWD = Path(__file__).parent
 NBHD_PATH = CWD / 'data/cleaned/nbhd_data.pkl'
-STREET_PATH = CWD / 'data/street_data.pkl'
+STREET_PATH = CWD / 'data/cleaned/street_data.pkl'
 
 # Import neighborhood data
 with open(NBHD_PATH, 'rb') as pickle_file:
@@ -169,27 +169,9 @@ APP.layout = html.Div(
             id='rowThree',
             className='twelve columns',
             children=[
-                # Traffic Flow Series
-                html.Div(
-                    id='trafficFlowSeriesContainer',
-                    className='six columns prettyContainer',
-                    children=[
-                        html.H4(
-                            id='seriesTitle',
-                            className='centerTitle',
-                            children='Neighborhood Series'
-                        ),
-                        dcc.Graph(
-                            id='trafficFlowSeries',
-                            figure=traffic_flow_series(
-                                STREET_DATA)
-                        )
-                    ]
-                ),
-                # Traffic Flow Stats
                 html.Div(
                     id='trafficFlowStatsContainer',
-                    className='six columns prettyContainer',
+                    className='twelve columns prettyContainer',
                     children=[
                         html.H4(
                             id='statsTitle',
@@ -287,26 +269,6 @@ def update_controls(value):
     if value == 'flow':
         return {'display': 'inline'}
     return {'display': 'none'}
-
-
-# Update traffic flow series title after dropdown selection
-@APP.callback(
-    Output('seriesTitle', 'children'),
-    [Input('dropdown', 'value')]
-)
-def update_traffic_series_title(value):
-    """Update traffic flow series title"""
-    return NAMES[value] + ' Series'
-
-
-# Update traffic flow series after dropdown selection
-@APP.callback(
-    Output('trafficFlowSeries', 'figure'),
-    [Input('dropdown', 'value')]
-)
-def update_traffic_flow_series(neighborhood):
-    """Update traffic flow series"""
-    return traffic_flow_series(STREET_DATA, neighborhood)
 
 
 # Update stats title after dropdown selection
