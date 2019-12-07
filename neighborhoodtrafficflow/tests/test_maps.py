@@ -1,12 +1,12 @@
-"""Test module for functions in figures.py"""
+"""Test module for generating maps."""
 from pathlib import Path
 import pickle
 
 import numpy as np
 import pytest
 
-from neighborhoodtrafficflow.figures import (matplotlib_to_plotly,
-                                             neighborhood_map)
+from neighborhoodtrafficflow.figures.maps import \
+    matplotlib_to_plotly, neighborhood_map
 
 # Import neighborhood data
 CWD = Path(__file__).parent
