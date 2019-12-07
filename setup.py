@@ -2,13 +2,14 @@
 from setuptools import setup, find_packages
 
 PACKAGES = find_packages()
+DESCRIPTION = 'An interactive dashboard to explore traffic flow trends in ' \
+    'Seattle neighborhoods.'
+URL = 'https://github.com/Neighborhood-Traffic-Flow/neighborhood-traffic-flow'
 
 OPTS = dict(
     name='neighborhoodtrafficflow',
-    description='An interactive dashboard to explore traffic flow trends '
-    'in Seattle neighborhoods.',
-    url='https://github.com/Neighborhood-Traffic-Flow/'
-        'neighborhood-traffic-flow',
+    description=DESCRIPTION,
+    url=URL,
     license='MIT',
     author='Neighborhood-Traffic-Flow',
     version='1.0',

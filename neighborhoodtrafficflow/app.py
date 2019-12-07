@@ -13,8 +13,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from neighborhoodtrafficflow.figures import neighborhood_map, \
-    road_map, traffic_flow_counts, speed_limits, road_types
+from neighborhoodtrafficflow.figures.maps import \
+    neighborhood_map, road_map
+from neighborhoodtrafficflow.figures.charts import \
+    traffic_flow_counts, speed_limits, road_types
 
 # Data file paths
 CWD = Path(__file__).parent

@@ -17,9 +17,9 @@ pytestmark = pytest.mark.skip("Skipping test_street_data.py")
 
 # File paths
 CWD = Path(__file__).parent
-SHP_PATH = CWD/'../data/raw/zillow-neighborhoods/' \
+SHP_PATH = CWD / '../data/raw/zillow-neighborhoods/' \
            'zillow-neighborhoods.shp'
-STREET_PATH = CWD/'../data/raw/Seattle_Streets/Seattle_Streets.shp'
+STREET_PATH = CWD / '../data/raw/Seattle_Streets/Seattle_Streets.shp'
 
 def test_get_polygons_1():
     """Check that function throws an error if no file at shp_path."""

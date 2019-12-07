@@ -19,7 +19,7 @@ ROAD_TYPE = {
 
 # Neighborhood names, centroids, and bounds
 CWD = Path(__file__).parent
-INFO_PATH = CWD / 'data/cleaned/nbhd_info.csv'
+INFO_PATH = CWD / '../data/cleaned/nbhd_info.csv'
 NBHD_INFO = pd.read_csv(INFO_PATH)
 
 
