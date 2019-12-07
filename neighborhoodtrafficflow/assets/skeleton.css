@@ -156,9 +156,11 @@ body {
   margin: auto;
   width: 90%;
 }
-/*#trafficFlowMap {
-  frameBorder: 1;
-}*/
+#rowTwo {
+  display: flex;
+  flex-flow: row;
+  height: 100%;
+}
 
 
 /* Typography
