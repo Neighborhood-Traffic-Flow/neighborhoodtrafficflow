@@ -7,9 +7,10 @@ The document should have sections for:
 * **Preliminary plan** A list of tasks in priority order.
 --->
 
+## Software Components
+
 ![](flowchart.png)
 
-## Software Components
 * **Data manager**: Pre-process raw data
    * What it does: Load raw data, join data by neighborhood and street, reformat data for Plotly figures
    * Input: Data from Zillow and City of Seattle
