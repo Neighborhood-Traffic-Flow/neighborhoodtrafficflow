@@ -16,6 +16,6 @@ install:
     - pip install codecov
     - pip install -e .
 
-script: pytest --cov=./
+script: pytest
 
 after_success: codecov
