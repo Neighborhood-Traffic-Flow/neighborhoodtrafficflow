@@ -10,7 +10,7 @@ from neighborhoodtrafficflow.data.neighborhood_data import \
     prep_map_data, prep_map_info
 
 # Don't run tests if no updates have been made to neighborhood_data.py
-pytestmark = pytest.mark.skip("Skipping test_neighborhood_data.py")
+#pytestmark = pytest.mark.skip("Skipping test_neighborhood_data.py")
 
 # File paths
 CWD = Path(__file__).parent

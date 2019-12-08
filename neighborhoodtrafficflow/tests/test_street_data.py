@@ -13,7 +13,7 @@ from neighborhoodtrafficflow.data.street_data import \
     get_street_data, add_flow_data
 
 # Don't run tests if no updates have been made to street_data.py
-pytestmark = pytest.mark.skip("Skipping test_street_data.py")
+#pytestmark = pytest.mark.skip("Skipping test_street_data.py")
 
 # File paths
 CWD = Path(__file__).parent
