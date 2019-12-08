@@ -13,9 +13,10 @@ install:
     - conda info -a
     - conda env create -f environment.yml
     - source activate ntf
-    - pip install codecov
     - pip install -e .
+    - pip install pytest-cov
+    - pip install coveralls
 
 script: pytest
 
-after_success: codecov
+after_success: coveralls
