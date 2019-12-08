@@ -53,6 +53,15 @@ FLOW_DESCRIPTION = 'This graph displays historical data about your selected \
                     neighborhood. The bolded line in the middle of each box \
                     represents the average statistic for the corresponding \
                     year.'
+FLOWMAP_DESCRIPTION = 'This map represents data from your selected neighborhood.'
+SPEED_LIMITS_DESCRIPTION = 'This chart displays the percentage of roads with all speed limits \
+                            in your selected neighborhood. The neighborhood information is \
+                            displayed in blue. This is compared to the city of Seattle \
+                            which is displayed in gray.'
+NBHD_RDTYPES_DESCRIPTION = 'This chart displays the percentage of road types in your \
+                            selected neighborhood. The neighborhood information is \
+                            displayed in blue. This is compared to the city of Seattle \
+                            which is displayed in gray.'
 
 # Initialize dashboard
 APP = dash.Dash(__name__)
@@ -216,6 +225,7 @@ APP.layout = html.Div(
                             className='centerTitle',
                             children='Neighborhood Speed Limits'
                         ),
+                        html.P(SPEED_LIMITS_DESCRIPTION),
                         dcc.Graph(
                             id='speedLimitFigure',
                             figure=speed_limits(STREET_DATA)
@@ -232,6 +242,7 @@ APP.layout = html.Div(
                             className='centerTitle',
                             children='Neighborhood Road Types'
                         ),
+                        html.P(NBHD_RDTYPES_DESCRIPTION),
                         dcc.Graph(
                             id='roadTypeFigure',
                             figure=road_types(STREET_DATA)
