@@ -1,0 +1,5 @@
+Users can also view the road type in a selected neighborhood on the map. 
+Users can select road type as their map types and select the neighborhood from drop down meun or choose from the map.
+
+App will show different road types in a selected neighborhood by different color based on their classification.
+When users hover over a street, it displays a popup containing street name
