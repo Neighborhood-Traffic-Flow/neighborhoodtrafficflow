@@ -6,7 +6,7 @@
 git clone https://github.com/Neighborhood-Traffic-Flow/neighborhoodtrafficflow.git
 ```
 
-#### Step 2: run the dashboard
+### Step 2: run the dashboard
 
 ```
 conda activate ntf
