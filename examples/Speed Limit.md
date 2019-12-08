@@ -3,7 +3,6 @@ and select the neighborhood from drop down meun or choose from the map.
 
 After selecting selecting a specific neighborhood, the app will show the speed limit on the neighborhood map by color.
 When users hover over a street, it displays a popup containing street name and the speed limit of that street. 
-
 ![image](https://github.com/Neighborhood-Traffic-Flow/neighborhoodtrafficflow/blob/master/examples/gif%20pictures/speed%20limit%20graph.gif）
 
 Users can also compare the speed limit in their selected neighborhood to the speed limit in Seattle 
