@@ -13,7 +13,7 @@ from neighborhoodtrafficflow.data.street_data import \
     get_street_data, add_flow_data
 
 # Don't run tests if no updates have been made to street_data.py
-PYTESTMARK = pytest.mark.skip("Skipping test_street_data.py")
+pytestmark = pytest.mark.skip("Skipping test_street_data.py")
 
 # File paths
 CWD = Path(__file__).parent
@@ -21,15 +21,17 @@ SHP_PATH = CWD / '../data/raw/zillow-neighborhoods/' \
            'zillow-neighborhoods.shp'
 STREET_PATH = CWD / '../data/raw/Seattle_Streets/Seattle_Streets.shp'
 
-def test_get_polygons_1():
-    """Check that function throws an error if no file at shp_path."""
 
-    # Call function
+################
+# get_polygons #
+################
+
+def test_exception_get_polygons():
+    """Check that function throws an error if no file at shp_path."""
     with pytest.raises(Exception):
         assert get_polygons('dummy.shp')
 
-
-def test_get_polygons_2():
+def test_output_length_get_polygons():
     """Check length and output types."""
     idx2poly = get_polygons(SHP_PATH)
     assert len(idx2poly) == 103
@@ -37,7 +39,11 @@ def test_get_polygons_2():
     assert isinstance(idx2poly[0], Polygon)
 
 
-def test_get_neighborhood_1():
+####################
+# get_neighborhood #
+####################
+
+def test_output_type_get_neighborhood():
     """Check output type."""
     lon = [-122.36866107043400]
     lat = [47.66757206792280]
@@ -48,8 +54,7 @@ def test_get_neighborhood_1():
     assert len(nbhd_type) == 1
     assert isinstance(nbhd_list[0], int)
 
-
-def test_get_neighborhood_2():
+def test_one_nbhd_get_neighborhood():
     """Check output of one neighborhood."""
     lon = [-122.36866107043400]
     lat = [47.66757206792280]
@@ -58,8 +63,7 @@ def test_get_neighborhood_2():
     assert len(nbhd_list) == 1
     assert nbhd_list[0] == 0
 
-
-def test_get_neighborhood_3():
+def test_two_nbhds_neighborhood():
     """Check output of two neighborhoods."""
     lon = [-122.36866107043400, -122.3821835817560]
     lat = [47.66757206792280, 47.69606176398850]
@@ -70,13 +74,16 @@ def test_get_neighborhood_3():
     assert nbhd_list[1] == 1
 
 
-def test_get_flow_path_1():
+#################
+# get_flow_path #
+#################
+
+def test_output_type_get_flow_path():
     """Test output type."""
     path = get_flow_path(2007)
     assert isinstance(path, PosixPath)
 
-
-def test_get_flow_path_2():
+def test_output_value_get_flow_path():
     """Test output value."""
     path = get_flow_path(2007)
     path_str = str(path)
@@ -84,14 +91,17 @@ def test_get_flow_path_2():
     assert os.path.exists(path)
 
 
-def test_get_flow_data_1():
+#################
+# get_flow_data #
+#################
+
+def test_ouput_length_get_flow_data():
     """Check length of output."""
     _, _, df_list, year_list = get_flow_data()
     assert len(df_list) == 12
     assert len(year_list) == 12
 
-
-def test_get_flow_data_2():
+def test_column_names_get_flow_data():
     """Check DataFrame columns names."""
     _, _, df_list, _ = get_flow_data()
     for i in range(12):
@@ -99,16 +109,14 @@ def test_get_flow_data_2():
         assert df_list[i].columns[1] == 'FLOWSEGID'
         assert df_list[i].columns[2] == 'geometry'
 
-
-def test_get_flow_data_3():
+def test_column_types_get_flow_data():
     """Check DataFrame types."""
     _, _, df_list, _ = get_flow_data()
     for i in range(12):
         assert df_list[i].dtypes[0] == object
         assert df_list[i].dtypes[1] == int
 
-
-def test_get_flow_data_4():
+def test_flow2key_get_flow_data():
     """Check first dictionary."""
     flow2key, _, _, _ = get_flow_data()
     assert isinstance(flow2key, dict)
@@ -119,8 +127,7 @@ def test_get_flow_data_4():
     assert list(key_type)[0] == int
     assert list(val_type)[0] == str
 
-
-def test_get_flow_data_5():
+def test_key2flow_get_flow_data():
     """Check second dictionary."""
     _, key2flow, _, _ = get_flow_data()
     assert isinstance(key2flow, dict)
@@ -131,8 +138,7 @@ def test_get_flow_data_5():
     assert list(key_type)[0] == str
     assert list(val_type)[0] == int
 
-
-def test_get_flow_data_6():
+def test_consistency_get_flow_data():
     """Check data consistincy across dictionaries."""
     flow2key, key2flow, _, _ = get_flow_data()
     for key in key2flow:
@@ -143,14 +149,17 @@ def test_get_flow_data_6():
         for key in keys.split(','):
             assert key2flow[key] == flow
 
-
-def test_get_flow_data_7():
+def test_year_get_flow_data():
     """Check year list."""
     _, _, _, year_list = get_flow_data()
     assert year_list == list(np.arange(2018, 2006, -1))
 
 
-def test_get_street_data_1():
+###################
+# get_street_data #
+###################
+
+def test_output_types_get_street_data():
     """Check output types."""
     # Initialize lists for street data
     key_list = []
@@ -194,8 +203,7 @@ def test_get_street_data_1():
     assert list(road_type)[0] == int
     assert list(nbhd_type)[0] == list
 
-
-def test_get_street_data_2():
+def test_update_lists_get_street_data():
     """Check modify in place."""
     # Initialize lists for street data
     key_list = []
@@ -221,8 +229,7 @@ def test_get_street_data_2():
     assert len(road_list) > 0
     assert len(nbhd_list) > 0
 
-
-def test_get_street_data_3():
+def test_output_range_get_street_data():
     """Check range of output."""
     # Initialize lists for street data
     key_list = []
@@ -246,7 +253,11 @@ def test_get_street_data_3():
     assert max(road_list) <= 5
 
 
-def test_add_flow_data():
+#################
+# add_flow_data #
+#################
+
+def test_output_add_flow_data():
     """Check final DataFrame."""
      # Get neighborhood polygons
     idx2poly = get_polygons(SHP_PATH)
