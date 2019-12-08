@@ -182,7 +182,7 @@ def road_map(data_frame, neighborhood=92, map_type='flow', year=2018):
         'type': 'scattergl',
         'name': 'Centroid',
         'x': [NBHD_INFO.loc[neighborhood, 'midLon']],
-        'y': [lat2y(NBHD_INFO.loc[neighborhood, 'midLat'])],
+        'y': [NBHD_INFO.loc[neighborhood, 'midLat']],
         'mode': 'markers',
         'showlegend': False,
         'marker': {
@@ -216,7 +216,7 @@ def road_map(data_frame, neighborhood=92, map_type='flow', year=2018):
         trace = {
             'type': 'scattergl',
             'x': row['lon'],
-            'y': [lat2y(lat) for lat in row['lat']],
+            'y': row['lat'],
             'mode': 'lines',
             'line': {
                 'width': 3,
@@ -256,12 +256,6 @@ def road_map(data_frame, neighborhood=92, map_type='flow', year=2018):
         }
     }
     return figure
-
-
-def lat2y(lat):
-    """Pseudo-Mercator projection."""
-    return 180.0 / math.pi * math.log(
-        math.tan(math.pi / 4.0 + lat * (math.pi / 180.0) / 2.0))
 
 
 def road_color(val, map_type):
@@ -331,9 +325,9 @@ def hover_text(name, val, map_type):
     if map_type == 'flow':
         if val == -1:
             return name + ', Flow Count: Unknown'
-        return name + ', Flow Count:' + str(int(val))
+        return name + ', Flow Count: ' + str(int(val))
     if map_type == 'speed':
         if val == -1:
             return name + ', Speed Limit: Unknown'
-        return name + ', Speed Limit:' + str(int(val)) + 'mph'
-    return name + ', Road Type:' + ROAD_TYPE[val]
+        return name + ', Speed Limit: ' + str(int(val)) + 'mph'
+    return name + ', Road Type: ' + ROAD_TYPE[val]
