@@ -13,5 +13,5 @@ dependencies:
   - pip=19.3.1
   - plotly=4.2.1
   - pylint
-  - pytest
+  - pytest pytest-cov
   - python=3.7.3
