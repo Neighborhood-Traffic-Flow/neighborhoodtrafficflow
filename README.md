@@ -6,6 +6,7 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/Neighborhood-Traffic-Flow/neighborhood-traffic-flow)](#contributors)
 [![GitHub license](https://img.shields.io/github/license/Neighborhood-Traffic-Flow/neighborhood-traffic-flow)](./LICENSE)
 [![Build Status](https://travis-ci.org/Neighborhood-Traffic-Flow/neighborhoodtrafficflow.svg?branch=master)](https://travis-ci.org/Neighborhood-Traffic-Flow/neighborhoodtrafficflow)
+[![Coverage Status](https://codecov.io/gh/Neighborhood-Traffic-Flow/neighborhoodtrafficflow/branch/master/graph/badge.svg)](https://codecov.io/gh/Neighborhood-Traffic-Flow/neighborhoodtrafficflow)
 
 
 An interactive dashboard to explore traffic flow trends in Seattle neighborhoods.
