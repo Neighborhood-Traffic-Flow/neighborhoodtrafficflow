@@ -1,6 +1,7 @@
 ## Seattle Neighborhoods
 
-The files `nbhd_info.csv` and `nbhd_data.pkl` were created with the script `neighborhood_data.py` and this [Zillow dataset](https://data.opendatasoft.com/explore/dataset/zillow-neighborhoods%40public/map/?refine.city=Seattle&location=10,47.6094,-122.33963&basemap=jawg.sunny). 
+The files `nbhd_info.csv` and `nbhd_data.pkl` were created with the script `neighborhood_data.py` and the following dataset:
+* [Zillow - US Neighborhoods](https://data.opendatasoft.com/explore/dataset/zillow-neighborhoods%40public/map/?refine.city=Seattle&location=10,47.6094,-122.33963&basemap=jawg.sunny)
 
 ## Seattle Streets
 
@@ -18,4 +19,5 @@ The file `street_data.pkl` was created with the script `street_data.py` and the 
 * [2016 Seattle Traffic Flow Counts](https://data-seattlecitygis.opendata.arcgis.com/datasets/2016-traffic-flow-counts)
 * [2017 Seattle Traffic Flow Counts](https://data-seattlecitygis.opendata.arcgis.com/datasets/2017-traffic-flow-counts)
 * [2018 Seattle Traffic Flow Counts](https://data-seattlecitygis.opendata.arcgis.com/datasets/2018-traffic-flow-counts)
+* [Zillow - US Neighborhoods](https://data.opendatasoft.com/explore/dataset/zillow-neighborhoods%40public/map/?refine.city=Seattle&location=10,47.6094,-122.33963&basemap=jawg.sunny)
 
