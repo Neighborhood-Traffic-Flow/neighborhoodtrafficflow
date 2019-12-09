@@ -1,1 +1,0 @@
-docs folder contains documentation (including the functional specification, the design specification, and the final project presentation and poster)
