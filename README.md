@@ -40,11 +40,12 @@ Note: The `conda activate` step only needs to be done once per shell instance.
 
 ## Directory Structure
 
-* `docs`: This directory houses the design documents for this project, the functional and componenet specifications, along with a PDF of slides from the technology review presentation. 
-* `examples`: This directory houses a how-to guide for using the dashboard, with examples of how to use its various features.
-* `neighborhoodtrafficflow`: This directory houses the data that goes into this dashboard, along with the code used to clean and prep the data, the code used to generate and define the dashboard, and our tests. It has been initialized with an `__init__.py` file. 
-
-
+* `docs`: Design documents: functional and component specifications, technology review slides, and final presentation slides
+* `examples`: How-to guide for using the dashboard, with examples of how to use its various features
+* `neighborhoodtrafficflow`: Main module defining the dashboard
+  * `data`: Data used by the dashboard, along with submodule used to clean and prep the data
+  * `figures`: Submodule to generate the dashboard's Plotly figures
+  * `tests`: Unit tests for data processing, dashboard, and figures
 
 ## Contributors
 
