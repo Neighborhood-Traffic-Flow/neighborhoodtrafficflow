@@ -6,7 +6,7 @@ When users hover over a street, it displays a popup containing street name and t
 
 ![image](https://github.com/Neighborhood-Traffic-Flow/neighborhoodtrafficflow/blob/master/examples/gif%20pictures/speed%20limit%20graph.gif)
 
-Users can also compare the speed limit in their selected neighborhood to the speed limit in Seattle 
+Users can also compare the percentage of roads with all speed limits in their selected neighborhood to that in Seattle 
 if they scoll down to the bottom. Users can hover mouses over the graph to view the the statistic for their selected 
 neighborhood and Seattle. Grey boxes represent the speed limit in Greater Seattle area, blue boxes represents the speed limit 
 in selected neighborhood.
