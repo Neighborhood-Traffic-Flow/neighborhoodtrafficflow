@@ -56,8 +56,8 @@ MAP_DESCRIPTION = 'Use the radio selections above to display average weekday \
     filter traffic flow counts by year using the slider above. Hover over a \
     road to display data.'
 FLOW_DESCRIPTION = 'Compare your selected neighborhood traffic flow to the \
-    city of Seattle. Filter by city or neighborhood by selecting the boxes on \
-    the right. Hover over boxes and points to display data.'
+    city of Seattle. Filter by city or neighborhood by selecting the boxes \
+    on the right. Hover over boxes and points to display data.'
 SPEED_DESCRIPTION = 'Compare your selected neighborhood speed limits to \
     the speed limits in the city of Seattle. Filter by city or neighborhood \
     by selecting the boxes on the right. Hover over bars to display data.'

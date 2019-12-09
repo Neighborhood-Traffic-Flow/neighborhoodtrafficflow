@@ -161,6 +161,11 @@ body {
   flex-flow: row;
   height: 100%;
 }
+#rowFour {
+  display: flex;
+  flex-flow: row;
+  height: 100%;
+}
 
 
 /* Typography
