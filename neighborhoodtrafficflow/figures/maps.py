@@ -228,6 +228,10 @@ def road_map(data_frame, neighborhood=92, map_type='flow', year=2018):
         data.append(trace)
 
     # Define plotly figure
+    if map_type == 'flow':
+        title = str(year) + ' ' + info[2]
+    else:
+        title = info[2]
     figure = {
         'data': data,
         'layout': {
@@ -246,7 +250,7 @@ def road_map(data_frame, neighborhood=92, map_type='flow', year=2018):
                 'ticktext': []
             },
             'yaxis': {
-                'title': info[2],
+                'title': title,
                 'linecolor': 'black',
                 'mirror': True,
                 'tickvals': [],

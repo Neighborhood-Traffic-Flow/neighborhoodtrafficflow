@@ -3,6 +3,7 @@ from pathlib import Path
 import pickle
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from neighborhoodtrafficflow.figures.maps import \
@@ -14,6 +15,7 @@ CWD = Path(__file__).parent
 NBHD_PATH = CWD / '../data/cleaned/nbhd_data.pkl'
 with open(NBHD_PATH, 'rb') as pickle_file:
     NBHD_DATA = pickle.load(pickle_file)
+STREET_DATA = pd.read_pickle(CWD / '../data/cleaned/street_data.pkl')
 
 
 ########################
@@ -30,7 +32,7 @@ def test_viridis_matplotlib_to_plotly():
     assert colormap[-1][1] == 'rgb(0.983868,0.904867,0.136897)'
 
 
-def test_RdYlGn_matplotlib_to_plotly():
+def test_ryg_matplotlib_to_plotly():
     """Test output of RdYlGn_r colormap for speed limit."""
     colormap = matplotlib_to_plotly('RdYlGn_r', 255)
     assert np.nan not in colormap
@@ -54,33 +56,107 @@ def test_tab10_matplotlib_to_plotly():
 # neighborhood_map #
 ####################
 
-def test_range_neighborhood_map():
+def test_neighborhood_neighborhood_map():
     """Ensure function breaks if given wrong neighborhood."""
     with pytest.raises(KeyError):
         neighborhood_map(*NBHD_DATA, selected=200)
 
 
-def test_parameter_types_neighborhood_map():
-    """Ensure function breaks if given wrong type."""
-    nbhd_data = NBHD_DATA.copy()
-    nbhd_data[0] = "103"
-    with pytest.raises(TypeError):
-        neighborhood_map(*nbhd_data)
+def test_output_type_neighborhood_map():
+    """Check output type of neighborhood map."""
+    figure = neighborhood_map(*NBHD_DATA)
+    assert isinstance(figure, dict)
 
-# Parameters: num, data, region_ids, names, selected
-# Check errors if input bad
-# Check output type
-# Check a specific example (centroid, selected)
+
+def test_default_neighborhood_map():
+    """Check a default values."""
+    figure = neighborhood_map(*NBHD_DATA)
+    center = {'lon': -122.3079690839059, 'lat': 47.6591634637792}
+    assert figure['data'][0]['type'] == 'choroplethmapbox'
+    assert figure['data'][0]['selectedpoints'] == [92]
+    assert figure['layout']['mapbox']['center'] == center
+
+
+def test_example_neighborhood_map():
+    """Check a specific neighborhood."""
+    figure = neighborhood_map(*NBHD_DATA, selected=0)
+    center = {'lon': -122.36866107043352, 'lat': 47.66757206792284}
+    assert figure['data'][0]['type'] == 'choroplethmapbox'
+    assert figure['data'][0]['selectedpoints'] == [0]
+    assert figure['layout']['mapbox']['center'] == center
 
 
 ############
 # road_map #
 ############
 
-# Parameters: data_frame, neighborhood, map_type, year
-# Check errors input bad
-# Check output type
-# Check a specific example (centroid, colormap, legend items for road, title)
+def test_neighborhood_road_map():
+    """Ensure function breaks if given wrong neighborhood."""
+    with pytest.raises(KeyError):
+        road_map(STREET_DATA, neighborhood=200)
+
+
+def test_type_road_map():
+    """Ensure function breaks if given wrong map type."""
+    with pytest.raises(KeyError):
+        road_map(STREET_DATA, map_type='dummy')
+
+
+def test_year_road_map():
+    """Ensure function breaks if given wrong year."""
+    with pytest.raises(KeyError):
+        road_map(STREET_DATA, year=0)
+
+
+def test_output_type_road_map():
+    """Check output type of road map."""
+    figure = road_map(STREET_DATA)
+    assert isinstance(figure, dict)
+
+
+def test_default_road_map():
+    """Check default neighborhood."""
+    figure = road_map(STREET_DATA)
+    assert figure['data'][0]['type'] == 'scattergl'
+    assert figure['data'][0]['x'] == [-122.3079690839059]
+    assert figure['data'][0]['y'] == [47.6591634637792]
+
+
+def test_example_road_map():
+    """Check specific neighborhood."""
+    figure = road_map(STREET_DATA, neighborhood=0)
+    assert figure['data'][0]['type'] == 'scattergl'
+    assert figure['data'][0]['x'] == [-122.36866107043352]
+    assert figure['data'][0]['y'] == [47.66757206792284]
+
+
+def test_flow_road_map():
+    """Check flow count values."""
+    figure = road_map(STREET_DATA, map_type='flow', year=2007)
+    color = 'rgb(0.267004,0.004874,0.329415)'
+    title = '2007 Average Weekday Traffic (1000 vehicles)'
+    assert figure['data'][0]['marker']['colorscale'][0][1] == color
+    assert figure['layout']['yaxis']['title'] == title
+
+
+def test_speed_road_map():
+    """Check speed limit values."""
+    figure = road_map(STREET_DATA, map_type='speed')
+    color = 'rgb(0.000000,0.407843,0.215686)'
+    title = 'Speed Limit (mph)'
+    assert figure['data'][0]['marker']['colorscale'][0][1] == color
+    assert figure['layout']['yaxis']['title'] == title
+
+
+def test_road_road_map():
+    """Check road type values."""
+    figure = road_map(STREET_DATA, map_type='road')
+    color = 'rgb(0.121569,0.466667,0.705882)'
+    legend = 'Not Designated'
+    title = 'Arterial Classification'
+    assert figure['data'][0]['marker']['colorscale'][0][1] == color
+    assert figure['data'][0]['marker']['colorbar']['ticktext'][0] == legend
+    assert figure['layout']['yaxis']['title'] == title
 
 
 ##############
