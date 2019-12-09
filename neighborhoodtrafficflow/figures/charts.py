@@ -1,4 +1,4 @@
-"""Functions corresponding charts shown in the dashboard"""
+"""Functions to generate Plotly charts for the dashboard."""
 from pathlib import Path
 
 import numpy as np
@@ -21,7 +21,23 @@ NBHD_INFO = pd.read_csv(INFO_PATH)
 
 
 def traffic_flow_counts(data_frame, neighborhood=92):
-    """Create traffic flow stats."""
+    """Create traffic flow count chart.
+
+    Create a Plotly box plot of traffic flow counts for Seattle and
+    the selected neighborhood.
+
+    Parameters
+    ----------
+    data_frame : Pandas DataFrame
+        DataFrame with traffic flow counts.
+    neighborhood : int
+        Index of currently selected neighborhood
+
+    Returns
+    -------
+    figure : dict
+        Plotly box plot figure.
+    """
     x_city = []
     y_city = []
     x_nbhd = []
@@ -88,7 +104,23 @@ def traffic_flow_counts(data_frame, neighborhood=92):
 
 
 def speed_limits(data_frame, neighborhood=92):
-    """docstring"""
+    """Create speed limit chart.
+
+    Create a Plotly histogram of traffic flow counts for Seattle and
+    the selected neighborhood.
+
+    Parameters
+    ----------
+    data_frame : Pandas DataFrame
+        DataFrame with speed limits.
+    neighborhood : int
+        Index of currently selected neighborhood
+
+    Returns
+    -------
+    figure : dict
+        Plotly histogram figure.
+    """
     city_data = data_frame[data_frame['speed'] >= 0]
     x_city = city_data['speed'].to_list()
     trace_city = {
@@ -141,7 +173,23 @@ def speed_limits(data_frame, neighborhood=92):
 
 
 def road_types(data_frame, neighborhood=92):
-    """docstring"""
+    """Create arterial classification chart.
+
+    Create a Plotly histogram of traffic flow counts for Seattle and
+    the selected neighborhood.
+
+    Parameters
+    ----------
+    data_frame : Pandas DataFrame
+        DataFrame with arterial classifications.
+    neighborhood : int
+        Index of currently selected neighborhood
+
+    Returns
+    -------
+    figure : dict
+        Plotly histogram figure.
+    """
     city_data = data_frame
     x_city = city_data['road'].to_list()
     trace_city = {

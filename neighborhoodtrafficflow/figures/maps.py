@@ -1,5 +1,4 @@
-"""Functions corresponding maps shown in the dashboard"""
-import math
+"""Functions to generate Plotly maps for the dashboard."""
 from pathlib import Path
 
 import numpy as np
