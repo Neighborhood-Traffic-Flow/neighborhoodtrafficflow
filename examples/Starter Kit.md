@@ -1,12 +1,12 @@
 # Installation and Use
 
-### Step 1: clone the repository
+### Step 1: Clone the repository
 
 ```
 git clone https://github.com/Neighborhood-Traffic-Flow/neighborhoodtrafficflow.git
 ```
 
-### Step 2: run the dashboard
+### Step 2: Activate the conda environment and run the dashboard
 
 ```
 conda activate ntf
@@ -16,7 +16,7 @@ python app.py
 
 Start the server, then open a web browser with the following URL: http://127.0.0.1:8050/
 
-### Step 3: open the interactive map
+### Step 3: Open the interactive map
 
 Paste the url into a web browser to launch the interactive map interface.
 

@@ -38,6 +38,14 @@ python app.py
 ```
 Note: The `conda activate` step only needs to be done once per shell instance.
 
+## Directory Structure
+
+* `docs`: This directory houses the design documents for this project, the functional and componenet specifications, along with a PDF of slides from the technology review presentation. 
+* `examples`: This directory houses a how-to guide for using the dashboard, with examples of how to use its various features.
+* `neighborhoodtrafficflow`: This directory houses the data that goes into this dashboard, along with the code used to clean and prep the data, the code used to generate and define the dashboard, and our tests. It has been initialized with an `__init__.py` file. 
+
+
+
 ## Contributors
 
 Thanks to the following people who have contributed to this project:
