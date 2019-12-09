@@ -5,10 +5,6 @@ from neighborhoodtrafficflow.figures.charts import \
     traffic_flow_counts, speed_limits, road_types
 
 
-########################
-# traffic_flow_counts #
-########################
-
 def test_dataframe_type_traffic_flow_counts():
     """Ensure function breaks if not given a dataframe."""
     with pytest.raises(TypeError):
