@@ -55,12 +55,16 @@ MAP_DESCRIPTION = 'Use the radio selections above to display average weekday \
     traffic flow counts, speed limits, or arterial classifications, and \
     filter traffic flow counts by year using the slider above. Hover over a \
     road to display data.'
-FLOW_DESCRIPTION = 'Filter by city or neighborhood by selecting the boxes on \
+FLOW_DESCRIPTION = 'Compare your selected neighborhood traffic flow to the \
+    city of Seattle. Filter by city or neighborhood by selecting the boxes on \
     the right. Hover over boxes and points to display data.'
-SPEED_DESCRIPTION = 'Filter by city or neighborhood by selecting the boxes \
-    on the right. Hover over bars to display data.'
-ROAD_DESCRIPTION = 'Filter by city or neighborhood by selecting the boxes \
-    on the right. Hover over bars to display data.'
+SPEED_DESCRIPTION = 'Compare your selected neighborhood speed limits to \
+    the speed limits in the city of Seattle. Filter by city or neighborhood \
+    by selecting the boxes on the right. Hover over bars to display data.'
+ROAD_DESCRIPTION = 'Compare the number of road types in your selected \
+    neighborhood road types to the number of road types in Seattle. Filter \
+    by city or neighborhood by selecting the boxes on the right. Hover over \
+    bars to display data.'
 
 # Initialize dashboard
 APP = dash.Dash(__name__)
