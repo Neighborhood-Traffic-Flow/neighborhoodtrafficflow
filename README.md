@@ -40,7 +40,7 @@ Note: The `conda activate` step only needs to be done once per shell instance.
 
 ## Directory Structure
 
-* `docs`: Design documents: functional and component specifications, technology review slides, and final presentation slides
+* `docs`: Design documents: functional and component specifications, technology review and final presentation slides
 * `examples`: How-to guide for using the dashboard, with examples of how to use its various features
 * `neighborhoodtrafficflow`: Main module defining the dashboard
   * `assets`: CSS style sheets for the dashboard
