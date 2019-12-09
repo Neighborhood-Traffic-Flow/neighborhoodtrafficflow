@@ -43,6 +43,7 @@ Note: The `conda activate` step only needs to be done once per shell instance.
 * `docs`: Design documents: functional and component specifications, technology review slides, and final presentation slides
 * `examples`: How-to guide for using the dashboard, with examples of how to use its various features
 * `neighborhoodtrafficflow`: Main module defining the dashboard
+  * `assets`: CSS style sheets for the dashboard
   * `data`: Data used by the dashboard, along with submodule used to clean and prep the data
   * `figures`: Submodule to generate the dashboard's Plotly figures
   * `tests`: Unit tests for data processing, dashboard, and figures
