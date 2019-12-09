@@ -12,13 +12,10 @@ from neighborhoodtrafficflow.data.street_data import \
     get_polygons, get_neighborhood, get_flow_path, get_flow_data, \
     get_street_data, add_flow_data
 
-# Don't run tests if no updates have been made to street_data.py
-#pytestmark = pytest.mark.skip("Skipping test_street_data.py")
-
 # File paths
 CWD = Path(__file__).parent
 SHP_PATH = CWD / '../data/raw/zillow-neighborhoods/' \
-           'zillow-neighborhoods.shp'
+    'zillow-neighborhoods.shp'
 STREET_PATH = CWD / '../data/raw/Seattle_Streets/Seattle_Streets.shp'
 
 
@@ -30,6 +27,7 @@ def test_exception_get_polygons():
     """Check that function throws an error if no file at shp_path."""
     with pytest.raises(Exception):
         assert get_polygons('dummy.shp')
+
 
 def test_output_length_get_polygons():
     """Check length and output types."""
@@ -54,6 +52,7 @@ def test_output_type_get_neighborhood():
     assert len(nbhd_type) == 1
     assert isinstance(nbhd_list[0], int)
 
+
 def test_one_nbhd_get_neighborhood():
     """Check output of one neighborhood."""
     lon = [-122.36866107043400]
@@ -62,6 +61,7 @@ def test_one_nbhd_get_neighborhood():
     nbhd_list = get_neighborhood(lon, lat, idx2poly)
     assert len(nbhd_list) == 1
     assert nbhd_list[0] == 0
+
 
 def test_two_nbhds_neighborhood():
     """Check output of two neighborhoods."""
@@ -83,6 +83,7 @@ def test_output_type_get_flow_path():
     path = get_flow_path(2007)
     assert isinstance(path, PosixPath)
 
+
 def test_output_value_get_flow_path():
     """Test output value."""
     path = get_flow_path(2007)
@@ -101,6 +102,7 @@ def test_ouput_length_get_flow_data():
     assert len(df_list) == 12
     assert len(year_list) == 12
 
+
 def test_column_names_get_flow_data():
     """Check DataFrame columns names."""
     _, _, df_list, _ = get_flow_data()
@@ -109,12 +111,14 @@ def test_column_names_get_flow_data():
         assert df_list[i].columns[1] == 'FLOWSEGID'
         assert df_list[i].columns[2] == 'geometry'
 
+
 def test_column_types_get_flow_data():
     """Check DataFrame types."""
     _, _, df_list, _ = get_flow_data()
     for i in range(12):
         assert df_list[i].dtypes[0] == object
         assert df_list[i].dtypes[1] == int
+
 
 def test_flow2key_get_flow_data():
     """Check first dictionary."""
@@ -127,6 +131,7 @@ def test_flow2key_get_flow_data():
     assert list(key_type)[0] == int
     assert list(val_type)[0] == str
 
+
 def test_key2flow_get_flow_data():
     """Check second dictionary."""
     _, key2flow, _, _ = get_flow_data()
@@ -138,6 +143,7 @@ def test_key2flow_get_flow_data():
     assert list(key_type)[0] == str
     assert list(val_type)[0] == int
 
+
 def test_consistency_get_flow_data():
     """Check data consistincy across dictionaries."""
     flow2key, key2flow, _, _ = get_flow_data()
@@ -148,6 +154,7 @@ def test_consistency_get_flow_data():
         keys = flow2key[flow]
         for key in keys.split(','):
             assert key2flow[key] == flow
+
 
 def test_year_get_flow_data():
     """Check year list."""
@@ -172,8 +179,8 @@ def test_output_types_get_street_data():
 
     # Get street data
     idx2poly = get_polygons(SHP_PATH)
-    df = gpd.read_file(get_flow_path(2007))
-    get_street_data(df, 2007, idx2poly, key_list, name_list, lon_list,
+    data_frame = gpd.read_file(get_flow_path(2007))
+    get_street_data(data_frame, 2007, idx2poly, key_list, name_list, lon_list,
                     lat_list, speed_list, road_list, nbhd_list)
 
     # Get types
@@ -203,6 +210,7 @@ def test_output_types_get_street_data():
     assert list(road_type)[0] == int
     assert list(nbhd_type)[0] == list
 
+
 def test_update_lists_get_street_data():
     """Check modify in place."""
     # Initialize lists for street data
@@ -216,8 +224,8 @@ def test_update_lists_get_street_data():
 
     # Get street data
     idx2poly = get_polygons(SHP_PATH)
-    df = gpd.read_file(get_flow_path(2007))
-    get_street_data(df, 2007, idx2poly, key_list, name_list, lon_list,
+    data_frame = gpd.read_file(get_flow_path(2007))
+    get_street_data(data_frame, 2007, idx2poly, key_list, name_list, lon_list,
                     lat_list, speed_list, road_list, nbhd_list)
 
     # Check length
@@ -228,6 +236,7 @@ def test_update_lists_get_street_data():
     assert len(speed_list) > 0
     assert len(road_list) > 0
     assert len(nbhd_list) > 0
+
 
 def test_output_range_get_street_data():
     """Check range of output."""
@@ -242,9 +251,10 @@ def test_output_range_get_street_data():
 
     # Get street data
     idx2poly = get_polygons(SHP_PATH)
-    df = gpd.read_file(STREET_PATH)
-    get_street_data(df, 'street', idx2poly, key_list, name_list, lon_list,
-                    lat_list, speed_list, road_list, nbhd_list)
+    data_frame = gpd.read_file(STREET_PATH)
+    get_street_data(data_frame, 'street', idx2poly, key_list,
+                    name_list, lon_list, lat_list, speed_list,
+                    road_list, nbhd_list)
 
     # Check range
     assert min(speed_list) >= -1
@@ -259,7 +269,7 @@ def test_output_range_get_street_data():
 
 def test_output_add_flow_data():
     """Check final DataFrame."""
-     # Get neighborhood polygons
+    # Get neighborhood polygons
     idx2poly = get_polygons(SHP_PATH)
 
     # Get mapping from FLOWSEGID to COMPKEY
@@ -275,12 +285,13 @@ def test_output_add_flow_data():
     nbhd_list = []
 
     # Get street data from Seattle Streets dataset
-    df = gpd.read_file(STREET_PATH)
-    get_street_data(df, 'street', idx2poly, key_list, name_list, lon_list,
-                    lat_list, speed_list, road_list, nbhd_list)
+    data_frame = gpd.read_file(STREET_PATH)
+    get_street_data(data_frame, 'street', idx2poly, key_list,
+                    name_list, lon_list, lat_list, speed_list,
+                    road_list, nbhd_list)
 
     # Get street data from Traffic Flow Counts datasets
-    for i in range(len(df_list)-1, -1, -1):
+    for i in range(len(df_list) - 1, -1, -1):
         get_street_data(df_list[i], year_list[i], idx2poly, key_list,
                         name_list, lon_list, lat_list, speed_list, road_list,
                         nbhd_list)
@@ -299,18 +310,18 @@ def test_output_add_flow_data():
     )
 
     # Add traffic flow data
-    for i in range(len(df_list)-1, -1, -1):
+    for i in range(len(df_list) - 1, -1, -1):
         add_flow_data(df_streets, df_list[i], year_list[i], flow2key)
 
     # Check column names and types
     name_list = ['key', 'name', 'lon', 'lat', 'speed', 'road', 'nbhd']
     type_list = [int, object, list, list, int, int, list]
     for i in range(7):
-        assert df_streets.columns[i] == name_list[i]
+        assert list(df_streets)[i] == name_list[i]
         assert df_streets.dtypes[i] == type_list[i]
     for year in range(2007, 2019):
-        assert df_streets.columns[year-2000] == str(year)
-        assert df_streets.dtypes[year-2000] == int
+        assert list(df_streets)[year - 2000] == str(year)
+        assert df_streets.dtypes[year - 2000] == int
 
     # Check values
     for year in range(2007, 2019):

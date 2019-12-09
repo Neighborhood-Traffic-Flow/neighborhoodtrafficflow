@@ -9,9 +9,6 @@ import pytest
 from neighborhoodtrafficflow.data.neighborhood_data import \
     prep_map_data, prep_map_info
 
-# Don't run tests if no updates have been made to neighborhood_data.py
-#pytestmark = pytest.mark.skip("Skipping test_neighborhood_data.py")
-
 # File paths
 CWD = Path(__file__).parent
 JSON_PATH = CWD / '../data/raw/zillow-neighborhoods/' \
@@ -26,12 +23,13 @@ INFO_PATH = 'nbhd_info.csv'
 # prep_data #
 #############
 
-def test_no_file_prep_map_data_():
+def test_no_file_prep_map_data():
     """Check that function throws an error if no file at json_path."""
 
     # Call function
     with pytest.raises(Exception):
         assert prep_map_data('dummy.geojson', DATA_PATH)
+
 
 def test_create_file_prep_map_data():
     """Check that function creates new data file if none exists."""
@@ -49,6 +47,7 @@ def test_create_file_prep_map_data():
     # Delete new data file
     os.remove(DATA_PATH)
 
+
 def test_output_length_prep_map_data():
     """Check length of new data file."""
 
@@ -64,6 +63,7 @@ def test_output_length_prep_map_data():
 
     # Delete new data file
     os.remove(DATA_PATH)
+
 
 def test_column_types_prep_map_data():
     """Check column types of new file."""
@@ -86,6 +86,7 @@ def test_column_types_prep_map_data():
 
     # Delete new data file
     os.remove(DATA_PATH)
+
 
 def test_entries_prep_map_data():
     """Check some entries of new data file."""
@@ -118,6 +119,7 @@ def test_no_file_prep_info():
     with pytest.raises(Exception):
         assert prep_map_data('dummy.shp', INFO_PATH)
 
+
 def test_create_file_prep_map_info():
     """Check that function creates new data file if none exists."""
 
@@ -134,6 +136,7 @@ def test_create_file_prep_map_info():
     # Delete new data file
     os.remove(INFO_PATH)
 
+
 def test_output_length_prep_map():
     """Check length of new data file."""
 
@@ -148,6 +151,7 @@ def test_output_length_prep_map():
 
     # Delete new data file
     os.remove(INFO_PATH)
+
 
 def test_column_types_prep_map_info():
     """Check column types of new data file."""
@@ -169,6 +173,7 @@ def test_column_types_prep_map_info():
     # Delete new data file
     os.remove(INFO_PATH)
 
+
 def test_column_names_prep_map_info():
     """Check column names of new data file."""
 
@@ -185,6 +190,7 @@ def test_column_names_prep_map_info():
 
     # Delete new data file
     os.remove(INFO_PATH)
+
 
 def test_entries_prep_map_info():
     """Check some entries of new data file."""
