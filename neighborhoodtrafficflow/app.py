@@ -41,27 +41,26 @@ YEAR_OPTIONS = {year: str(year) for year in range(2007, 2019)}
 
 # Descriptions
 APP_DESCRIPTION = 'This is an interactive dashboard for current and future \
-                  Seattle residents to understand the traffic flow of \
-                  neighborhoods in the city. By clicking an area on the map \
-                  below, you can view the average traffic flow, the speed \
-                  limit, and types of roads. You may also view the \
-                  historical data to see how traffic flow in the selected \
-                  neighborhood has changed over time.'
+    Seattle residents to explore neighborhood traffic flow trends. Select a \
+    neighborhood by clicking on the map below or using the dropdown menu on \
+    the right. Use the radio selections to view roads by average weekday \
+    traffic flow counts, speed limits, or arterial classifications, and \
+    filter traffic flow counts by year using the slider. Filter the box \
+    charts and histograms below by city or neighborhood by selecting the \
+    boxes on the right of each figure. Hover over any figure to display data.'
 NBHD_DESCRIPTION = 'Select a neighborhood by clicking an area on the map. \
-                    Use your cursor to zoom in and out.'
-FLOW_DESCRIPTION = 'This graph displays historical data about your selected \
-                    neighborhood. The bolded line in the middle of each box \
-                    represents the average statistic for the corresponding \
-                    year.'
-FLOWMAP_DESCRIPTION = 'This map represents data from your selected neighborhood.'
-SPEED_LIMITS_DESCRIPTION = 'This chart displays the percentage of roads with all speed limits \
-                            in your selected neighborhood. The neighborhood information is \
-                            displayed in blue. This is compared to the city of Seattle \
-                            which is displayed in gray.'
-NBHD_RDTYPES_DESCRIPTION = 'This chart displays the percentage of road types in your \
-                            selected neighborhood. The neighborhood information is \
-                            displayed in blue. This is compared to the city of Seattle \
-                            which is displayed in gray.'
+    Use your cursor to zoom and pan. Hover over a neighborhood to display \
+    its name.'
+MAP_DESCRIPTION = 'Use the radio selections above to display average weekday \
+    traffic flow counts, speed limits, or arterial classifications, and \
+    filter traffic flow counts by year using the slider above. Hover over a \
+    road to display data.'
+FLOW_DESCRIPTION = 'Filter by city or neighborhood by selecting the boxes on \
+    the right. Hover over boxes and points to display data.'
+SPEED_DESCRIPTION = 'Filter by city or neighborhood by selecting the boxes \
+    on the right. Hover over bars to display data.'
+ROAD_DESCRIPTION = 'Filter by city or neighborhood by selecting the boxes \
+    on the right. Hover over bars to display data.'
 
 # Initialize dashboard
 APP = dash.Dash(__name__)
@@ -71,24 +70,6 @@ APP.layout = html.Div(
     id='mainContainer',
     className='twelve columns',
     children=[
-        # Header
-        html.Div(
-            id='header',
-            className='twelve columns centerTitle',
-            children=[
-                html.H4('Neighborhood Traffic Flow'),
-                html.H6(
-                    children=[
-                        'Final Project for ',
-                        html.A(
-                            'CSE 583: Software Engineering for \
-                            Data Scientists',
-                            href='https://uwseds.github.io/'
-                        )
-                    ]
-                )
-            ]
-        ),
         # Row one
         html.Div(
             id='rowOne',
@@ -98,11 +79,27 @@ APP.layout = html.Div(
                 html.Div(
                     className='six columns blankContainer',
                     children=[
-                        html.H5(
+                        html.H4(
                             className='centerTitle',
-                            children='About This App'
+                            children='Neighborhood Traffic Flow'
                         ),
-                        html.P(APP_DESCRIPTION)
+                        html.H6(
+                            className='centerTitle',
+                            children=[
+                                'Final Project for ',
+                                html.A(
+                                    'CSE 583: Software Engineering for ' \
+                                    'Data Scientists',
+                                    href='https://uwseds.github.io/'
+                                )
+                            ]
+                        ),
+                        html.P(APP_DESCRIPTION),
+                        html.A(
+                            'Click here for examples.',
+                            href='https://github.com/Neighborhood-Traffic-F' \
+                            'low/neighborhoodtrafficflow/tree/master/examples'
+                        )
                     ]
                 ),
                 # Controls
@@ -159,13 +156,12 @@ APP.layout = html.Div(
                         html.H4(
                             className='centerTitle',
                             children='Seattle Neighborhoods'),
-                        html.P(
-                            children=NBHD_DESCRIPTION
-                        ),
                         dcc.Graph(
                             id='neighborhoodMapFigure',
                             figure=neighborhood_map(*NBHD_DATA)
-                        )
+                        ),
+                        html.Br(),
+                        html.P(NBHD_DESCRIPTION)
                     ]
                 ),
                 # Neighborhood Road Map
@@ -181,7 +177,9 @@ APP.layout = html.Div(
                         dcc.Graph(
                             id='roadMapFigure',
                             figure=road_map(STREET_DATA)
-                        )
+                        ),
+                        html.Br(),
+                        html.P(MAP_DESCRIPTION)
                     ]
                 )
             ]
@@ -201,11 +199,12 @@ APP.layout = html.Div(
                             className='centerTitle',
                             children='Neighborhood Flow Counts'
                         ),
-                        html.P(FLOW_DESCRIPTION),
                         dcc.Graph(
                             id='flowCountFigure',
                             figure=traffic_flow_counts(STREET_DATA)
-                        )
+                        ),
+                        html.Br(),
+                        html.P(FLOW_DESCRIPTION)
                     ]
                 )
             ]
@@ -225,11 +224,12 @@ APP.layout = html.Div(
                             className='centerTitle',
                             children='Neighborhood Speed Limits'
                         ),
-                        html.P(SPEED_LIMITS_DESCRIPTION),
                         dcc.Graph(
                             id='speedLimitFigure',
                             figure=speed_limits(STREET_DATA)
-                        )
+                        ),
+                        html.Br(),
+                        html.P(SPEED_DESCRIPTION)
                     ]
                 ),
                 # Road Type Histogram
@@ -242,11 +242,12 @@ APP.layout = html.Div(
                             className='centerTitle',
                             children='Neighborhood Road Types'
                         ),
-                        html.P(NBHD_RDTYPES_DESCRIPTION),
                         dcc.Graph(
                             id='roadTypeFigure',
                             figure=road_types(STREET_DATA)
-                        )
+                        ),
+                        html.Br(),
+                        html.P(ROAD_DESCRIPTION)
                     ]
                 )
             ]
