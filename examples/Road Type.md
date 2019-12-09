@@ -1,3 +1,5 @@
+# Example of Road Type Feature
+
 Users can also view the road type in a selected neighborhood on the map. 
 Users can select road type as their map types and select the neighborhood from drop down meun or choose from the map.
 
